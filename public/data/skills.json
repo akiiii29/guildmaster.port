@@ -1,0 +1,4264 @@
+[
+  {
+    "id": "ACTIVE_NONE",
+    "nameKey": "active_none_name",
+    "name": "—",
+    "descriptionKey": "active_none_description",
+    "description": "No active ability",
+    "kind": "active",
+    "case": 1,
+    "operations": [],
+    "handlerRequired": false,
+    "source": "return null;"
+  },
+  {
+    "id": "ACTIVE_MIGHTY_STRIKE",
+    "nameKey": "active_mighty_strike_name",
+    "name": "Mighty Strike",
+    "descriptionKey": "active_mighty_strike_description",
+    "description": "Strikes an enemy for 200% damage",
+    "kind": "active",
+    "case": 2,
+    "operations": [
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_CRUSHING_STRIKE",
+    "nameKey": "active_crushing_strike_name",
+    "name": "Crushing Strike",
+    "descriptionKey": "active_crushing_strike_description",
+    "description": "Strikes an enemy for 250% damage",
+    "kind": "active",
+    "case": 3,
+    "operations": [
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setDamageAmplification(2.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_TAUNT_I",
+    "nameKey": "active_taunt_i_name",
+    "name": "Taunt",
+    "descriptionKey": "active_taunt_i_description",
+    "description": "TAUNTS an enemy for 2 turns, then strikes it for 200% damage.\\n\\nTAUNT: the taunting unit is always chosen as target",
+    "kind": "active",
+    "case": 4,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "TAUNT",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.TAUNT, entity, 2, 1.0d)).applyEffectOnDodge().setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_TAUNT_II",
+    "nameKey": "active_taunt_ii_name",
+    "name": "Taunt II",
+    "descriptionKey": "active_taunt_ii_description",
+    "description": "TAUNTS an enemy for 4 turns, then strikes it for 200% damage.\\n\\nTAUNT: the taunting unit is always chosen as target",
+    "kind": "active",
+    "case": 5,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "TAUNT",
+            "cause": "self",
+            "turns": 4,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.TAUNT, entity, 4, 1.0d)).applyEffectOnDodge().setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_TAUNT_III",
+    "nameKey": "active_taunt_iii_name",
+    "name": "Taunt III",
+    "descriptionKey": "active_taunt_iii_description",
+    "description": "TAUNTS an enemy for 8 turns, then strikes it for 200% damage.\\n\\nTAUNT: the taunting unit is always chosen as target",
+    "kind": "active",
+    "case": 6,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "TAUNT",
+            "cause": "self",
+            "turns": 8,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.TAUNT, entity, 8, 1.0d)).applyEffectOnDodge().setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_TAUNT_IV",
+    "nameKey": "active_taunt_iv_name",
+    "name": "Taunt IV",
+    "descriptionKey": "active_taunt_iv_description",
+    "description": "TAUNTS an enemy for 8 turns, then strikes it for 600% damage.\\n\\nTAUNT: the taunting unit is always chosen as target",
+    "kind": "active",
+    "case": 7,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "TAUNT",
+            "cause": "self",
+            "turns": 8,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 6
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.TAUNT, entity, 8, 1.0d)).applyEffectOnDodge().setDamageAmplification(6.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_EN_GARDE",
+    "nameKey": "active_en_garde_name",
+    "name": "En Garde",
+    "descriptionKey": "active_en_garde_description",
+    "description": "Gains DEFENSIVE STANCE, then strikes an enemy for 200% damage.\\n\\nDEFENSIVE STANCE: the next time the unit would receive damage, it takes none and this effect is removed",
+    "kind": "active",
+    "case": 8,
+    "operations": [
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": true,
+    "source": "applyStatus(entity, new StatusEffect(StatusEffectType.DEFENSIVE_STANCE, entity, 999, 1.0d), 0.0d);\r\n                return skill.setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_OVERWHELM",
+    "nameKey": "active_overwhelm_name",
+    "name": "Overwhelm",
+    "descriptionKey": "active_overwhelm_description",
+    "description": "Strikes an enemy for 300% damage. Then, it has 70% chance of being STUNNED.\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 9,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 0.7
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, 0.7d)).setDamageAmplification(3.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_DECIMATE_I",
+    "nameKey": "active_decimate_i_name",
+    "name": "Decimate",
+    "descriptionKey": "active_decimate_i_description",
+    "description": "Strikes all enemies for 300% damage. Then, each has 70% chance of being STUNNED.\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 10,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 0.7
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, 0.7d)).setDamageAmplification(3.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_DECIMATE_II",
+    "nameKey": "active_decimate_ii_name",
+    "name": "Decimate II",
+    "descriptionKey": "active_decimate_ii_description",
+    "description": "Strikes all enemies for 300% damage, then STUNS them.\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 11,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, 1.0d)).setDamageAmplification(3.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_DECIMATE_III",
+    "nameKey": "active_decimate_iii_name",
+    "name": "Decimate III",
+    "descriptionKey": "active_decimate_iii_description",
+    "description": "Strikes all enemies for 400% damage, then STUNS them.\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 12,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 4
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, 1.0d)).setDamageAmplification(4.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_CONDEMN",
+    "nameKey": "active_condemn_name",
+    "name": "Condemn",
+    "descriptionKey": "active_condemn_description",
+    "description": "SILENCE an enemy for 1 turn, then strikes it for 250% damage.\\n\\nSILENCE: the unit can\\'t gain any mana",
+    "kind": "active",
+    "case": 13,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "SILENCE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.SILENCE, entity, 1, 1.0d)).applyEffectOnDodge().setDamageAmplification(2.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_CONDEMN_ALL_I",
+    "nameKey": "active_condemn_all_i_name",
+    "name": "Condemn All",
+    "descriptionKey": "active_condemn_all_i_description",
+    "description": "SILENCE all enemies for 1 turn, then strikes them for 250% damage.\\n\\nSILENCE: the unit can\\'t gain any mana",
+    "kind": "active",
+    "case": 14,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "SILENCE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.SILENCE, entity, 1, 1.0d)).applyEffectOnDodge().setDamageAmplification(2.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_CONDEMN_ALL_II",
+    "nameKey": "active_condemn_all_ii_name",
+    "name": "Condemn All II",
+    "descriptionKey": "active_condemn_all_ii_description",
+    "description": "SILENCE all enemies for 2 turn, then strikes them for 250% damage.\\n\\nSILENCE: the unit can\\'t gain any mana",
+    "kind": "active",
+    "case": 15,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "SILENCE",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.SILENCE, entity, 2, 1.0d)).applyEffectOnDodge().setDamageAmplification(2.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_BARRAGE_I",
+    "nameKey": "active_barrage_i_name",
+    "name": "Barrage",
+    "descriptionKey": "active_barrage_i_description",
+    "description": "Fires an arrow at 2 random enemies",
+    "kind": "active",
+    "case": 16,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "2"
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"2\").execute();"
+  },
+  {
+    "id": "ACTIVE_BARRAGE_II",
+    "nameKey": "active_barrage_ii_name",
+    "name": "Barrage II",
+    "descriptionKey": "active_barrage_ii_description",
+    "description": "Fires an arrow at 3 random enemies",
+    "kind": "active",
+    "case": 17,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "3"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": {
+          "runtimeFormula": "eldritchFeebleTetherMultiplier"
+        }
+      }
+    ],
+    "handlerRequired": true,
+    "source": "if (entity.getTrueClass().equals(\"EldritchAlchemist\")) {\r\n                    Iterator<StatusEffect> it2 = entity.getPositiveStatusEffects().iterator();\r\n                    while (true) {\r\n                        if (it2.hasNext()) {\r\n                            if (it2.next().getType() == StatusEffectType.FEEBLE_TETHER) {\r\n                                z = true;\r\n                            }\r\n                        }\r\n                    }\r\n                }\r\n                return skill.setTargetSelectionMode(\"3\").setDamageAmplification(z ? 10.0d : 1.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_BARRAGE_III",
+    "nameKey": "active_barrage_iii_name",
+    "name": "Barrage III",
+    "descriptionKey": "active_barrage_iii_description",
+    "description": "Fires an arrow at 4 random enemies",
+    "kind": "active",
+    "case": 18,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "4"
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"4\").execute();"
+  },
+  {
+    "id": "ACTIVE_FOCUSED_BARRAGE",
+    "nameKey": "active_focused_barrage_name",
+    "name": "Focused Barrage",
+    "descriptionKey": "active_focused_barrage_description",
+    "description": "Fires two arrows at each enemy, with 50% reduced damage.",
+    "kind": "active",
+    "case": 24,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.5
+      },
+      {
+        "operation": "noLog",
+        "value": true
+      }
+    ],
+    "handlerRequired": true,
+    "source": "skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.5d);\r\n                skill.execute();\r\n                return skill.noLog().execute();"
+  },
+  {
+    "id": "ACTIVE_BARRAGE_IV",
+    "nameKey": "active_barrage_iv_name",
+    "name": "Barrage IV",
+    "descriptionKey": "active_barrage_iv_description",
+    "description": "Fires an arrow at 5 random enemies",
+    "kind": "active",
+    "case": 19,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "5"
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"5\").execute();"
+  },
+  {
+    "id": "ACTIVE_BARRAGE_V",
+    "nameKey": "active_barrage_v_name",
+    "name": "Barrage V",
+    "descriptionKey": "active_barrage_v_description",
+    "description": "Fires an arrow at 6 random enemies",
+    "kind": "active",
+    "case": 20,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "6"
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"6\").execute();"
+  },
+  {
+    "id": "ACTIVE_BARRAGE_VI",
+    "nameKey": "active_barrage_vi_name",
+    "name": "Barrage VI",
+    "descriptionKey": "active_barrage_vi_description",
+    "description": "Fires an arrow at 7 random enemies",
+    "kind": "active",
+    "case": 21,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "7"
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"7\").execute();"
+  },
+  {
+    "id": "ACTIVE_BARRAGE_VII",
+    "nameKey": "active_barrage_vii_name",
+    "name": "Barrage VII",
+    "descriptionKey": "active_barrage_vii_description",
+    "description": "Fires an arrow at 9 random enemies",
+    "kind": "active",
+    "case": 22,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "9"
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"9\").execute();"
+  },
+  {
+    "id": "ACTIVE_BARRAGE_VIII",
+    "nameKey": "active_barrage_viii_name",
+    "name": "Barrage VIII",
+    "descriptionKey": "active_barrage_viii_description",
+    "description": "Fires an arrow at 11 random enemies",
+    "kind": "active",
+    "case": 23,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "11"
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"11\").execute();"
+  },
+  {
+    "id": "ACTIVE_INCINERATE",
+    "nameKey": "active_incinerate_name",
+    "name": "Incinerate",
+    "descriptionKey": "active_incinerate_description",
+    "description": "Sets all enemies ABLAZE for 1 turn and deals 200% damage to them.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 25,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 1, 1.0d)).applyEffectOnDodge().setDamageAmplification(2.0d).setForceRange(true).execute();"
+  },
+  {
+    "id": "ACTIVE_INCINERATE_II",
+    "nameKey": "active_incinerate_ii_name",
+    "name": "Incinerate II",
+    "descriptionKey": "active_incinerate_ii_description",
+    "description": "Sets all enemies ABLAZE for 1 turn and deals 300% damage to them.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 26,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 3
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 1, 1.0d)).applyEffectOnDodge().setDamageAmplification(3.0d).setForceRange(true).execute();"
+  },
+  {
+    "id": "ACTIVE_SUBLIMATE",
+    "nameKey": "active_sublimate_name",
+    "name": "Sublimate",
+    "descriptionKey": "active_sublimate_description",
+    "description": "Sets all enemies ABLAZE for 1 turn and deals 170% damage to them. Then, FREEZE all enemies for 2 turns and deals 170% damage to them.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn.\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.",
+    "kind": "active",
+    "case": 27,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 1.7
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "FROZEN",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 1.7
+      },
+      {
+        "operation": "noLog",
+        "value": true
+      }
+    ],
+    "handlerRequired": true,
+    "source": "skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 1, 1.0d)).applyEffectOnDodge().setDamageAmplification(1.7d).setForceRange(true).execute();\r\n                return skill.setStatusEffect(new StatusEffect(StatusEffectType.FROZEN, entity, 2, 1.0d)).setDamageAmplification(1.7d).noLog().execute();"
+  },
+  {
+    "id": "ACTIVE_BACKSTAB_I",
+    "nameKey": "active_backstab_i_name",
+    "name": "Backstab",
+    "descriptionKey": "active_backstab_i_description",
+    "description": "Stabs an enemy.\\nCritical hit bonus damage × 1.5",
+    "kind": "active",
+    "case": 28,
+    "operations": [
+      {
+        "operation": "setCriticalAmplification",
+        "value": 1.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setCriticalAmplification(1.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_BACKSTAB_II",
+    "nameKey": "active_backstab_ii_name",
+    "name": "Backstab II",
+    "descriptionKey": "active_backstab_ii_description",
+    "description": "Stabs an enemy.\\nCritical hit bonus damage × 2",
+    "kind": "active",
+    "case": 29,
+    "operations": [
+      {
+        "operation": "setCriticalAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setCriticalAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_BACKSTAB_III",
+    "nameKey": "active_backstab_iii_name",
+    "name": "Backstab III",
+    "descriptionKey": "active_backstab_iii_description",
+    "description": "Stabs an enemy.\\nCritical hit bonus damage × 3",
+    "kind": "active",
+    "case": 30,
+    "operations": [
+      {
+        "operation": "setCriticalAmplification",
+        "value": 3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setCriticalAmplification(3.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_UMBRAL_STRIKE_I",
+    "nameKey": "active_umbral_strike_i_name",
+    "name": "Umbral Strike",
+    "descriptionKey": "active_umbral_strike_i_description",
+    "description": "Stabs an enemy for [200% × (1 + Darkness/100)] damage.\\nCritical hit bonus damage × 1.5",
+    "kind": "active",
+    "case": 31,
+    "operations": [
+      {
+        "operation": "setCriticalAmplification",
+        "value": 1.5
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": {
+          "runtimeFormula": "darknessScaledMultiplier",
+          "multiplier": 2
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setCriticalAmplification(1.5d).setDamageAmplification(((((double) this.localDarkness) * 0.01d) + 1.0d) * 2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_UMBRAL_STRIKE_II",
+    "nameKey": "active_umbral_strike_ii_name",
+    "name": "Umbral Strike II",
+    "descriptionKey": "active_umbral_strike_ii_description",
+    "description": "Stabs an enemy for [500% × (1 + Darkness/100)] damage.\\nCritical hit bonus damage × 1.5",
+    "kind": "active",
+    "case": 32,
+    "operations": [
+      {
+        "operation": "setCriticalAmplification",
+        "value": 1.5
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": {
+          "runtimeFormula": "darknessScaledMultiplier",
+          "multiplier": 5
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setCriticalAmplification(1.5d).setDamageAmplification(((((double) this.localDarkness) * 0.01d) + 1.0d) * 5.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_UMBRAL_STRIKE_III",
+    "nameKey": "active_umbral_strike_iii_name",
+    "name": "Umbral Strike III",
+    "descriptionKey": "active_umbral_strike_iii_description",
+    "description": "Stabs an enemy for [600% × (1 + Darkness/100)] damage.\\nCritical hit bonus damage × 2",
+    "kind": "active",
+    "case": 33,
+    "operations": [
+      {
+        "operation": "setCriticalAmplification",
+        "value": 2
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": {
+          "runtimeFormula": "darknessScaledMultiplier",
+          "multiplier": 6
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setCriticalAmplification(2.0d).setDamageAmplification(((((double) this.localDarkness) * 0.01d) + 1.0d) * 6.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_ECLIPSE_I",
+    "nameKey": "active_eclipse_i_name",
+    "name": "Eclipse",
+    "descriptionKey": "active_eclipse_i_description",
+    "description": "Stabs the lowest health enemy. Instantly recasts on enemy kill.\\nCritical hit bonus damage × 3",
+    "kind": "active",
+    "case": 34,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "lowest_absolute_enemy"
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 3
+      },
+      {
+        "operation": "recastOnKill",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_LOWEST_ABSOLUTE_ENEMY).setCriticalAmplification(3.0d).recastOnKill().execute();"
+  },
+  {
+    "id": "ACTIVE_ECLIPSE_II",
+    "nameKey": "active_eclipse_ii_name",
+    "name": "Eclipse II",
+    "descriptionKey": "active_eclipse_ii_description",
+    "description": "Stabs the lowest health enemy, executing them if health is reduced to 10% or less. Instantly recasts on enemy kill.\\nCritical hit bonus damage × 3",
+    "kind": "active",
+    "case": 35,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "lowest_relative_enemy"
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 3
+      },
+      {
+        "operation": "setExecutionThreshold",
+        "value": 0.1
+      },
+      {
+        "operation": "recastOnKill",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_LOWEST_RELATIVE_ENEMY).setCriticalAmplification(3.0d).setExecutionThreshold(EFFECT_PROBABILITY).recastOnKill().execute();"
+  },
+  {
+    "id": "ACTIVE_ECLIPSE_III",
+    "nameKey": "active_eclipse_iii_name",
+    "name": "Eclipse III",
+    "descriptionKey": "active_eclipse_iii_description",
+    "description": "Stabs the lowest health enemy, executing them if health is reduced to 20% or less. Instantly recasts on enemy kill.\\nCritical hit bonus damage × 3",
+    "kind": "active",
+    "case": 36,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "lowest_relative_enemy"
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 3
+      },
+      {
+        "operation": "setExecutionThreshold",
+        "value": 0.2
+      },
+      {
+        "operation": "recastOnKill",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_LOWEST_RELATIVE_ENEMY).setCriticalAmplification(3.0d).setExecutionThreshold(0.2d).recastOnKill().execute();"
+  },
+  {
+    "id": "ACTIVE_ECLIPSE_IV",
+    "nameKey": "active_eclipse_iv_name",
+    "name": "Eclipse IV",
+    "descriptionKey": "active_eclipse_iv_description",
+    "description": "Stabs the lowest health enemy, executing them if health is reduced to 25% or less. Instantly recasts on enemy kill.\\nCritical hit bonus damage × 3",
+    "kind": "active",
+    "case": 37,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "lowest_relative_enemy"
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 3
+      },
+      {
+        "operation": "setExecutionThreshold",
+        "value": 0.25
+      },
+      {
+        "operation": "recastOnKill",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_LOWEST_RELATIVE_ENEMY).setCriticalAmplification(3.0d).setExecutionThreshold(0.25d).recastOnKill().execute();"
+  },
+  {
+    "id": "ACTIVE_FEINT",
+    "nameKey": "active_feint_name",
+    "name": "Feint",
+    "descriptionKey": "active_feint_description",
+    "description": "Feigns a movement and strikes unexpectedly, dealing 100% damage and STUNNING an enemy for 1 turn.\\nCritical hit bonus damage × 1.5.\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 38,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "random_enemy"
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 1.5
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_RANDOM_ENEMY).setCriticalAmplification(1.5d).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_PETRIFYING_MELODY",
+    "nameKey": "active_petrifying_melody_name",
+    "name": "Petrifying Melody",
+    "descriptionKey": "active_petrifying_melody_description",
+    "description": "Plays a string of notes with his lute, dealing 100% damage and PETRIFYING an enemy for 1 turn.\\nCritical hit bonus damage × 1.5.\\nThis ability is always ranged.\\n\\nPETRIFY: This unit can\\'t dodge, takes 15% increased damage and skips its turn.",
+    "kind": "active",
+    "case": 39,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "random_enemy"
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 1.5
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "PETRIFY",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_RANDOM_ENEMY).setCriticalAmplification(1.5d).setForceRange(true).setStatusEffect(new StatusEffect(StatusEffectType.PETRIFY, entity, 1, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_THOUSAND_CUTS",
+    "nameKey": "active_thousand_cuts_name",
+    "name": "Thousand Cuts",
+    "descriptionKey": "active_thousand_cuts_description",
+    "description": "Stabs an enemy and applies a charges of BLEED for every 3 damage dealt.\\nCritical hit bonus damage × 3.\\n\\nBLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge",
+    "kind": "active",
+    "case": 40,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "BLEED",
+            "cause": "self",
+            "turns": 0,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.BLEED, entity, 0, 1.0d)).setCriticalAmplification(3.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_THOUSAND_CUTS_II",
+    "nameKey": "active_thousand_cuts_ii_name",
+    "name": "Thousand Cuts II",
+    "descriptionKey": "active_thousand_cuts_ii_description",
+    "description": "Stabs an enemy and applies a charges of BLEED for every 2 damage dealt.\\nCritical hit bonus damage × 3.\\n\\nBLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge",
+    "kind": "active",
+    "case": 41,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "BLEED",
+            "cause": "self",
+            "turns": 0,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.BLEED, entity, 0, 1.0d)).setCriticalAmplification(3.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_ENERGY_BURST_I",
+    "nameKey": "active_energy_burst_i_name",
+    "name": "Energy Burst",
+    "descriptionKey": "active_energy_burst_i_description",
+    "description": "Bursts an enemy for 150% damage",
+    "kind": "active",
+    "case": 42,
+    "operations": [
+      {
+        "operation": "setDamageAmplification",
+        "value": 1.5
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setDamageAmplification(1.5d).setForceRange(true).execute();"
+  },
+  {
+    "id": "ACTIVE_ENERGY_BURST_II",
+    "nameKey": "active_energy_burst_ii_name",
+    "name": "Energy Burst II",
+    "descriptionKey": "active_energy_burst_ii_description",
+    "description": "Bursts an enemy for 200% damage",
+    "kind": "active",
+    "case": 43,
+    "operations": [
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setDamageAmplification(2.0d).setForceRange(true).execute();"
+  },
+  {
+    "id": "ACTIVE_FIRE_BURST",
+    "nameKey": "active_fire_burst_name",
+    "name": "Fire Burst",
+    "descriptionKey": "active_fire_burst_description",
+    "description": "Bursts an enemy for 200% damage and sets it ABLAZE for one turn.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 44,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 1, 1.0d)).setForceRange(true).setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_FIREBALL",
+    "nameKey": "active_fireball_name",
+    "name": "Fireball",
+    "descriptionKey": "active_fireball_description",
+    "description": "Deals 200% damage to all enemies and sets them ABLAZE for one turn.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 45,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 1, 1.0d)).setTargetSelectionMode(TARGET_ALL_ENEMIES).setForceRange(true).setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_METEOR_I",
+    "nameKey": "active_meteor_i_name",
+    "name": "Meteor",
+    "descriptionKey": "active_meteor_i_description",
+    "description": "Deals 230% damage to all enemies and sets them ABLAZE for one turn. ABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 46,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 1, 1.0d)).setTargetSelectionMode(TARGET_ALL_ENEMIES).setForceRange(true).setDamageAmplification(2.3d).execute();"
+  },
+  {
+    "id": "ACTIVE_METEOR_II",
+    "nameKey": "active_meteor_ii_name",
+    "name": "Meteor II",
+    "descriptionKey": "active_meteor_ii_description",
+    "description": "Deals 230% damage to all enemies and sets them ABLAZE for 2 turns.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 47,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 2, 1.0d)).setTargetSelectionMode(TARGET_ALL_ENEMIES).setForceRange(true).setDamageAmplification(2.3d).execute();"
+  },
+  {
+    "id": "ACTIVE_HEAL",
+    "nameKey": "active_heal_name",
+    "name": "Heal",
+    "descriptionKey": "active_heal_description",
+    "description": "Heals the ally with the lowest health for 100% damage",
+    "kind": "active",
+    "case": 48,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "lowest_relative_ally"
+      },
+      {
+        "operation": "healing",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_LOWEST_RELATIVE_ALLY).healing().setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_MASS_HEAL_I",
+    "nameKey": "active_mass_heal_i_name",
+    "name": "Mass Heal",
+    "descriptionKey": "active_mass_heal_i_description",
+    "description": "Heals every ally for 100% damage",
+    "kind": "active",
+    "case": 49,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_allies"
+      },
+      {
+        "operation": "healing",
+        "value": true
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ALLIES).healing().setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_MASS_HEAL_II",
+    "nameKey": "active_mass_heal_ii_name",
+    "name": "Mass Heal II",
+    "descriptionKey": "active_mass_heal_ii_description",
+    "description": "Heals every ally for 100% damage, then grants them REGENERATION for 2 turns\\n\\nREGENERATION: when its turn starts, the unit heals for 6% of its max HP",
+    "kind": "active",
+    "case": 50,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_allies"
+      },
+      {
+        "operation": "healing",
+        "value": true
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "REGENERATION",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ALLIES).healing().setStatusEffect(new StatusEffect(StatusEffectType.REGENERATION, entity, 2, 1.0d)).setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_MASS_HEAL_III",
+    "nameKey": "active_mass_heal_iii_name",
+    "name": "Mass Heal III",
+    "descriptionKey": "active_mass_heal_iii_description",
+    "description": "Heals every ally for 115% damage, then grants them REGENERATION for 3 turns\\n\\nREGENERATION: when its turn starts, the unit heals for 6% of its max HP",
+    "kind": "active",
+    "case": 51,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_allies"
+      },
+      {
+        "operation": "healing",
+        "value": true
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "REGENERATION",
+            "cause": "self",
+            "turns": 3,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ALLIES).healing().setStatusEffect(new StatusEffect(StatusEffectType.REGENERATION, entity, 3, 1.0d)).setDamageAmplification(2.3d).execute();"
+  },
+  {
+    "id": "ACTIVE_RESTORATION_I",
+    "nameKey": "active_restoration_i_name",
+    "name": "Restoration",
+    "descriptionKey": "active_restoration_i_description",
+    "description": "Heals every ally for 115% damage with a 4% chance to resurrect them, then grants them REGENERATION for 3 turns\\n\\nREGENERATION: when its turn starts, the unit heals for 6% of its max HP",
+    "kind": "active",
+    "case": 52,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_allies"
+      },
+      {
+        "operation": "healing",
+        "value": true
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "REGENERATION",
+            "cause": "self",
+            "turns": 3,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.3
+      },
+      {
+        "operation": "setReviveProbability",
+        "value": 0.04
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ALLIES).healing().setStatusEffect(new StatusEffect(StatusEffectType.REGENERATION, entity, 3, 1.0d)).setDamageAmplification(2.3d).setReviveProbability(0.04d).execute();"
+  },
+  {
+    "id": "ACTIVE_RESTORATION_II",
+    "nameKey": "active_restoration_ii_name",
+    "name": "Restoration II",
+    "descriptionKey": "active_restoration_ii_description",
+    "description": "Heals every ally for 130% damage with a 6% chance to resurrect them, then grants them REGENERATION for 3 turns\\n\\nREGENERATION: when its turn starts, the unit heals for 6% of its max HP",
+    "kind": "active",
+    "case": 53,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_allies"
+      },
+      {
+        "operation": "healing",
+        "value": true
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "REGENERATION",
+            "cause": "self",
+            "turns": 3,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.6
+      },
+      {
+        "operation": "setReviveProbability",
+        "value": 0.06
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ALLIES).healing().setStatusEffect(new StatusEffect(StatusEffectType.REGENERATION, entity, 3, 1.0d)).setDamageAmplification(2.6d).setReviveProbability(0.06d).execute();"
+  },
+  {
+    "id": "ACTIVE_CURSE_I",
+    "nameKey": "active_curse_i_name",
+    "name": "Curse",
+    "descriptionKey": "active_curse_i_description",
+    "description": "Bursts an enemy for 300% damage and inflicts LESSER CURSE on them. LESSER CURSE: When the unit dies, a Zombie spawns and fights for the summoner\\'s team. It suffers a 25% max HP decay per turn. Only one summoned minion can exist at a given time.",
+    "kind": "active",
+    "case": 54,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "LESSER_CURSE",
+            "cause": "self",
+            "turns": 999,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 3
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.LESSER_CURSE, entity, 999, 1.0d)).setDamageAmplification(3.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_CURSE_II",
+    "nameKey": "active_curse_ii_name",
+    "name": "Curse II",
+    "descriptionKey": "active_curse_ii_description",
+    "description": "Bursts an enemy for 325% damage and inflicts CURSE on them.\\n\\nCURSE: When the unit dies, a Skeleton spawns and fights for the summoner\\'s team. It suffers a 25% max HP decay per turn and is twice as likely to be chosen as target. Only one summoned minion can exist at a given time.",
+    "kind": "active",
+    "case": 55,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "CURSE",
+            "cause": "self",
+            "turns": 999,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 3.25
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.CURSE, entity, 999, 1.0d)).setDamageAmplification(3.25d).execute();"
+  },
+  {
+    "id": "ACTIVE_CURSE_III",
+    "nameKey": "active_curse_iii_name",
+    "name": "Curse III",
+    "descriptionKey": "active_curse_iii_description",
+    "description": "Bursts an enemy for 350% damage and inflicts GREATER CURSE on them.\\n\\nGREATER CURSE: When the unit dies, a Bone Horror spawns and fights for the summoner\\'s team. It suffers a 25% max HP decay per turn and is three times as likely to be chosen as target. Only one summoned minion can exist at a given time.",
+    "kind": "active",
+    "case": 56,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "GREATER_CURSE",
+            "cause": "self",
+            "turns": 999,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 3.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.GREATER_CURSE, entity, 999, 1.0d)).setDamageAmplification(3.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_CURSE_IV",
+    "nameKey": "active_curse_iv_name",
+    "name": "Curse IV",
+    "descriptionKey": "active_curse_iv_description",
+    "description": "Bursts an enemy for 375% damage and inflicts OMINOUS CURSE on them.\\n\\nOMINOUS CURSE: When the unit dies, a Bone Nightmare spawns and fights for the summoner\\'s team. It suffers a 25% max HP decay per turn, is three times as likely to be chosen as target and has a 35% counterattack chance. Only one summoned minion can exist at a given time.",
+    "kind": "active",
+    "case": 57,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "OMINOUS_CURSE",
+            "cause": "self",
+            "turns": 999,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 3.75
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.OMINOUS_CURSE, entity, 999, 1.0d)).setDamageAmplification(3.75d).execute();"
+  },
+  {
+    "id": "ACTIVE_CURSE_V",
+    "nameKey": "active_curse_v_name",
+    "name": "Curse V",
+    "descriptionKey": "active_curse_v_description",
+    "description": "Bursts an enemy for 400% damage and inflicts ABHORRENT CURSE on them.\\n\\nABHORRENT CURSE: When the unit dies, a Bone Hydra spawns and fights for the summoner\\'s team. It suffers a 25% max HP decay per turn, is three times as likely to be chosen as target, has a 35% counterattack chance and deals 50 physical retaliation damages to melee attackers. Only one summoned minion can exist at a given time.",
+    "kind": "active",
+    "case": 58,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABHORRENT_CURSE",
+            "cause": "self",
+            "turns": 999,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 4
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.ABHORRENT_CURSE, entity, 999, 1.0d)).setDamageAmplification(4.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_FLAY",
+    "nameKey": "active_flay_name",
+    "name": "Flay",
+    "descriptionKey": "active_flay_description",
+    "description": "Strikes a unit for 1000% damage. Range is always melee.",
+    "kind": "active",
+    "case": 59,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "random_except_self"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 10
+      },
+      {
+        "operation": "setForceRange",
+        "value": false
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_RANDOM_EXCEPT_SELF).setDamageAmplification(10.0d).setForceRange(false).execute();"
+  },
+  {
+    "id": "ACTIVE_ANNIHILATE",
+    "nameKey": "active_annihilate_name",
+    "name": "Annihilate",
+    "descriptionKey": "active_annihilate_description",
+    "description": "Strikes all units for 1000% damage. Range is always melee.",
+    "kind": "active",
+    "case": 60,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_except_self"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 10
+      },
+      {
+        "operation": "setForceRange",
+        "value": false
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_EXCEPT_SELF).setDamageAmplification(10.0d).setForceRange(false).execute();"
+  },
+  {
+    "id": "ACTIVE_OBLITERATE",
+    "nameKey": "active_obliterate_name",
+    "name": "Obliterate",
+    "descriptionKey": "active_obliterate_description",
+    "description": "Strikes all units for 2000% damage. Range is always melee.",
+    "kind": "active",
+    "case": 61,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_except_self"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 20
+      },
+      {
+        "operation": "setForceRange",
+        "value": false
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_EXCEPT_SELF).setDamageAmplification(20.0d).setForceRange(false).execute();"
+  },
+  {
+    "id": "ACTIVE_EXTIRPATE",
+    "nameKey": "active_extirpate_name",
+    "name": "Extirpate",
+    "descriptionKey": "active_extirpate_description",
+    "description": "Strikes all units for 3000% damage. Range is always melee.",
+    "kind": "active",
+    "case": 62,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_except_self"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 30
+      },
+      {
+        "operation": "setForceRange",
+        "value": false
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_EXCEPT_SELF).setDamageAmplification(30.0d).setForceRange(false).execute();"
+  },
+  {
+    "id": "ACTIVE_WHIP_AND_TEAR",
+    "nameKey": "active_whip_and_tear_name",
+    "name": "Whip and Tear",
+    "descriptionKey": "active_whip_and_tear_description",
+    "description": "Strikes all units for 3000% damage. Range is always melee. Then, whips a surviving enemy for 3000% damage.",
+    "kind": "active",
+    "case": 63,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_except_self"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 30
+      },
+      {
+        "operation": "setForceRange",
+        "value": false
+      },
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "random_except_self"
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      },
+      {
+        "operation": "noLog",
+        "value": true
+      }
+    ],
+    "handlerRequired": true,
+    "source": "skill.setTargetSelectionMode(TARGET_ALL_EXCEPT_SELF).setDamageAmplification(30.0d).setForceRange(false).execute();\r\n                return skill.setTargetSelectionMode(TARGET_RANDOM_EXCEPT_SELF).setForceRange(true).noLog().execute();"
+  },
+  {
+    "id": "ACTIVE_STOMP",
+    "nameKey": "active_stomp_name",
+    "name": "Stomp",
+    "descriptionKey": "active_stomp_description",
+    "description": "Stomps the ground, dealing damage to all enemies and stunning them for 1 turn\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 64,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_ESCAPE",
+    "nameKey": "active_escape_name",
+    "name": "Escape",
+    "descriptionKey": "active_escape_description",
+    "description": "Escapes from the fight",
+    "kind": "active",
+    "case": 65,
+    "operations": [],
+    "handlerRequired": true,
+    "source": "this.enemies.remove(entity);\r\n                this.fightingGroup.remove(entity);\r\n                Logger.log(this, 43, Integer.valueOf(entity.getIdName()));\r\n                return null;"
+  },
+  {
+    "id": "ACTIVE_SOOTHING_WINDS",
+    "nameKey": "active_soothing_winds_name",
+    "name": "Soothing Winds",
+    "descriptionKey": "active_soothing_winds_description",
+    "description": "Enemies have a 60% probability of being stunned for 3 turns. Then, they are dealt 100% damage\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 66,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 3,
+            "probability": 0.6
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 3, 0.6d)).applyEffectOnDodge().execute();"
+  },
+  {
+    "id": "ACTIVE_QUICKSAND_GRASP",
+    "nameKey": "active_quicksand_grasp_name",
+    "name": "Quicksand Grasp",
+    "descriptionKey": "active_quicksand_grasp_description",
+    "description": "Deal double damage. The target is then silenced for 4 turns\\n\\nSILENCE: the unit can\\'t gain any mana.",
+    "kind": "active",
+    "case": 67,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "SILENCE",
+            "cause": "self",
+            "turns": 4,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.SILENCE, entity, 4, 1.0d)).setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_SANDSTORM",
+    "nameKey": "active_sandstorm_name",
+    "name": "Sandstorm",
+    "descriptionKey": "active_sandstorm_description",
+    "description": "Enemies have 80% chance of being SILENCED for 5 turns. Then, they are dealt 50% damage\\n\\nSILENCE: the unit can\\'t gain any mana",
+    "kind": "active",
+    "case": 68,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "SILENCE",
+            "cause": "self",
+            "turns": 5,
+            "probability": 0.8
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.5
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.SILENCE, entity, 5, 0.8d)).setDamageAmplification(0.5d).applyEffectOnDodge().execute();"
+  },
+  {
+    "id": "ACTIVE_RESTORE_ORDER",
+    "nameKey": "active_restore_order_name",
+    "name": "Restore Order",
+    "descriptionKey": "active_restore_order_description",
+    "description": "Deals 90% damage to all enemies",
+    "kind": "active",
+    "case": 69,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.9
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.9d).execute();"
+  },
+  {
+    "id": "ACTIVE_PROTECT_THE_WEAK",
+    "nameKey": "active_protect_the_weak_name",
+    "name": "Protect the Weak",
+    "descriptionKey": "active_protect_the_weak_description",
+    "description": "TAUNTS all enemies for 2 turns. Then, they are dealt 10% damage\\n\\nTAUNT: the taunting unit is always chosen as target",
+    "kind": "active",
+    "case": 70,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "TAUNT",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.1
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.TAUNT, entity, 2, 1.0d)).setDamageAmplification(EFFECT_PROBABILITY).applyEffectOnDodge().execute();"
+  },
+  {
+    "id": "ACTIVE_STATIC_SURGE",
+    "nameKey": "active_static_surge_name",
+    "name": "Static Surge",
+    "descriptionKey": "active_static_surge_description",
+    "description": "Deals 250% damage to all enemies. Then, they have 50% chance of being stunned for one turn\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 71,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 0.5
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, 0.5d)).setDamageAmplification(2.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_ARCANE_STRIKE",
+    "nameKey": "active_arcane_strike_name",
+    "name": "Arcane Strike",
+    "descriptionKey": "active_arcane_strike_description",
+    "description": "Deals 400% damage to a random enemy.",
+    "kind": "active",
+    "case": 72,
+    "operations": [
+      {
+        "operation": "setDamageAmplification",
+        "value": 4
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setDamageAmplification(4.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_FLINTLOCK_SHOT",
+    "nameKey": "active_flintlock_shot_name",
+    "name": "Flintlock Shot",
+    "descriptionKey": "active_flintlock_shot_description",
+    "description": "Deals 200% damage to a random enemy and set them ABLAZE.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 73,
+    "operations": [
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setDamageAmplification(2.0d).setForceRange(true).setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 1, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_ICE_TOMB",
+    "nameKey": "active_ice_tomb_name",
+    "name": "Ice Tomb",
+    "descriptionKey": "active_ice_tomb_description",
+    "description": "Deals 1000% damage to a random enemy. Then, FREEZES it for 10 turns.\\n\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.",
+    "kind": "active",
+    "case": 74,
+    "operations": [
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "FROZEN",
+            "cause": "self",
+            "turns": 20,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 10
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setStatusEffect(new StatusEffect(StatusEffectType.FROZEN, entity, 20, 1.0d)).setDamageAmplification(10.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_FROZEN_BREATH",
+    "nameKey": "active_frozen_breath_name",
+    "name": "Frozen Breath",
+    "descriptionKey": "active_frozen_breath_description",
+    "description": "Deals 100% damage to all enemies. Then, FREEZES them for 2 turns.\\n\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.",
+    "kind": "active",
+    "case": 75,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "FROZEN",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.FROZEN, entity, 2, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_ARCANE_BARRAGE",
+    "nameKey": "active_arcane_barrage_name",
+    "name": "Arcane Barrage",
+    "descriptionKey": "active_arcane_barrage_description",
+    "description": "Shoots 12 magic missiles at random enemies, each dealing 100% damage",
+    "kind": "active",
+    "case": 76,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "12"
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"12\").execute();"
+  },
+  {
+    "id": "ACTIVE_DESERT_JUDGEMENT",
+    "nameKey": "active_desert_judgement_name",
+    "name": "Desert Judgement",
+    "descriptionKey": "active_desert_judgement_description",
+    "description": "Attacks 4 random enemies, with each attack doing 150% damage",
+    "kind": "active",
+    "case": 77,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "4"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 1.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"4\").setDamageAmplification(1.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_DISEMBODY",
+    "nameKey": "active_disembody_name",
+    "name": "Disembody",
+    "descriptionKey": "active_disembody_description",
+    "description": "Deals 7777 magic damage to all enemies. Cannot be dodged.",
+    "kind": "active",
+    "case": 78,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 1111
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 0.66
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(1111.0d).setCriticalAmplification(0.66d).execute();"
+  },
+  {
+    "id": "ACTIVE_PANDEMONIUM",
+    "nameKey": "active_pandemonium_name",
+    "name": "Pandemonium",
+    "descriptionKey": "active_pandemonium_description",
+    "description": "Deals 75% physical damage to all enemies.",
+    "kind": "active",
+    "case": 79,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.75
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 0.66
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.75d).setCriticalAmplification(0.66d).execute();"
+  },
+  {
+    "id": "ACTIVE_ARCANE_DIFFUSION",
+    "nameKey": "active_arcane_diffusion_name",
+    "name": "Arcane Diffusion",
+    "descriptionKey": "active_arcane_diffusion_description",
+    "description": "Deals 40% magic damage to all enemies. Applies on hit status effects.",
+    "kind": "active",
+    "case": 81,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.4
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.4d).execute();"
+  },
+  {
+    "id": "ACTIVE_FRAGMENTATION",
+    "nameKey": "active_fragmentation_name",
+    "name": "Fragmentation",
+    "descriptionKey": "active_fragmentation_description",
+    "description": "Loses 5000 HP. Then, shoots 5 marble splinters at random enemies, each dealing 100% damage. Heal for 1000 HP for every fragment that hits the target. Caster\\'s HP can\\'t be reduced below 1 with this ability.",
+    "kind": "active",
+    "case": 80,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "5"
+      },
+      {
+        "operation": "setForceRange",
+        "value": true
+      }
+    ],
+    "handlerRequired": true,
+    "source": "entity.setCurrentHp(Math.max(1, entity.getCurrentHp() - 5000));\r\n                Logger.log(this, 101, Integer.valueOf(R.string.log_the_cultist_rebels_fragmentation));\r\n                return skill.setTargetSelectionMode(\"5\").setForceRange(true).execute();"
+  },
+  {
+    "id": "ACTIVE_SACRIFICE",
+    "nameKey": "active_sacrifice_name",
+    "name": "Sacrifice",
+    "descriptionKey": "active_sacrifice_description",
+    "description": "Makes an offering to the Great Serpent.",
+    "kind": "active",
+    "case": 82,
+    "operations": [
+      {
+        "operation": "setDamageAmplification",
+        "value": 100
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 0.66
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setDamageAmplification(100.0d).setCriticalAmplification(0.66d).execute();"
+  },
+  {
+    "id": "ACTIVE_BOTCHED_SACRIFICE",
+    "nameKey": "active_sacrifice_name",
+    "name": "Sacrifice",
+    "descriptionKey": "active_sacrifice_description",
+    "description": "Makes an offering to the Great Serpent.",
+    "kind": "active",
+    "case": 92,
+    "operations": [],
+    "handlerRequired": true,
+    "source": "Logger.log(this, Logger.BOTCHED_OFFERING, entity);\r\n                return null;"
+  },
+  {
+    "id": "ACTIVE_CHOKING_POWDER",
+    "nameKey": "active_choking_powder_name",
+    "name": "Choking Powder",
+    "descriptionKey": "active_choking_powder_description",
+    "description": "SILENCES every enemy for 3 turns, then deal 40% damage.\\nSILENCE: the unit can\\'t gain any mana",
+    "kind": "active",
+    "case": 83,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.4
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "SILENCE",
+            "cause": "self",
+            "turns": 3,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.4d).setStatusEffect(new StatusEffect(StatusEffectType.SILENCE, entity, 3, 1.0d)).applyEffectOnDodge().execute();"
+  },
+  {
+    "id": "ACTIVE_DAZE",
+    "nameKey": "active_daze_name",
+    "name": "Daze",
+    "descriptionKey": "active_daze_description",
+    "description": "Deals 10% magic damage to all enemies and STUNS them for 2 turns.\\nSTUN: the unit skips its turn",
+    "kind": "active",
+    "case": 84,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.1
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(EFFECT_PROBABILITY).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 2, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_FLEECE",
+    "nameKey": "active_fleece_name",
+    "name": "Fleece",
+    "descriptionKey": "active_fleece_description",
+    "description": "Deals 35% physical damage to all enemies. Applies BLEED 40 on hit.\\nBLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge",
+    "kind": "active",
+    "case": 85,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.35
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "BLEED",
+            "cause": "self",
+            "turns": 40,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.35d).setStatusEffect(new StatusEffect(StatusEffectType.BLEED, entity, 40, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_DISASSEMBLE",
+    "nameKey": "active_disassemble_name",
+    "name": "Disassemble",
+    "descriptionKey": "active_disassemble_description",
+    "description": "TAUNTS all enemies for 5 turns. Then, they are dealt 10% damage\\n\\nTAUNT: the taunting unit is always chosen as target",
+    "kind": "active",
+    "case": 86,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "TAUNT",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.1
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setStatusEffect(new StatusEffect(StatusEffectType.TAUNT, entity, 5, 1.0d)).setDamageAmplification(EFFECT_PROBABILITY).applyEffectOnDodge().execute();"
+  },
+  {
+    "id": "ACTIVE_OVERDRIVE",
+    "nameKey": "active_overdrive_name",
+    "name": "Overdrive",
+    "descriptionKey": "active_overdrive_description",
+    "description": "If a Magic Armor is present, deals 300 damage to it and launches its components towards the enemies, stunning them for 1 turn and dealing 70% magic damage. The Magic Armor HP cannot be reduced below 1.\\n\\nSTUN: the unit skips its turn.",
+    "kind": "active",
+    "case": 87,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.7
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": true,
+    "source": "Iterator<Enemy> it3 = this.enemies.iterator();\r\n                while (true) {\r\n                    if (it3.hasNext()) {\r\n                        next = it3.next();\r\n                        if (next instanceof MagicArmor) {\r\n                        }\r\n                    } else {\r\n                        next = null;\r\n                    }\r\n                }\r\n                if (next == null) {\r\n                    return null;\r\n                }\r\n                next.setCurrentHp(Math.max(1, next.getCurrentHp() - 300));\r\n                Logger.log(this, 101, Integer.valueOf(R.string.log_hidden_city_of_larox_overdrive));\r\n                return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.7d).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_RAYS_OF_DESTRUCTION",
+    "nameKey": "active_rays_of_destruction_name",
+    "name": "Rays of Destruction",
+    "descriptionKey": "active_rays_of_destruction_description",
+    "description": "Blasts 8 enemies for 40% damage.",
+    "kind": "active",
+    "case": 88,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "8"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.4
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"8\").setDamageAmplification(0.4d).execute();"
+  },
+  {
+    "id": "ACTIVE_THE_TEN_HELLS",
+    "nameKey": "active_the_ten_hells_name",
+    "name": "The Ten Hells",
+    "descriptionKey": "active_the_ten_hells_description",
+    "description": "Casts all enemies into a forgotten realm, killing them instantly.",
+    "kind": "active",
+    "case": 89,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 100000
+      },
+      {
+        "operation": "setCriticalAmplification",
+        "value": 0.66
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(100000.0d).setCriticalAmplification(0.66d).execute();"
+  },
+  {
+    "id": "ACTIVE_INSTILL_TERROR",
+    "nameKey": "active_instill_terror_name",
+    "name": "Instill Terror",
+    "descriptionKey": "active_instill_terror_description",
+    "description": "Bends the minds of all enemies, having a chance to STUN them equal to the amount of darkness. Then, deals 15% magic damage to them.\\nSTUN: the unit skips its turn",
+    "kind": "active",
+    "case": 90,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.15
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": {
+              "runtimeFormula": "localDarknessPercent"
+            }
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.15d).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 1, ((double) this.localDarkness) * 0.01d)).applyEffectOnDodge().execute();"
+  },
+  {
+    "id": "ACTIVE_FIRE_DANCE",
+    "nameKey": "active_fire_dance_name",
+    "name": "Fire Dance",
+    "descriptionKey": "active_fire_dance_description",
+    "description": "Sets himself ABLAZE for 3 turns. Advances the Fire Ritual progress by 1.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn.",
+    "kind": "active",
+    "case": 91,
+    "operations": [],
+    "handlerRequired": true,
+    "source": "Logger.log(this, 29, entity);\r\n                if (this.event == null) {\r\n                    this.event = new Event(Event.SUMMON_SMOLDERING_TITAN);\r\n                }\r\n                Event event = this.event;\r\n                event.setProgress(Math.min(100, event.getProgress() + 1 + ((int) (Utils.random() * 5.0d))));\r\n                applyStatus(entity, new StatusEffect(StatusEffectType.ABLAZE, this.acting, 3, 1.0d), 0.0d);\r\n                Logger.log(this, Logger.RITUAL_SUMMON_SMOLDERING_TITAN, Integer.valueOf(this.event.getProgress()));\r\n                return null;"
+  },
+  {
+    "id": "ACTIVE_DREAM_FORGE",
+    "nameKey": "active_dream_forge_name",
+    "name": "Dream Forge",
+    "descriptionKey": "active_dream_forge_description",
+    "description": "Heals itself for 10000 HP. Then, forges 10 cosmic blades that descend on random enemies, dealing 200% damage.",
+    "kind": "active",
+    "case": 93,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "10"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 2
+      }
+    ],
+    "handlerRequired": true,
+    "source": "entity.setCurrentHp(Math.min(entity.calculateTotalMaxHp(), entity.getCurrentHp() + 10000));\r\n                Logger.log(this, 24, 0, entity, entity, 10000);\r\n                return skill.setTargetSelectionMode(\"10\").setDamageAmplification(2.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_GRAVITY_SHIFT",
+    "nameKey": "active_gravity_shift_name",
+    "name": "Gravity Shift",
+    "descriptionKey": "active_gravity_shift_description",
+    "description": "Quickly changes its mass distribution to generate a wave that deals 50% damage to all enemies.",
+    "kind": "active",
+    "case": 94,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_SMASH",
+    "nameKey": "active_smash_name",
+    "name": "Smash",
+    "descriptionKey": "active_smash_description",
+    "description": "Smashes the ground, dealing 50% damage to all enemies.",
+    "kind": "active",
+    "case": 95,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.5
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.5d).execute();"
+  },
+  {
+    "id": "ACTIVE_LIGHTS_OUT",
+    "nameKey": "active_lights_out_name",
+    "name": "Lights Out",
+    "descriptionKey": "active_lights_out_description",
+    "description": "Deals 10x damage to the lowest health enemy.",
+    "kind": "active",
+    "case": 96,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "lowest_relative_enemy"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 10
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_LOWEST_RELATIVE_ENEMY).setDamageAmplification(10.0d).execute();"
+  },
+  {
+    "id": "ACTIVE_LIVE_TEST",
+    "nameKey": "active_live_test_name",
+    "name": "Live Test",
+    "descriptionKey": "active_live_test_description",
+    "description": "POISONS every enemy for 3 turns, then deals 5% damage to them.\\n\\nPOISON: damage reduced by 20%",
+    "kind": "active",
+    "case": 97,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.05
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "POISON",
+            "cause": "self",
+            "turns": 3,
+            "probability": 1
+          }
+        }
+      },
+      {
+        "operation": "applyEffectOnDodge",
+        "value": true
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.05d).setStatusEffect(new StatusEffect(StatusEffectType.POISON, entity, 3, 1.0d)).applyEffectOnDodge().execute();"
+  },
+  {
+    "id": "ACTIVE_AT_THE_STAKE",
+    "nameKey": "active_at_the_stake_name",
+    "name": "At the Stake",
+    "descriptionKey": "active_at_the_stake_description",
+    "description": "Deals 20% damage to all enemies and sets them ABLAZE for 4 turns.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 98,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.2
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 4,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.2d).setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 4, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_TABULA_RASA",
+    "nameKey": "active_tabula_rasa_name",
+    "name": "Tabula Rasa",
+    "descriptionKey": "active_tabula_rasa_description",
+    "description": "Deals 50% damage to all enemies and sets them ABLAZE for 2 turns.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "active",
+    "case": 99,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.5
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 2,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.5d).setStatusEffect(new StatusEffect(StatusEffectType.ABLAZE, entity, 2, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_BOUNCE",
+    "nameKey": "active_bounce_name",
+    "name": "Bounce",
+    "descriptionKey": "active_bounce_description",
+    "description": "Bounces 10 times, dealing 50% damage to a random enemy each time and STUNNING them for 4 turns.\\n\\nSTUN: the unit skips its turn",
+    "kind": "active",
+    "case": 100,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "10"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.5
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 4,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(\"10\").setDamageAmplification(0.5d).setStatusEffect(new StatusEffect(StatusEffectType.STUN, entity, 4, 1.0d)).execute();"
+  },
+  {
+    "id": "ACTIVE_DEVOUR_SPIRIT",
+    "nameKey": "active_devour_spirit_name",
+    "name": "Devour Spirit",
+    "descriptionKey": "active_devour_spirit_description",
+    "description": "Deals 20% damage to all enemies, then TERRIFIES them for 1 turn.\\n\\nTERRIFY: The unit skips its turn and takes 20% max hp as magic damage.",
+    "kind": "active",
+    "case": 101,
+    "operations": [
+      {
+        "operation": "setTargetSelectionMode",
+        "value": "all_enemies"
+      },
+      {
+        "operation": "setDamageAmplification",
+        "value": 0.2
+      },
+      {
+        "operation": "setStatusEffect",
+        "value": {
+          "statusEffect": {
+            "type": "TERRIFY",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      }
+    ],
+    "handlerRequired": false,
+    "source": "return skill.setTargetSelectionMode(TARGET_ALL_ENEMIES).setDamageAmplification(0.2d).setStatusEffect(new StatusEffect(StatusEffectType.TERRIFY, entity, 1, 1.0d)).execute();"
+  },
+  {
+    "id": "PASSIVE_NONE",
+    "nameKey": "passive_none_name",
+    "name": "—",
+    "descriptionKey": "passive_none_description",
+    "description": "No passive ability",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_THREATENING_I",
+    "nameKey": "passive_threatening_i_name",
+    "name": "Threatening",
+    "descriptionKey": "passive_threatening_i_description",
+    "description": "This unit has a 2× chance of being targeted by enemies",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_THREATENING_II",
+    "nameKey": "passive_threatening_ii_name",
+    "name": "Threatening II",
+    "descriptionKey": "passive_threatening_ii_description",
+    "description": "This unit has a 3× chance of being targeted by enemies",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_THREATENING_III",
+    "nameKey": "passive_threatening_iii_name",
+    "name": "Threatening III",
+    "descriptionKey": "passive_threatening_iii_description",
+    "description": "This unit has a 4× chance of being targeted by enemies",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_THREATENING_IV",
+    "nameKey": "passive_threatening_iv_name",
+    "name": "Threatening IV",
+    "descriptionKey": "passive_threatening_iv_description",
+    "description": "This unit has a 5× chance of being targeted by enemies",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SUBJUGATE_I",
+    "nameKey": "passive_subjugate_i_name",
+    "name": "Subjugate",
+    "descriptionKey": "passive_subjugate_i_description",
+    "description": "This unit has a 2× chance of being targeted by enemies. If the target HP is lower than this unit\\'s HP, 50% STUN chance on hit.\\n\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SUBJUGATE_II",
+    "nameKey": "passive_subjugate_ii_name",
+    "name": "Subjugate II",
+    "descriptionKey": "passive_subjugate_ii_description",
+    "description": "This unit has a 2× chance of being targeted by enemies. If the target HP is lower than this unit\\'s HP, STUNS on hit.\\n\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SWORD_MASTERY_I",
+    "nameKey": "passive_sword_mastery_i_name",
+    "name": "Sword Mastery",
+    "descriptionKey": "passive_sword_mastery_i_description",
+    "description": "This unit has a 3× chance of being targeted by enemies.\\nEvery time this unit is hit by a melee attack, it has a 30% chance of striking back with a basic attack",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SWORD_MASTERY_II",
+    "nameKey": "passive_sword_mastery_ii_name",
+    "name": "Sword Mastery II",
+    "descriptionKey": "passive_sword_mastery_ii_description",
+    "description": "This unit has a 3× chance of being targeted by enemies.\\nEvery time this unit is hit by a melee attack, it has a 45% chance of striking back with a basic attack",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SWORD_MASTERY_III",
+    "nameKey": "passive_sword_mastery_iii_name",
+    "name": "Sword Mastery III",
+    "descriptionKey": "passive_sword_mastery_iii_description",
+    "description": "This unit has a 3× chance of being targeted by enemies.\\nEvery time this unit is hit by a melee attack, it has a 60% chance of striking back with a basic attack",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SWORD_EXPERTISE_I",
+    "nameKey": "passive_sword_expertise_i_name",
+    "name": "Sword Expertise",
+    "descriptionKey": "passive_sword_expertise_i_description",
+    "description": "This unit has a 3× chance of being targeted by enemies.\\nEvery time this unit is hit by an attack, it has a 15% chance of gaining Defensive Stance. If the attack was melee, it has a 60% chance of striking back with a basic attack.\\n\\nDEFENSIVE STANCE: the next time the unit would receive damage, it takes none and this effect is removed.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SWORD_EXPERTISE_II",
+    "nameKey": "passive_sword_expertise_ii_name",
+    "name": "Sword Expertise II",
+    "descriptionKey": "passive_sword_expertise_ii_description",
+    "description": "This unit has a 3× chance of being targeted by enemies.\\nEvery time this unit is hit by an attack, it has a 30% chance of gaining Defensive Stance. If the attack was melee, it has a 60% chance of striking back with a basic attack.\\n\\nDEFENSIVE STANCE: the next time the unit would receive damage, it takes none and this effect is removed.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BLINDING_I",
+    "nameKey": "passive_blinding_i_name",
+    "name": "Blinding",
+    "descriptionKey": "passive_blinding_i_description",
+    "description": "This unit has a 2× chance of being targeted by enemies.\\nReduce Darkness by 10.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BLINDING_II",
+    "nameKey": "passive_blinding_ii_name",
+    "name": "Blinding II",
+    "descriptionKey": "passive_blinding_ii_description",
+    "description": "This unit has a 2× chance of being targeted by enemies.\\nReduce Darkness by 20.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BLINDING_III",
+    "nameKey": "passive_blinding_iii_name",
+    "name": "Blinding III",
+    "descriptionKey": "passive_blinding_iii_description",
+    "description": "This unit has a 2× chance of being targeted by enemies.\\nReduce Darkness by 30.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BLINDING_IV",
+    "nameKey": "passive_blinding_iv_name",
+    "name": "Blinding IV",
+    "descriptionKey": "passive_blinding_iv_description",
+    "description": "This unit has a 2× chance of being targeted by enemies.\\nReduce Darkness by 40.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BLINDING_V",
+    "nameKey": "passive_blinding_v_name",
+    "name": "Blinding V",
+    "descriptionKey": "passive_blinding_v_description",
+    "description": "This unit has a 2× chance of being targeted by enemies.\\nReduce Darkness by 50.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SEARING",
+    "nameKey": "passive_searing_name",
+    "name": "Searing",
+    "descriptionKey": "passive_searing_description",
+    "description": "This unit has a 2× chance of being targeted by enemies.\\nReduce Darkness by 50.\\n70% immunity to negative status effects.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RIDER_I",
+    "nameKey": "passive_rider_i_name",
+    "name": "Rider",
+    "descriptionKey": "passive_rider_i_description",
+    "description": "Every time this unit acts, the horse kicks an enemy for 25 physical damage",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RIDER_II",
+    "nameKey": "passive_rider_ii_name",
+    "name": "Rider II",
+    "descriptionKey": "passive_rider_ii_description",
+    "description": "Every time this unit acts, the wolf bites an enemy for 40 physical damage",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RIDER_III",
+    "nameKey": "passive_rider_iii_name",
+    "name": "Rider III",
+    "descriptionKey": "passive_rider_iii_description",
+    "description": "Every time this unit acts, the worg mauls an enemy for 55 physical damage",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RIDER_IV",
+    "nameKey": "passive_rider_iv_name",
+    "name": "Rider IV",
+    "descriptionKey": "passive_rider_iv_description",
+    "description": "Every time this unit acts, the mount spits from a distance for 55 physical damage",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RIDER_V",
+    "nameKey": "passive_rider_v_name",
+    "name": "Rider V",
+    "descriptionKey": "passive_rider_v_description",
+    "description": "Every time this unit acts, the mount performs a ranged attack for 70 physical damage",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RIDER_VI",
+    "nameKey": "passive_rider_vi_name",
+    "name": "Rider VI",
+    "descriptionKey": "passive_rider_vi_description",
+    "description": "Every time this unit acts, the mount performs a ranged attack for 85 physical damage",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RIDER_VII",
+    "nameKey": "passive_rider_vii_name",
+    "name": "Rider VII",
+    "descriptionKey": "passive_rider_vii_description",
+    "description": "Every time this unit acts, the mount performs a ranged attack for 100 physical damage",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_KEEN_VISION",
+    "nameKey": "passive_keen_vision_name",
+    "name": "Keen Vision",
+    "descriptionKey": "passive_keen_vision_description",
+    "description": "Attacks always hit the target",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_POISONOUS_ARROWS_I",
+    "nameKey": "passive_poisonous_arrows_i_name",
+    "name": "Poisonous Arrows",
+    "descriptionKey": "passive_poisonous_arrows_i_description",
+    "description": "Attacks always hit, and have a 25% chance to POISON the target for 1 turn.\\n\\nPOISON: damage reduced by 20%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_POISONOUS_ARROWS_II",
+    "nameKey": "passive_poisonous_arrows_ii_name",
+    "name": "Poisonous Arrows II",
+    "descriptionKey": "passive_poisonous_arrows_ii_description",
+    "description": "Attacks always hit, and have a 40% chance to POISON the target for 1 turn.\\n\\nPOISON: damage reduced by 20%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_POISONOUS_ARROWS_III",
+    "nameKey": "passive_poisonous_arrows_iii_name",
+    "name": "Poisonous Arrows III",
+    "descriptionKey": "passive_poisonous_arrows_iii_description",
+    "description": "Attacks always hit, and have a 40% chance to POISON the target for 2 turns.\\n\\nPOISON: damage reduced by 20%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_THAUMATURGY_I",
+    "nameKey": "passive_thaumaturgy_i_name",
+    "name": "Thaumaturgy I",
+    "descriptionKey": "passive_thaumaturgy_i_description",
+    "description": "Attacks always hit, and have a 40% chance to POISON the target for 1 turn. On death, POISONS every enemy for 5 turns and STUNS them for 1 turn.\\n\\nPOISON: damage reduced by 20%\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_THAUMATURGY_II",
+    "nameKey": "passive_thaumaturgy_ii_name",
+    "name": "Thaumaturgy II",
+    "descriptionKey": "passive_thaumaturgy_ii_description",
+    "description": "Attacks always hit, and have a 40% chance to POISON the target for 1 turn. On death, POISONS, FREEZES, sets ABLAZE every enemy for 5 turns and STUNS them for 1 turn.\\n\\nPOISON: damage reduced by 20%\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.\\nABLAZE: takes 5% max hp as magic damage at the start of its turn\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_THAUMATURGY_III",
+    "nameKey": "passive_thaumaturgy_iii_name",
+    "name": "Thaumaturgy III",
+    "descriptionKey": "passive_thaumaturgy_iii_description",
+    "description": "Attacks always hit, and have a 40% chance to POISON the target for 1 turn. On death, POISONS, FREEZES, sets ABLAZE every enemy for 5 turns, STUNS them for 1 turn and confers ANOINTED to allies for 10 turns.\\n\\nPOISON: damage reduced by 20%\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.\\nABLAZE: takes 5% max hp as magic damage at the start of its turn\\nSTUN: the unit skips its turn\\nANOINTED: This unit deals 25% increased damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_THAUMATURGY_IV",
+    "nameKey": "passive_thaumaturgy_iv_name",
+    "name": "Thaumaturgy IV",
+    "descriptionKey": "passive_thaumaturgy_iv_description",
+    "description": "Attacks always hit, and have a 40% chance to POISON the target for 1 turn. On death, POISONS, FREEZES, sets ABLAZE every enemy for 5 turns, STUNS them for 1 turn and confers ANOINTED to allies for 10 turns. Then, she is allowed by an ancient power to cast her ability one last time for 10× damage.\\n\\nPOISON: damage reduced by 20%\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.\\nABLAZE: takes 5% max hp as magic damage at the start of its turn\\nSTUN: the unit skips its turn\\nANOINTED: This unit deals 25% increased damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_POISONOUS_BLOOD",
+    "nameKey": "passive_poisonous_blood_name",
+    "name": "Poisonous Blood",
+    "descriptionKey": "passive_poisonous_blood_description",
+    "description": "Attacks always hit, and have a 40% chance to POISON the target for 2 turns.\\nImmunity to POISON.\\n\\nPOISON: damage reduced by 20%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_CORROSIVE_BLOOD",
+    "nameKey": "passive_corrosive_blood_name",
+    "name": "Corrosive Blood",
+    "descriptionKey": "passive_corrosive_blood_description",
+    "description": "Attacks always hit, and have a 40% chance to POISON the target for 2 turns.\\nImmunity to POISON.\\nPOISON damage reduction +5% (additive).\\n\\nPOISON: damage reduced by 20%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SABOTEUR",
+    "nameKey": "passive_saboteur_name",
+    "name": "Saboteur",
+    "descriptionKey": "passive_saboteur_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INFILTRATOR",
+    "nameKey": "passive_infiltrator_name",
+    "name": "Infiltrator",
+    "descriptionKey": "passive_infiltrator_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nDodge chance increased by 10% (additive)",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_DESPISE_WEAKNESS",
+    "nameKey": "passive_despise_weakness_name",
+    "name": "Despise Weakness",
+    "descriptionKey": "passive_despise_weakness_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nDodge chance increased by 10% (additive)\\nAttacks target the lowest health enemy.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_NIGHT_VISION_I",
+    "nameKey": "passive_night_vision_i_name",
+    "name": "Night Vision",
+    "descriptionKey": "passive_night_vision_i_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nDarkness increases accuracy and dodge instead of reducing them.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_NIGHT_VISION_II",
+    "nameKey": "passive_night_vision_ii_name",
+    "name": "Night Vision II",
+    "descriptionKey": "passive_night_vision_ii_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nDarkness increases accuracy and dodge instead of reducing them.\\nDamage increased by [Darkness]%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_NIGHT_VISION_III",
+    "nameKey": "passive_night_vision_iii_name",
+    "name": "Night Vision III",
+    "descriptionKey": "passive_night_vision_iii_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nDarkness increases accuracy and dodge instead of reducing them.\\nDamage increased by [1.5 × Darkness]%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_NIGHT_VISION_IV",
+    "nameKey": "passive_night_vision_iv_name",
+    "name": "Night Vision IV",
+    "descriptionKey": "passive_night_vision_iv_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nDarkness increases accuracy and dodge instead of reducing them.\\nDamage increased by [2 × Darkness]%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_DEADLY_FINESSE_I",
+    "nameKey": "passive_deadly_finesse_i_name",
+    "name": "Deadly Finesse",
+    "descriptionKey": "passive_deadly_finesse_i_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nOn hit, apply 15 charges of BLEED.\\n+10% dodge (additive)\\n\\nBLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_DEADLY_FINESSE_II",
+    "nameKey": "passive_deadly_finesse_ii_name",
+    "name": "Deadly Finesse II",
+    "descriptionKey": "passive_deadly_finesse_ii_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nOn hit, apply 30 charges of BLEED.\\n+10% dodge (additive)\\n\\nBLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_DEADLY_FINESSE_III",
+    "nameKey": "passive_deadly_finesse_iii_name",
+    "name": "Deadly Finesse III",
+    "descriptionKey": "passive_deadly_finesse_iii_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nOn hit, apply 60 charges of BLEED.\\n+10% dodge (additive)\\n\\nBLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INSPIRING_I",
+    "nameKey": "passive_inspiring_i_name",
+    "name": "Inspiring",
+    "descriptionKey": "passive_inspiring_i_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nAt the end of its turn, shields the ally with the lowest shield for 30 HP and INSPIRES them for 1 turns.\\nThe amount shielded is affected by healing modifiers, and cannot exceed 20% max HP.\\n\\nINSPIRED: this unit deals 25% more damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INSPIRING_II",
+    "nameKey": "passive_inspiring_ii_name",
+    "name": "Inspiring II",
+    "descriptionKey": "passive_inspiring_ii_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nAt the end of its turn, shields the ally with the lowest shield for 30 HP and INSPIRES them for 3 turns.\\nThe amount shielded is affected by healing modifiers, and cannot exceed 20% max HP.\\n\\nINSPIRED: this unit deals 25% more damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INSPIRING_III",
+    "nameKey": "passive_inspiring_iii_name",
+    "name": "Inspiring III",
+    "descriptionKey": "passive_inspiring_iii_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nAt the end of its turn, shields the ally with the lowest shield for 75 HP and INSPIRES them for 3 turns.\\nThe amount shielded is affected by healing modifiers, and cannot exceed 20% max HP.\\n\\nINSPIRED: this unit deals 25% more damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_EXALTING_I",
+    "nameKey": "passive_exalting_i_name",
+    "name": "Exalting",
+    "descriptionKey": "passive_exalting_i_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nAt the end of its turn, shields the ally with the lowest shield for 75 HP and EXALTS them for 3 turns.\\nThe amount shielded is affected by healing modifiers, and cannot exceed 20% max HP.\\n\\nEXALTED: this unit deals 25% more damage, and is dealt 5 less damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_EXALTING_II",
+    "nameKey": "passive_exalting_ii_name",
+    "name": "Exalting II",
+    "descriptionKey": "passive_exalting_ii_description",
+    "description": "Tries to avoid traps first and always rolls with dexterity. If successful, the trap is disarmed.\\nAt the end of its turn, shields the ally with the lowest shield for 75 HP and EXALTS them for 5 turns.\\nThe amount shielded is affected by healing modifiers, and cannot exceed 20% max HP.\\n\\nEXALTED: this unit deals 25% more damage, and is dealt 5 less damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_HEALER_I",
+    "nameKey": "passive_healer_i_name",
+    "name": "Healer",
+    "descriptionKey": "passive_healer_i_description",
+    "description": "Attacks heal the ally with the lowest health for 50% damage.\\nCan be used while exploring",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_HEALER_II",
+    "nameKey": "passive_healer_ii_name",
+    "name": "Healer II",
+    "descriptionKey": "passive_healer_ii_description",
+    "description": "Attacks heal the ally with the lowest health for 50% damage. Healing an ally also removes a negative condition. Can be used while exploring",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_FIRE_MAGIC_I",
+    "nameKey": "passive_fire_magic_i_name",
+    "name": "Fire Magic",
+    "descriptionKey": "passive_fire_magic_i_description",
+    "description": "Attacks have 50% chance to set ABLAZE for 1 turn\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_FIRE_MAGIC_II",
+    "nameKey": "passive_fire_magic_ii_name",
+    "name": "Fire Magic II",
+    "descriptionKey": "passive_fire_magic_ii_description",
+    "description": "Attacks set ABLAZE for 1 turn\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_PYROMANCY_I",
+    "nameKey": "passive_pyromancy_i_name",
+    "name": "Pyromancy",
+    "descriptionKey": "passive_pyromancy_i_description",
+    "description": "Attacks set ABLAZE for 1 turn. Pokes a random enemy for 1 damage after each basic attack, applying status effects.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_PYROMANCY_II",
+    "nameKey": "passive_pyromancy_ii_name",
+    "name": "Pyromancy II",
+    "descriptionKey": "passive_pyromancy_ii_description",
+    "description": "Attacks set ABLAZE for 1 turn. Pokes 2 random enemies for 1 damage after each basic attack, applying status effects.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_WITHERING_TOUCH",
+    "nameKey": "passive_withering_touch_name",
+    "name": "Withering Touch",
+    "descriptionKey": "passive_withering_touch_description",
+    "description": "Dealing damage heals the unit for half the amount",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_WITHERING_LINK",
+    "nameKey": "passive_withering_link_name",
+    "name": "Withering Link",
+    "descriptionKey": "passive_withering_link_description",
+    "description": "Dealing damage heals the unit and his summoned minion for half the amount",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_CHAOTIC",
+    "nameKey": "passive_chaotic_name",
+    "name": "Chaotic",
+    "descriptionKey": "passive_chaotic_description",
+    "description": "Attacks allies and enemies alike",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_LEECH",
+    "nameKey": "passive_leech_name",
+    "name": "Leech",
+    "descriptionKey": "passive_leech_description",
+    "description": "Heals for the damage dealt",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_FLYING_LEECH",
+    "nameKey": "passive_flying_leech_name",
+    "name": "Flying Leech",
+    "descriptionKey": "passive_flying_leech_description",
+    "description": "Can\\'t be hit by melee attacks or abilities. Heals for the damage dealt",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RED_HOT",
+    "nameKey": "passive_red_hot_name",
+    "name": "Red Hot",
+    "descriptionKey": "passive_red_hot_description",
+    "description": "Melee attacks to and from this target set ABLAZE for 3 turns\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_POSITIVE_CHARGE",
+    "nameKey": "passive_positive_charge_name",
+    "name": "Positive Charge",
+    "descriptionKey": "passive_positive_charge_description",
+    "description": "Melee attacks to and from this target STUN for 2 turns.\\n\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SUB_ZERO",
+    "nameKey": "passive_sub_zero_name",
+    "name": "Sub Zero",
+    "descriptionKey": "passive_sub_zero_description",
+    "description": "Melee attacks to and from this target FREEZE the attacker for 4 turns.\\n\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_VOID_PULL",
+    "nameKey": "passive_void_pull_name",
+    "name": "Void Pull",
+    "descriptionKey": "passive_void_pull_description",
+    "description": "Melee attacks deal 33 magic damage to the attacker.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_DISSOLVE_BY_DECREE",
+    "nameKey": "passive_dissolve_by_decree_name",
+    "name": "Dissolve by decree",
+    "descriptionKey": "passive_dissolve_by_decree_description",
+    "description": "50% immunity to status effects.\\nAttacks from this unit can\\'t be dodged, and have 70% chance of inflicting each of the following statuses for 3 turns: POISON, SILENCE, FREEZE, ABLAZE, STUN.\\n\\nPOISON: damage reduced by 20%\\nSILENCE: the unit can\\'t gain any mana\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.\\nABLAZE: takes 5% max hp as magic damage at the start of its turn\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_IMMUNITY",
+    "nameKey": "passive_immunity_name",
+    "name": "Immunity",
+    "descriptionKey": "passive_immunity_description",
+    "description": "50% immunity to status effects.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_ENHANCED_IMMUNITY",
+    "nameKey": "passive_enhanced_immunity_name",
+    "name": "Enhanced Immunity",
+    "descriptionKey": "passive_enhanced_immunity_description",
+    "description": "75% immunity to status effects.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_PERFECT_IMMUNITY",
+    "nameKey": "passive_perfect_immunity_name",
+    "name": "Perfect Immunity",
+    "descriptionKey": "passive_perfect_immunity_description",
+    "description": "100% immunity to status effects.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_FLYING",
+    "nameKey": "passive_flying_name",
+    "name": "Flying",
+    "descriptionKey": "passive_flying_description",
+    "description": "Can\\'t be hit by melee attacks or abilities.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SPIKES",
+    "nameKey": "passive_spikes_name",
+    "name": "Spikes",
+    "descriptionKey": "passive_spikes_description",
+    "description": "Deals 12 damage to any melee attacker.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SHARP_SPIKES",
+    "nameKey": "passive_sharp_spikes_name",
+    "name": "Sharp Spikes",
+    "descriptionKey": "passive_sharp_spikes_description",
+    "description": "Inflicts BLEED 25 to melee attackers. BLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_DESERT_ARCHER",
+    "nameKey": "passive_desert_archer_name",
+    "name": "Desert Archer",
+    "descriptionKey": "passive_desert_archer_description",
+    "description": "10% STUN on hit.\\n\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INCORPOREAL",
+    "nameKey": "passive_incorporeal_name",
+    "name": "Incorporeal",
+    "descriptionKey": "passive_incorporeal_description",
+    "description": "Every physical damage is reduced to 1.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_DEFLECT_MAGIC",
+    "nameKey": "passive_deflect_magic_name",
+    "name": "Deflect Magic",
+    "descriptionKey": "passive_deflect_magic_description",
+    "description": "Every magical damage is reduced to 1.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_MASSIVE",
+    "nameKey": "passive_massive_name",
+    "name": "Massive",
+    "descriptionKey": "passive_massive_description",
+    "description": "Stuns for 2 turns with every basic attack.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RETALIATE",
+    "nameKey": "passive_retaliate_name",
+    "name": "Retaliate",
+    "descriptionKey": "passive_retaliate_description",
+    "description": "Every time this unit is hit by a melee attack, it has a 50% chance of striking back with a basic attack",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_RETALIATE_II",
+    "nameKey": "passive_retaliate_ii_name",
+    "name": "Retaliate II",
+    "descriptionKey": "passive_retaliate_ii_description",
+    "description": "Every time this unit is hit by a melee attack, it strikes back with a basic attack",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_REGENERATION_I",
+    "nameKey": "passive_regeneration_i_name",
+    "name": "Regeneration I",
+    "descriptionKey": "passive_regeneration_i_description",
+    "description": "Regenerates 15 HP per turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_REGENERATION_II",
+    "nameKey": "passive_regeneration_ii_name",
+    "name": "Regeneration II",
+    "descriptionKey": "passive_regeneration_ii_description",
+    "description": "Regenerates 30 HP per turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_REGENERATION_III",
+    "nameKey": "passive_regeneration_iii_name",
+    "name": "Regeneration III",
+    "descriptionKey": "passive_regeneration_iii_description",
+    "description": "Regenerates 50 HP per turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_TROLL_MAGIC",
+    "nameKey": "passive_troll_magic_name",
+    "name": "Troll Magic",
+    "descriptionKey": "passive_troll_magic_description",
+    "description": "Regenerates 20 HP per turn. Attacks remove a negative status and heal an ally, prioritizing those affected by a negative status.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_VENOMOUS_BITE",
+    "nameKey": "passive_venomous_bite_name",
+    "name": "Venomous Bite",
+    "descriptionKey": "passive_venomous_bite_description",
+    "description": "Attacks from this unit inflict POISON for 10 turns.\\n\\nPOISON: damage reduced by 20%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_NIGHT_HUNTER",
+    "nameKey": "passive_night_hunter_name",
+    "name": "Night Hunter",
+    "descriptionKey": "passive_night_hunter_description",
+    "description": "This unit starts the fight first. Damage increased by [Darkness]%.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_ELEMENTAL_DUALITY",
+    "nameKey": "passive_elemental_duality_name",
+    "name": "Elemental Duality",
+    "descriptionKey": "passive_elemental_duality_description",
+    "description": "Attacks from this enemy FREEZE and set ABLAZE for 2 turns.\\n\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.\\nABLAZE: takes 5% max hp as magic damage at the start of its turn.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_STATIC_AFFINITY",
+    "nameKey": "passive_static_affinity_name",
+    "name": "Static Affinity",
+    "descriptionKey": "passive_static_affinity_description",
+    "description": "Attacks from this enemy STUN for 3 turns.\\n\\nSTUN: the unit skips its turn.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_CLAIRVOYANCE",
+    "nameKey": "passive_clairvoyance_name",
+    "name": "Clairvoyance",
+    "descriptionKey": "passive_clairvoyance_description",
+    "description": "Peers into the future. Extremely hard to hit. Attacks from this unit can\\'t miss. 50% status immunity.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_LICH_CURSE",
+    "nameKey": "passive_lich_curse_name",
+    "name": "Lich Curse",
+    "descriptionKey": "passive_lich_curse_description",
+    "description": "25% lifesteal",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_LESSER_PSYONIC",
+    "nameKey": "passive_lesser_psyonic_name",
+    "name": "Lesser Psyonic",
+    "descriptionKey": "passive_lesser_psyonic_description",
+    "description": "Melee attacks deal 20 magic damage to the attacker.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_PURIFIER",
+    "nameKey": "passive_purifier_name",
+    "name": "Purifier",
+    "descriptionKey": "passive_purifier_description",
+    "description": "Attacks twice. Attacks set ABLAZE for 3 turns.\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INORGANIC",
+    "nameKey": "passive_inorganic_name",
+    "name": "Inorganic",
+    "descriptionKey": "passive_inorganic_description",
+    "description": "Immune to BLEED, POISON and ABLAZE.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_FLYING_FORTRESS",
+    "nameKey": "passive_flying_fortress_name",
+    "name": "Flying Fortress",
+    "descriptionKey": "passive_flying_fortress_description",
+    "description": "Can\\'t be hit by melee attacks or abilities. After its basic attack, it fires a barrage of 5 cannonballs at random enemies, each dealing 90 physical damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_TERRITORIAL",
+    "nameKey": "passive_territorial_name",
+    "name": "Territorial",
+    "descriptionKey": "passive_territorial_description",
+    "description": "This unit has a 3× chance of being targeted by enemies. To them, every unit of a different type is considered an enemy.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BEHEMOTH",
+    "nameKey": "passive_behemoth_name",
+    "name": "Behemoth",
+    "descriptionKey": "passive_behemoth_description",
+    "description": "Immunity to STUN and PETRIFY. When it spawns the ground above collapses, swallowing anyone that doesn\\'t get out of the way enough quickly.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_FLYING_DISEASE",
+    "nameKey": "passive_flying_disease_name",
+    "name": "Flying Disease",
+    "descriptionKey": "passive_flying_disease_description",
+    "description": "Can\\'t be hit by melee attacks or abilities. Attacks inflict POISON and BLEED for 12 turns on the target.\\n\\nBLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge\\nPOISON: damage reduced by 20%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_ANIMATED_GUARDIAN",
+    "nameKey": "passive_animated_guardian_name",
+    "name": "Iron Guardian",
+    "descriptionKey": "passive_animated_guardian_description",
+    "description": "This unit has a 2× chance of being targeted by enemies. Deals 105 magic damage to any melee attacker.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_REVERSE_ENTROPY",
+    "nameKey": "passive_reverse_entropy_name",
+    "name": "Reverse Entropy",
+    "descriptionKey": "passive_reverse_entropy_description",
+    "description": "Attacks heal the ally with the lowest health for 50% damage. Heals two times as much if the target is a Magic Armor.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_ELEMENTAL_CONTROL",
+    "nameKey": "passive_elemental_control_name",
+    "name": "Elemental Control",
+    "descriptionKey": "passive_elemental_control_description",
+    "description": "On hit, applies a random effect between ABLAZE, FREEZE and STUN for 2 turns.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn.\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_ELEMENTAL_MASTERY",
+    "nameKey": "passive_elemental_mastery_name",
+    "name": "Elemental Mastery",
+    "descriptionKey": "passive_elemental_mastery_description",
+    "description": "On hit, applies a random effect between ABLAZE, FREEZE and STUN for 4 turns.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn.\\nFREEZE: This unit can\\'t dodge and takes 10 physical damage each turn.\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_WICKED_APPETITE",
+    "nameKey": "passive_wicked_appetite_name",
+    "name": "Wicked Appetite",
+    "descriptionKey": "passive_wicked_appetite_description",
+    "description": "Damage increased by [Darkness]%. Attacks target the lowest health enemy.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_TERATOGEN",
+    "nameKey": "passive_teratogen_name",
+    "name": "Teratogen",
+    "descriptionKey": "passive_teratogen_description",
+    "description": "Attacks heal the lowest health ally, and grants ANOINTED for 5 turns.\\nANOINTED: This unit deals 25% increased damage.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_COSMIC_PROJECTION",
+    "nameKey": "passive_cosmic_projection_name",
+    "name": "Cosmic Projection",
+    "descriptionKey": "passive_cosmic_projection_description",
+    "description": "60% bonus dodge chance. Immunity to every status effect.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_PRIMORDIAL_HUNGER",
+    "nameKey": "passive_primordial_hunger_name",
+    "name": "Primordial Hunger",
+    "descriptionKey": "passive_primordial_hunger_description",
+    "description": "Attacks allies and enemies alike. 100% lifesteal.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_NEUROTOXICITY",
+    "nameKey": "passive_neurotoxicity_name",
+    "name": "Neurotoxicity",
+    "descriptionKey": "passive_neurotoxicity_description",
+    "description": "Melee attacks to and from this target STUN for 1 turn and POISON for 3 turns.\\n\\nSTUN: the unit skips its turn\\nPOISON: damage reduced by 20%",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BERSERKER_RAGE",
+    "nameKey": "passive_berserker_rage_name",
+    "name": "Berserker Rage",
+    "descriptionKey": "passive_berserker_rage_description",
+    "description": "Attacks twice per turn when its health is below 50%.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_PREHISTORIC_AVIAN",
+    "nameKey": "passive_prehistoric_avian_name",
+    "name": "Prehistoric Avian",
+    "descriptionKey": "passive_prehistoric_avian_description",
+    "description": "Can\\'t be hit by melee attacks. Attacks allies and enemies alike",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_PREHISTORIC_COLOSSUS",
+    "nameKey": "passive_prehistoric_colossus_name",
+    "name": "Prehistoric Colossus",
+    "descriptionKey": "passive_prehistoric_colossus_description",
+    "description": "This unit has a 3× chance of being targeted by enemies. Attacks allies and enemies alike",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_NATURAL_EMPATHY",
+    "nameKey": "passive_natural_empathy_name",
+    "name": "Natural Empathy",
+    "descriptionKey": "passive_natural_empathy_description",
+    "description": "Attacks heal the ally with the lowest health for 50% damage, and remove a negative condition. Prehistoric units will never attack this unit\\'s allies.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_FIRE_GIANT",
+    "nameKey": "passive_fire_giant_name",
+    "name": "Fire Giant",
+    "descriptionKey": "passive_fire_giant_description",
+    "description": "Immune to ABLAZE. Melee attacks directed at this target set ABLAZE for 1 turn.\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BIOENHANCED",
+    "nameKey": "passive_bioenhanced_name",
+    "name": "Bioenhanced",
+    "descriptionKey": "passive_bioenhanced_description",
+    "description": "Displays a stronger version of every trait.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SWARM",
+    "nameKey": "passive_swarm_name",
+    "name": "Swarm",
+    "descriptionKey": "passive_swarm_description",
+    "description": "Immune to BLEED, STUN, PETRIFY. Reduces all damage to 1. Attacks once per HP point.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INFINITY",
+    "nameKey": "passive_infinity_name",
+    "name": "Infinity",
+    "descriptionKey": "passive_infinity_description",
+    "description": "80% immunity to status effects. Does not consume mana.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_SHARP_BLADES",
+    "nameKey": "passive_sharp_blades_name",
+    "name": "Sharp Blades",
+    "descriptionKey": "passive_sharp_blades_description",
+    "description": "BLEED 40 on hit\\n\\nBLEED: the target receives 1 damage at the start of its turn for every charge, then removes one charge",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_ELUSIVE",
+    "nameKey": "passive_elusive_name",
+    "name": "Elusive",
+    "descriptionKey": "passive_elusive_description",
+    "description": "50% bonus dodge chance.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_MIND_FLAY",
+    "nameKey": "passive_mind_flay_name",
+    "name": "Mind Flay",
+    "descriptionKey": "passive_mind_flay_description",
+    "description": "Attacks twice. PETRIFY 2 turns on hit.\\n\\nPETRIFY: This unit can\\'t dodge, takes 15% increased damage and skips its turn.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_UNETHICAL_CONDUCT",
+    "nameKey": "passive_unethical_conduct_name",
+    "name": "Unethical Conduct",
+    "descriptionKey": "passive_unethical_conduct_description",
+    "description": "80% immunity to status effects.\\nPOISON damage reduction +30% (additive).\\nAttacks heal the ally with the lowest health for 50% damage, and cleanse every negative status effect.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_GARGANTUAN",
+    "nameKey": "passive_gargantuan_name",
+    "name": "Gargantuan",
+    "descriptionKey": "passive_gargantuan_description",
+    "description": "STUNS 4 turns on hit.\\nSTUN: the unit skips its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_ABLAZE",
+    "nameKey": "passive_ablaze_name",
+    "name": "Ablaze",
+    "descriptionKey": "passive_ablaze_description",
+    "description": "Can\\'t be set ABLAZE. Melee attacks to and from this target set ABLAZE for 3 turns\\n\\nABLAZE: takes 5% max hp as magic damage at the start of its turn",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_TRUE_LIFESTEAL",
+    "nameKey": "passive_true_lifesteal_name",
+    "name": "True Lifesteal",
+    "descriptionKey": "passive_true_lifesteal_description",
+    "description": "Heals himself for 200% of damage dealt",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_ABSURD_GENEALOGY",
+    "nameKey": "passive_absurd_genealogy_name",
+    "name": "Absurd Genealogy",
+    "descriptionKey": "passive_absurd_genealogy_description",
+    "description": "Cannot be hit by melee attacks. On death, 65% chance of coming back to life with full HP and mana, indefinitely.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BLIND_RAGE",
+    "nameKey": "passive_blind_rage_name",
+    "name": "Blind Rage",
+    "descriptionKey": "passive_blind_rage_description",
+    "description": "100% Critical Chance. Attacks three times per turn. Immunity to STUN, PETRIFY.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BIOENHANCED_II",
+    "nameKey": "passive_bioenhanced_ii_name",
+    "name": "Bioenhanced II",
+    "descriptionKey": "passive_bioenhanced_ii_description",
+    "description": "Displays a much stronger version of every trait.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INSCRUTABLE",
+    "nameKey": "passive_inscrutable_name",
+    "name": "Inscrutable",
+    "descriptionKey": "passive_inscrutable_description",
+    "description": "Immune to TAUNT, SILENCE, STUN, CURSE.\\nStarts the fight first.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_BEND_REALITY",
+    "nameKey": "passive_bend_reality_name",
+    "name": "Bend Reality",
+    "descriptionKey": "passive_bend_reality_description",
+    "description": "Attacks always hit. Every status effect inflicted upon this unit is instead inflicted on the attacker.",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INITIATIVE",
+    "nameKey": "passive_initiative_i_name",
+    "name": "Initiative",
+    "descriptionKey": "passive_initiative_i_description",
+    "description": "This unit starts the fight first",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  },
+  {
+    "id": "PASSIVE_INITIATIVE_II",
+    "nameKey": "passive_initiative_ii_name",
+    "name": "Initiative II",
+    "descriptionKey": "passive_initiative_ii_description",
+    "description": "This unit starts the fight first, and with a full mana bar",
+    "kind": "passive",
+    "case": null,
+    "operations": [],
+    "handlerRequired": false,
+    "source": null
+  }
+]

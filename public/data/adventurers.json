@@ -1,0 +1,5894 @@
+[
+  {
+    "id": "Adept",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 10,
+      "baseMaxHp": 25,
+      "baseConstitution": 3,
+      "baseIntelligence": 15,
+      "baseDexterity": 5,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_adept"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_adept_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_adept_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_ENERGY_BURST_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "FireWizard",
+      "DarkSorcerer"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Adept.java",
+    "nameKey": "adventurer_adept_name",
+    "name": "Adept",
+    "descriptionKey": "adventurer_adept_description",
+    "description": "A novice who just started to grasp the potential of his gift. His limited knowledge undermines the control over his magic.",
+    "imageKey": "unit_adept",
+    "asset": "assets_extracted/main/drawable/unit_adept.png"
+  },
+  {
+    "id": "Alchemist",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 155,
+      "baseConstitution": 9,
+      "baseIntelligence": 16,
+      "baseDexterity": 26,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 1,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_alchemist"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_alchemist_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_alchemist_description"
+      },
+      "passiveSkill": "PASSIVE_THAUMATURGY_I",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER",
+      "onDeathEffectsOnEnemies": [
+        {
+          "statusEffect": {
+            "type": "POISON",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        }
+      ]
+    },
+    "nextClasses": [
+      "ElementalAlchemist"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Alchemist.java",
+    "nameKey": "adventurer_alchemist_name",
+    "name": "Alchemist",
+    "descriptionKey": "adventurer_alchemist_description",
+    "description": "A gifted archer fascinated by the nature of her concoctions, who decided to focus on the study of Thaumaturgy: replicating magic through scientific means.",
+    "imageKey": "unit_alchemist",
+    "asset": "assets_extracted/main/drawable/unit_alchemist.png"
+  },
+  {
+    "id": "AncientLich",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 125,
+      "baseConstitution": 8,
+      "baseIntelligence": 40,
+      "baseDexterity": 10,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "baseLifesteal": 50,
+      "healsMinionBound": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_ancient_lich"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_ancient_lich_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_ancient_lich_description"
+      },
+      "passiveSkill": "PASSIVE_WITHERING_LINK",
+      "activeSkill": "ACTIVE_CURSE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "LorfOfDecay"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/AncientLich.java",
+    "nameKey": "adventurer_ancient_lich_name",
+    "name": "Ancient Lich",
+    "descriptionKey": "adventurer_ancient_lich_description",
+    "description": "Long forgotten by death itself, this Lich survived for eons in a remote corner of the realms, his powers over death growing to unfathomable strength.",
+    "imageKey": "unit_ancient_lich",
+    "asset": "assets_extracted/main/drawable/unit_ancient_lich.png"
+  },
+  {
+    "id": "Angel",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 160,
+      "baseConstitution": 9,
+      "baseIntelligence": 45,
+      "baseDexterity": 11,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "healer": true,
+      "cleanser": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_angel"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_angel_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_angel_description"
+      },
+      "passiveSkill": "PASSIVE_HEALER_II",
+      "activeSkill": "ACTIVE_RESTORATION_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Archangel"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Angel.java",
+    "nameKey": "adventurer_angel_name",
+    "name": "Angel",
+    "descriptionKey": "adventurer_angel_description",
+    "description": "Heralds of the Gods of Light, only the most exceptional and selfless healers can ascend through the divine ranks. They are said to operate in mysterious ways, and even to be able to bring back fallen soldiers from certain death.",
+    "imageKey": "unit_angel",
+    "asset": "assets_extracted/main/drawable/unit_angel.png"
+  },
+  {
+    "id": "AngelOfWar",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 380,
+      "baseConstitution": 40,
+      "baseIntelligence": 20,
+      "baseDexterity": 12,
+      "baseDefense": 20,
+      "baseMagicDefense": 40,
+      "threat": 2,
+      "darknessReduction": 50,
+      "immunityToStatus": 0.7,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_angel_of_war"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_angel_of_war_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_angel_of_war_description"
+      },
+      "passiveSkill": "PASSIVE_SEARING",
+      "activeSkill": "ACTIVE_CONDEMN_ALL_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/AngelOfWar.java",
+    "nameKey": "adventurer_angel_of_war_name",
+    "name": "Angel of War",
+    "descriptionKey": "adventurer_angel_of_war_description",
+    "description": "The feared and revered leader of the Holy Temple, he shapes its doctrine and commands its followers. He must possess the strength to resist all forms of magical and political influence as he wages war against the very source of evil, defeating eldritch gods before they can tighten their hold on the human realms.",
+    "imageKey": "unit_angel_of_war",
+    "asset": "assets_extracted/main/drawable/unit_angel_of_war.png"
+  },
+  {
+    "id": "Apprentice",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 5,
+      "baseMaxHp": 20,
+      "baseConstitution": 2,
+      "baseIntelligence": 10,
+      "baseDexterity": 4,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_apprentice"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_apprentice_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_apprentice_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_ENERGY_BURST_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "LightDisciple",
+      "Adept"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Apprentice.java",
+    "nameKey": "adventurer_apprentice_name",
+    "name": "Apprentice",
+    "descriptionKey": "adventurer_apprentice_description",
+    "description": "Untrained in the art of combat, he possesses the spark of something he can\\'t explain yet. Ever since he saw it, he searched for ways to improve his understanding.",
+    "imageKey": "unit_apprentice",
+    "asset": "assets_extracted/main/drawable/unit_apprentice.png"
+  },
+  {
+    "id": "Archangel",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 200,
+      "baseConstitution": 10,
+      "baseIntelligence": 50,
+      "baseDexterity": 12,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "healer": true,
+      "cleanser": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_archangel"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_archangel_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_archangel_description"
+      },
+      "passiveSkill": "PASSIVE_HEALER_II",
+      "activeSkill": "ACTIVE_RESTORATION_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Archangel.java",
+    "nameKey": "adventurer_archangel_name",
+    "name": "Archangel",
+    "descriptionKey": "adventurer_archangel_description",
+    "description": "Archangel are divine beings of pure light, embodying hope in the darkest corners of the Realms. Ancient chronicles tell of these powerful beings descending from the sky, restoring entire armies and turning the tide of decisive battles.",
+    "imageKey": "unit_archangel",
+    "asset": "assets_extracted/main/drawable/unit_archangel.png"
+  },
+  {
+    "id": "Archer",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 5,
+      "baseMaxHp": 30,
+      "baseConstitution": 4,
+      "baseIntelligence": 4,
+      "baseDexterity": 8,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_archer"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_archer_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_archer_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_BARRAGE_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "Huntress"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Archer.java",
+    "nameKey": "adventurer_archer_name",
+    "name": "Archer",
+    "descriptionKey": "adventurer_archer_description",
+    "description": "Armed with a bow and arrows, she provides reliable long-range support, delivering shots to hurt enemies from a distance.",
+    "imageKey": "unit_archer",
+    "asset": "assets_extracted/main/drawable/unit_archer.png"
+  },
+  {
+    "id": "Assassin",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 90,
+      "baseConstitution": 15,
+      "baseIntelligence": 7,
+      "baseDexterity": 15,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_assassin"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_assassin_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_assassin_description"
+      },
+      "passiveSkill": "PASSIVE_INFILTRATOR",
+      "activeSkill": "ACTIVE_BACKSTAB_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "SpireInitiate",
+      "RedStalker"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Assassin.java",
+    "nameKey": "adventurer_assassin_name",
+    "name": "Assassin",
+    "descriptionKey": "adventurer_assassin_description",
+    "description": "Masters of deception, these individuals are often employed by noble families to discreetly remove troublesome opponents.",
+    "imageKey": "unit_assassin",
+    "asset": "assets_extracted/main/drawable/unit_assassin.png"
+  },
+  {
+    "id": "Balrog",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 380,
+      "baseConstitution": 36,
+      "baseIntelligence": 36,
+      "baseDexterity": 36,
+      "baseDefense": 36,
+      "baseMagicDefense": 36,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_balrog"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_balrog_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_balrog_description"
+      },
+      "passiveSkill": "PASSIVE_CHAOTIC",
+      "activeSkill": "ACTIVE_WHIP_AND_TEAR",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Balrog.java",
+    "nameKey": "adventurer_balrog_name",
+    "name": "Balrog",
+    "descriptionKey": "adventurer_balrog_description",
+    "description": "The unrestrained embodiment of Chaos, feared even by powerful Gods. This natural force wreaks havoc in the mortal lands as in the depths of hell, often having entire armies failing to stop its march.",
+    "imageKey": "unit_balrog",
+    "asset": "assets_extracted/main/drawable/unit_balrog.png"
+  },
+  {
+    "id": "Bard",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 155,
+      "baseConstitution": 17,
+      "baseIntelligence": 17,
+      "baseDexterity": 17,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "endOfTurnAction": "SHIELD_INSPIRE_III",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_bard"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_bard_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_bard_description"
+      },
+      "passiveSkill": "PASSIVE_INSPIRING_III",
+      "activeSkill": "ACTIVE_FEINT",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "Lorekeeper"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Bard.java",
+    "nameKey": "adventurer_bard_name",
+    "name": "Bard",
+    "descriptionKey": "adventurer_bard_description",
+    "description": "A master entertainer who can play music to heal, harm, or drive soldiers into a holy fury. Used to resort to any means to survive, this traveling storyteller offensive capabilities should not be underestimated, either.",
+    "imageKey": "unit_bard",
+    "asset": "assets_extracted/main/drawable/unit_bard.png"
+  },
+  {
+    "id": "BlackIdol",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 200,
+      "baseConstitution": 10,
+      "baseIntelligence": 50,
+      "baseDexterity": 12,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "baseLifesteal": 50,
+      "healsMinionBound": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_black_idol"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_black_idol_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_black_idol_description"
+      },
+      "passiveSkill": "PASSIVE_WITHERING_LINK",
+      "activeSkill": "ACTIVE_CURSE_V",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/BlackIdol.java",
+    "nameKey": "adventurer_black_idol_name",
+    "name": "Black Idol",
+    "descriptionKey": "adventurer_black_idol_description",
+    "description": "A Lich ascended to his ultimate form. Though his body remains a mere withered shell, the spirit of this dark mage has grown immensely powerful. He can wield magic to shape the world around him and summon horrors beyond imagination.",
+    "imageKey": "unit_black_idol",
+    "asset": "assets_extracted/main/drawable/unit_black_idol.png"
+  },
+  {
+    "id": "BlackRegent",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 380,
+      "baseConstitution": 40,
+      "baseIntelligence": 14,
+      "baseDexterity": 18,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 2,
+      "stunChanceOnLowerHp": 1,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_black_regent"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_black_regent_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_black_regent_description"
+      },
+      "passiveSkill": "PASSIVE_SUBJUGATE_II",
+      "activeSkill": "ACTIVE_DECIMATE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/BlackRegent.java",
+    "nameKey": "adventurer_black_regent_name",
+    "name": "Black Regent",
+    "descriptionKey": "adventurer_black_regent_description",
+    "description": "Fueled solely by his lust for power, this brilliant strategist has transformed his kingdom into a war machine, poised to subjugate neighboring states—whether opposing or neutral—to seize the resources needed for his expansion. With no regard for life and an insatiable hunger for dominance, he poses a grave threat to the peace and stability of the Realms if left unchecked.",
+    "imageKey": "unit_black_regent",
+    "asset": "assets_extracted/main/drawable/unit_black_regent.png"
+  },
+  {
+    "id": "Blight",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 195,
+      "baseConstitution": 10,
+      "baseIntelligence": 16,
+      "baseDexterity": 32,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 2,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_blight"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_blight_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_blight_description"
+      },
+      "passiveSkill": "PASSIVE_POISONOUS_ARROWS_III",
+      "activeSkill": "ACTIVE_BARRAGE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "Wraith"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Blight.java",
+    "nameKey": "adventurer_blight_name",
+    "name": "Blight",
+    "descriptionKey": "adventurer_blight_description",
+    "description": "Feared even by the most prepared armies, she can render a whole fortress defenseless with a few, accurate shots at its defending troops.",
+    "imageKey": "unit_blight",
+    "asset": "assets_extracted/main/drawable/unit_blight.png"
+  },
+  {
+    "id": "BoneHorror",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 315,
+      "baseConstitution": 72,
+      "baseIntelligence": 1,
+      "baseDexterity": 17,
+      "baseDefense": 50,
+      "baseMagicDefense": 0,
+      "threat": 3,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_bone_horror"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "summoned_bone_horror_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "summoned_bone_horror_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_II",
+      "activeSkill": "ACTIVE_NONE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "NONE",
+      "summonedMinion": true
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/BoneHorror.java",
+    "nameKey": "summoned_bone_horror_name",
+    "name": "Bone Horror",
+    "descriptionKey": "summoned_bone_horror_description",
+    "description": "A reanimated bone horror. It feels no pain, so physical damage is less effective.",
+    "imageKey": "unit_bone_horror",
+    "asset": "assets_extracted/main/drawable/unit_bone_horror.png"
+  },
+  {
+    "id": "BoneHydra",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 390,
+      "baseConstitution": 125,
+      "baseIntelligence": 1,
+      "baseDexterity": 24,
+      "baseDefense": 50,
+      "baseMagicDefense": 0,
+      "threat": 3,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_bone_hydra"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "summoned_bone_hydra_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "summoned_bone_hydra_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_II",
+      "activeSkill": "ACTIVE_NONE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "NONE",
+      "summonedMinion": true
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/BoneHydra.java",
+    "nameKey": "summoned_bone_hydra_name",
+    "name": "Bone Hydra",
+    "descriptionKey": "summoned_bone_hydra_description",
+    "description": "A reanimated bone hydra. It feels no pain, so physical damage is less effective.",
+    "imageKey": "unit_bone_hydra",
+    "asset": "assets_extracted/main/drawable/unit_bone_hydra.png"
+  },
+  {
+    "id": "BoneNightmare",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 345,
+      "baseConstitution": 105,
+      "baseIntelligence": 1,
+      "baseDexterity": 20,
+      "baseDefense": 50,
+      "baseMagicDefense": 0,
+      "threat": 3,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_bone_nightmare"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "summoned_bone_nightmare_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "summoned_bone_nightmare_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_II",
+      "activeSkill": "ACTIVE_NONE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "NONE",
+      "summonedMinion": true
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/BoneNightmare.java",
+    "nameKey": "summoned_bone_nightmare_name",
+    "name": "Bone Nightmare",
+    "descriptionKey": "summoned_bone_nightmare_description",
+    "description": "A reanimated bone nightmare. It feels no pain, so physical damage is less effective.",
+    "imageKey": "unit_bone_nightmare",
+    "asset": "assets_extracted/main/drawable/unit_bone_nightmare.png"
+  },
+  {
+    "id": "CelestialRain",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 290,
+      "baseConstitution": 12,
+      "baseIntelligence": 20,
+      "baseDexterity": 40,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_celestial_rain"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_celestial_rain_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_celestial_rain_description"
+      },
+      "passiveSkill": "PASSIVE_KEEN_VISION",
+      "activeSkill": "ACTIVE_BARRAGE_VIII",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/CelestialRain.java",
+    "nameKey": "adventurer_celestial_rain_name",
+    "name": "Celestial Rain",
+    "descriptionKey": "adventurer_celestial_rain_description",
+    "description": "A legendary archer that defies the most basic laws of nature. Every arrow crackles with raw energy as it hits the target with extreme force, and her sole presence on the battlefield denies to entire armies the possibility of an open field attack.",
+    "imageKey": "unit_celestial_rain",
+    "asset": "assets_extracted/main/drawable/unit_celestial_rain.png"
+  },
+  {
+    "id": "Cleric",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 35,
+      "baseConstitution": 4,
+      "baseIntelligence": 20,
+      "baseDexterity": 6,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "healer": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_cleric"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_cleric_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_cleric_description"
+      },
+      "passiveSkill": "PASSIVE_HEALER_I",
+      "activeSkill": "ACTIVE_HEAL",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "WhiteMage"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Cleric.java",
+    "nameKey": "adventurer_cleric_name",
+    "name": "Cleric",
+    "descriptionKey": "adventurer_cleric_description",
+    "description": "After years of magic studies, the Cleric has a solid grasp of healing magic. He is a solid staple of any exploration team of adventurers.",
+    "imageKey": "unit_cleric",
+    "asset": "assets_extracted/main/drawable/unit_cleric.png"
+  },
+  {
+    "id": "CorrosiveWraith",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 290,
+      "baseConstitution": 12,
+      "baseIntelligence": 20,
+      "baseDexterity": 40,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "poisonBonus": 5,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 2,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_corrosive_wraith"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_corrosive_wraith_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_corrosive_wraith_description"
+      },
+      "passiveSkill": "PASSIVE_CORROSIVE_BLOOD",
+      "activeSkill": "ACTIVE_FOCUSED_BARRAGE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [],
+    "statusImmunities": [
+      "POISON"
+    ],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/CorrosiveWraith.java",
+    "nameKey": "adventurer_corrosive_wraith_name",
+    "name": "Corrosive Wraith",
+    "descriptionKey": "adventurer_corrosive_wraith_description",
+    "description": "The poison coursing through her veins has somehow mutated into an even more potent form without harming its host. This unique toxin is stronger, unlike any other, and can only exist through this rare symbiosis. When these creatures defy the law of the land, they are hunted relentlessly—and often, unsuccessfully.",
+    "imageKey": "unit_corrosive_wraith",
+    "asset": "assets_extracted/main/drawable/unit_corrosive_wraith.png"
+  },
+  {
+    "id": "Cutthroat",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 65,
+      "baseConstitution": 12,
+      "baseIntelligence": 6,
+      "baseDexterity": 12,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_cuttroath"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_cutthroat_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_cutthroat_description"
+      },
+      "passiveSkill": "PASSIVE_SABOTEUR",
+      "activeSkill": "ACTIVE_BACKSTAB_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "Assassin"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Cutthroat.java",
+    "nameKey": "adventurer_cutthroat_name",
+    "name": "Cutthroat",
+    "descriptionKey": "adventurer_cutthroat_description",
+    "description": "Strong and nimble, he stealthily closes in on unsuspecting targets to strike them with considerable force.",
+    "imageKey": "unit_cuttroath",
+    "asset": "assets_extracted/main/drawable/unit_cuttroath.png"
+  },
+  {
+    "id": "DarkKnight",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 130,
+      "baseConstitution": 20,
+      "baseIntelligence": 9,
+      "baseDexterity": 8,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 2,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_dark_knight"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_dark_knight_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_dark_knight_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_I",
+      "activeSkill": "ACTIVE_OVERWHELM",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "DeathKnight"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/DarkKnight.java",
+    "nameKey": "adventurer_dark_knight_name",
+    "name": "Dark Knight",
+    "descriptionKey": "adventurer_dark_knight_description",
+    "description": "A knight who has forsaken the path of law, now only loyal to his own principles.",
+    "imageKey": "unit_dark_knight",
+    "asset": "assets_extracted/main/drawable/unit_dark_knight.png"
+  },
+  {
+    "id": "DarkSorcerer",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 35,
+      "baseConstitution": 4,
+      "baseIntelligence": 20,
+      "baseDexterity": 6,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "baseLifesteal": 50,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_dark_sorcerer"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_dark_sorcerer_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_dark_sorcerer_description"
+      },
+      "passiveSkill": "PASSIVE_WITHERING_TOUCH",
+      "activeSkill": "ACTIVE_ENERGY_BURST_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Necromancer"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/DarkSorcerer.java",
+    "nameKey": "adventurer_dark_sorcerer_name",
+    "name": "Dark Sorcerer",
+    "descriptionKey": "adventurer_dark_sorcerer_description",
+    "description": "Having abandoned the path of knowledge for that of corruption, this mage seeks power not through endless studies and practice, but through communion with evil beings trying to influence the world for their nefarious purposes.",
+    "imageKey": "unit_dark_sorcerer",
+    "asset": "assets_extracted/main/drawable/unit_dark_sorcerer.png"
+  },
+  {
+    "id": "DeathKnight",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 170,
+      "baseConstitution": 24,
+      "baseIntelligence": 10,
+      "baseDexterity": 10,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 2,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_death_knight"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_death_knight_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_death_knight_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_I",
+      "activeSkill": "ACTIVE_DECIMATE_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Scourge"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/DeathKnight.java",
+    "nameKey": "adventurer_death_knight_name",
+    "name": "Death Knight",
+    "descriptionKey": "adventurer_death_knight_description",
+    "description": "Inspiring fear as he roams the lands, the Death Knight relentlessly obliterates any obstacle that lies in the path of his objectives.",
+    "imageKey": "unit_death_knight",
+    "asset": "assets_extracted/main/drawable/unit_death_knight.png"
+  },
+  {
+    "id": "Demilich",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 70,
+      "baseConstitution": 6,
+      "baseIntelligence": 30,
+      "baseDexterity": 8,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "baseLifesteal": 50,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_demilich"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_demilich_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_demilich_description"
+      },
+      "passiveSkill": "PASSIVE_WITHERING_TOUCH",
+      "activeSkill": "ACTIVE_CURSE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Lich"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Demilich.java",
+    "nameKey": "adventurer_demilich_name",
+    "name": "Demilich",
+    "descriptionKey": "adventurer_demilich_description",
+    "description": "In the self-destructive path to become a master of the undead, the necromancer has to face power beyond the mortal\\'s imagination, and resist their corruption. Flesh begins to decompose, as he realizes that the price to pay for the control over Death is eternal suffering.",
+    "imageKey": "unit_demilich",
+    "asset": "assets_extracted/main/drawable/unit_demilich.png"
+  },
+  {
+    "id": "Demon",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 215,
+      "baseConstitution": 24,
+      "baseIntelligence": 24,
+      "baseDexterity": 24,
+      "baseDefense": 24,
+      "baseMagicDefense": 24,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_demon"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_demon_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_demon_description"
+      },
+      "passiveSkill": "PASSIVE_CHAOTIC",
+      "activeSkill": "ACTIVE_ANNIHILATE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "InfernalLord"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Demon.java",
+    "nameKey": "adventurer_demon_name",
+    "name": "Demon",
+    "descriptionKey": "adventurer_demon_description",
+    "description": "Awakening from the initial torpor, the inhabitant of this body grasps the rules of this reality and breaks free from its cradle. It obeys no master, and its disgust for earthly creatures weakness only grows with time.",
+    "imageKey": "unit_demon",
+    "asset": "assets_extracted/main/drawable/unit_demon.png"
+  },
+  {
+    "id": "DivineChampion",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 380,
+      "baseConstitution": 40,
+      "baseIntelligence": 14,
+      "baseDexterity": 18,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 3,
+      "counterattack": 0.6,
+      "onSelfHit": {
+        "statusEffect": {
+          "type": "DEFENSIVE_STANCE",
+          "cause": "self",
+          "turns": 999,
+          "probability": 0.3
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_divine_champion"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_divine_champion_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_divine_champion_description"
+      },
+      "passiveSkill": "PASSIVE_SWORD_EXPERTISE_II",
+      "activeSkill": "ACTIVE_EN_GARDE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/DivineChampion.java",
+    "nameKey": "adventurer_divine_champion_name",
+    "name": "Divine Champion",
+    "descriptionKey": "adventurer_divine_champion_description",
+    "description": "Untouchable by most conventional and magical weapons, this divine warrior wields a sword with lightning speed, deflecting both arrows and spells alike. He is the champion of choice to face any adversary, even those of divine power.",
+    "imageKey": "unit_divine_champion",
+    "asset": "assets_extracted/main/drawable/unit_divine_champion.png"
+  },
+  {
+    "id": "DivineDuelist",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 320,
+      "baseConstitution": 36,
+      "baseIntelligence": 13,
+      "baseDexterity": 16,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 3,
+      "counterattack": 0.6,
+      "onSelfHit": {
+        "statusEffect": {
+          "type": "DEFENSIVE_STANCE",
+          "cause": "self",
+          "turns": 999,
+          "probability": 0.15
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_divine_duelist"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_divine_duelist_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_divine_duelist_description"
+      },
+      "passiveSkill": "PASSIVE_SWORD_EXPERTISE_I",
+      "activeSkill": "ACTIVE_EN_GARDE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "DivineChampion"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/DivineDuelist.java",
+    "nameKey": "adventurer_divine_duelist_name",
+    "name": "Divine Duelist",
+    "descriptionKey": "adventurer_divine_duelist_description",
+    "description": "A duelist of unmatched skill in single combat, this warrior—born perhaps once in a generation—wields a sword so swift that his strikes are over before they’re even seen, cutting down opponents with imperceptible speed.",
+    "imageKey": "unit_divine_duelist",
+    "asset": "assets_extracted/main/drawable/unit_divine_duelist.png"
+  },
+  {
+    "id": "DrakeRider",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 195,
+      "baseConstitution": 10,
+      "baseIntelligence": 16,
+      "baseDexterity": 32,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "endOfTurnAction": "RIDER_V",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_drake_rider"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_drake_rider_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_drake_rider_description"
+      },
+      "passiveSkill": "PASSIVE_RIDER_V",
+      "activeSkill": "ACTIVE_INCINERATE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "GoldenRider"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/DrakeRider.java",
+    "nameKey": "adventurer_drake_rider_name",
+    "name": "Drake Rider",
+    "descriptionKey": "adventurer_drake_rider_description",
+    "description": "Only legendary riders could hope to ever tame a drake and learn how to ride it. This deadly duo will ignite the battlefield while hunting down the few survivors with deadly arrows.",
+    "imageKey": "unit_drake_rider",
+    "asset": "assets_extracted/main/drawable/unit_drake_rider.png"
+  },
+  {
+    "id": "Eidolon",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 290,
+      "baseConstitution": 23,
+      "baseIntelligence": 26,
+      "baseDexterity": 23,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "endOfTurnAction": "SHIELD_EXALT_II",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_eidolon"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_eidolon_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_eidolon_description"
+      },
+      "passiveSkill": "PASSIVE_EXALTING_II",
+      "activeSkill": "ACTIVE_PETRIFYING_MELODY",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Eidolon.java",
+    "nameKey": "adventurer_eidolon_name",
+    "name": "Eidolon",
+    "descriptionKey": "adventurer_eidolon_description",
+    "description": "An ethereal embodiment of divine melody, wielding godlike power to protect his allies, able to rally armies to reshape whole kingdoms.",
+    "imageKey": "unit_eidolon",
+    "asset": "assets_extracted/main/drawable/unit_eidolon.png"
+  },
+  {
+    "id": "EldritchAlchemist",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 290,
+      "baseConstitution": 12,
+      "baseIntelligence": 28,
+      "baseDexterity": 32,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 1,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_eldritch_alchemist"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_eldritch_alchemist_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_eldritch_alchemist_description"
+      },
+      "passiveSkill": "PASSIVE_THAUMATURGY_IV",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER",
+      "onDeathEffectsOnEnemies": [
+        {
+          "statusEffect": {
+            "type": "POISON",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "FROZEN",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        }
+      ],
+      "onDeathEffectsOnAllies": [
+        {
+          "statusEffect": {
+            "type": "ANOINTED",
+            "cause": "self",
+            "turns": 10,
+            "probability": 1
+          }
+        }
+      ]
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/EldritchAlchemist.java",
+    "nameKey": "adventurer_eldritch_alchemist_name",
+    "name": "Eldritch Alchemist",
+    "descriptionKey": "adventurer_eldritch_alchemist_description",
+    "description": "Transcending the border between mortal and divine, her potions incorporate an eldritch god\\'s blessing, obtained through arcane means and without its knowledge.",
+    "imageKey": "unit_eldritch_alchemist",
+    "asset": "assets_extracted/main/drawable/unit_eldritch_alchemist.png"
+  },
+  {
+    "id": "ElementalAlchemist",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 195,
+      "baseConstitution": 10,
+      "baseIntelligence": 20,
+      "baseDexterity": 28,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 1,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_elemental_alchemist"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_elemental_alchemist_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_elemental_alchemist_description"
+      },
+      "passiveSkill": "PASSIVE_THAUMATURGY_II",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER",
+      "onDeathEffectsOnEnemies": [
+        {
+          "statusEffect": {
+            "type": "POISON",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "FROZEN",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        }
+      ]
+    },
+    "nextClasses": [
+      "EsotericAlchemist"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/ElementalAlchemist.java",
+    "nameKey": "adventurer_elemental_alchemist_name",
+    "name": "Elemental Alchemist",
+    "descriptionKey": "adventurer_elemental_alchemist_description",
+    "description": "A brilliant mind who devoted her life to the study of Thaumaturgy, she has successfully replicated elemental magic in her potions using only natural ingredients and chemical processes.",
+    "imageKey": "unit_elemental_alchemist",
+    "asset": "assets_extracted/main/drawable/unit_elemental_alchemist.png"
+  },
+  {
+    "id": "EsotericAlchemist",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 240,
+      "baseConstitution": 11,
+      "baseIntelligence": 24,
+      "baseDexterity": 30,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 1,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_esoteric_alchemist"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_esoteric_alchemist_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_esoteric_alchemist_description"
+      },
+      "passiveSkill": "PASSIVE_THAUMATURGY_III",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER",
+      "onDeathEffectsOnEnemies": [
+        {
+          "statusEffect": {
+            "type": "POISON",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "STUN",
+            "cause": "self",
+            "turns": 1,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "ABLAZE",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        },
+        {
+          "statusEffect": {
+            "type": "FROZEN",
+            "cause": "self",
+            "turns": 5,
+            "probability": 1
+          }
+        }
+      ],
+      "onDeathEffectsOnAllies": [
+        {
+          "statusEffect": {
+            "type": "ANOINTED",
+            "cause": "self",
+            "turns": 10,
+            "probability": 1
+          }
+        }
+      ]
+    },
+    "nextClasses": [
+      "EldritchAlchemist"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/EsotericAlchemist.java",
+    "nameKey": "adventurer_esoteric_alchemist_name",
+    "name": "Esoteric Alchemist",
+    "descriptionKey": "adventurer_esoteric_alchemist_description",
+    "description": "This masterful alchemist not only succeeded in harnessing the power of the elements in her creations but also infused them with blessings typically linked to benevolent deities.",
+    "imageKey": "unit_esoteric_alchemist",
+    "asset": "assets_extracted/main/drawable/unit_esoteric_alchemist.png"
+  },
+  {
+    "id": "EternalFortress",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 380,
+      "baseConstitution": 40,
+      "baseIntelligence": 20,
+      "baseDexterity": 12,
+      "baseDefense": 30,
+      "baseMagicDefense": 30,
+      "threat": 5,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_eternal_fortress"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_eternal_fortress_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_eternal_fortress_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_IV",
+      "activeSkill": "ACTIVE_TAUNT_IV",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/EternalFortress.java",
+    "nameKey": "adventurer_eternal_fortress_name",
+    "name": "Eternal Fortress",
+    "descriptionKey": "adventurer_eternal_fortress_description",
+    "description": "A legendary warrior whose armor is unbreakable by conventional means. Able to duel with mortals and deities, able to withstand an unreal amount of damage before even flinching.",
+    "imageKey": "unit_eternal_fortress",
+    "asset": "assets_extracted/main/drawable/unit_eternal_fortress.png"
+  },
+  {
+    "id": "FireWizard",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 35,
+      "baseConstitution": 4,
+      "baseIntelligence": 20,
+      "baseDexterity": 6,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_fire_wizard"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_fire_wizard_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_fire_wizard_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_FIRE_BURST",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "RedMage"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/FireWizard.java",
+    "nameKey": "adventurer_fire_wizard_name",
+    "name": "Fire Wizard",
+    "descriptionKey": "adventurer_fire_wizard_description",
+    "description": "Amids the journey of discovery, the Fire Wizard learned to channel magic to emulate natural forces. Being the most dangerous of them all, he choose fire as the object of his studies.",
+    "imageKey": "unit_fire_wizard",
+    "asset": "assets_extracted/main/drawable/unit_fire_wizard.png"
+  },
+  {
+    "id": "Footman",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 5,
+      "baseMaxHp": 40,
+      "baseConstitution": 8,
+      "baseIntelligence": 4,
+      "baseDexterity": 4,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_footman"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_footman_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_footman_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_MIGHTY_STRIKE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Warrior"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Footman.java",
+    "nameKey": "adventurer_footman_name",
+    "name": "Footman",
+    "descriptionKey": "adventurer_footman_description",
+    "description": "A novice infantry unit. Lacks experience, but has received a brief training in the Royal Army.",
+    "imageKey": "unit_footman",
+    "asset": "assets_extracted/main/drawable/unit_footman.png"
+  },
+  {
+    "id": "Fury",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 120,
+      "baseConstitution": 8,
+      "baseIntelligence": 12,
+      "baseDexterity": 24,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_fury"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_fury_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_fury_description"
+      },
+      "passiveSkill": "PASSIVE_KEEN_VISION",
+      "activeSkill": "ACTIVE_BARRAGE_IV",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "Hailstorm"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Fury.java",
+    "nameKey": "adventurer_fury_name",
+    "name": "Fury",
+    "descriptionKey": "adventurer_fury_description",
+    "description": "With a rare mastery of the bow, she makes death rain on the battlefield in the form of the deadliest of arrows.",
+    "imageKey": "unit_fury",
+    "asset": "assets_extracted/main/drawable/unit_fury.png"
+  },
+  {
+    "id": "GoldenRider",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 240,
+      "baseConstitution": 11,
+      "baseIntelligence": 18,
+      "baseDexterity": 36,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "endOfTurnAction": "RIDER_VI",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_golden_rider"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_golden_rider_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_golden_rider_description"
+      },
+      "passiveSkill": "PASSIVE_RIDER_VI",
+      "activeSkill": "ACTIVE_INCINERATE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "WyrmRider"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/GoldenRider.java",
+    "nameKey": "adventurer_golden_rider_name",
+    "name": "Golden Rider",
+    "descriptionKey": "adventurer_golden_rider_description",
+    "description": "This fearsome archer rides one of the last remaining Golden Drakes, a nearly extinct subspecies of the more common drake. Distinguished by its brilliant golden scales, the Golden Drake boasts greater strength and a fiercer, hotter flame than its kin.",
+    "imageKey": "unit_golden_rider",
+    "asset": "assets_extracted/main/drawable/unit_golden_rider.png"
+  },
+  {
+    "id": "Guard",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 95,
+      "baseConstitution": 16,
+      "baseIntelligence": 8,
+      "baseDexterity": 6,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 3,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_guard"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_guard_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_guard_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_II",
+      "activeSkill": "ACTIVE_MIGHTY_STRIKE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "IronWarden",
+      "RoyalGuard"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Guard.java",
+    "nameKey": "adventurer_guard_name",
+    "name": "Guard",
+    "descriptionKey": "adventurer_guard_description",
+    "description": "Specialized in the surveillance of civilians or places of interest, guards are widely employed for the protection of sensitive objectives.",
+    "imageKey": "unit_guard",
+    "asset": "assets_extracted/main/drawable/unit_guard.png"
+  },
+  {
+    "id": "Hailstorm",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 155,
+      "baseConstitution": 9,
+      "baseIntelligence": 14,
+      "baseDexterity": 28,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_hailstorm"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_hailstorm_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_hailstorm_description"
+      },
+      "passiveSkill": "PASSIVE_KEEN_VISION",
+      "activeSkill": "ACTIVE_BARRAGE_V",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "Tempest"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Hailstorm.java",
+    "nameKey": "adventurer_hailstorm_name",
+    "name": "Hailstorm",
+    "descriptionKey": "adventurer_hailstorm_description",
+    "description": "Having developed an almost superhuman ability with her weapon, she hails arrows on enemy armies with such a speed that surviving is almost impossible",
+    "imageKey": "unit_hailstorm",
+    "asset": "assets_extracted/main/drawable/unit_hailstorm.png"
+  },
+  {
+    "id": "HeavenlyCantor",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 240,
+      "baseConstitution": 21,
+      "baseIntelligence": 23,
+      "baseDexterity": 21,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "endOfTurnAction": "SHIELD_EXALT_I",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_heavenly_cantor"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_heavenly_cantor_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_heavenly_cantor_description"
+      },
+      "passiveSkill": "PASSIVE_EXALTING_I",
+      "activeSkill": "ACTIVE_PETRIFYING_MELODY",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "Eidolon"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/HeavenlyCantor.java",
+    "nameKey": "adventurer_heavenly_cantor_name",
+    "name": "Heavenly Cantor",
+    "descriptionKey": "adventurer_heavenly_cantor_description",
+    "description": "A divine musician able to change the fate of a war through his instrument. Not only he will empower his allies, but through a uniquely crafted music, he will make them immune to pain.",
+    "imageKey": "unit_heavenly_cantor",
+    "asset": "assets_extracted/main/drawable/unit_heavenly_cantor.png"
+  },
+  {
+    "id": "HellishSculptor",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 240,
+      "baseConstitution": 27,
+      "baseIntelligence": 11,
+      "baseDexterity": 27,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "BLEED",
+          "cause": "self",
+          "turns": 60,
+          "probability": 1
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_hellish_sculptor"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_hellish_sculptor_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_hellish_sculptor_description"
+      },
+      "passiveSkill": "PASSIVE_DEADLY_FINESSE_III",
+      "activeSkill": "ACTIVE_THOUSAND_CUTS",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "SpiritEngraver"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/HellishSculptor.java",
+    "nameKey": "adventurer_hellish_sculptor_name",
+    "name": "Hellish Sculptor",
+    "descriptionKey": "adventurer_hellish_sculptor_description",
+    "description": "Half way between assassin and artist, he draws his target ever closer to death with each strike—leaving behind hauntingly beautiful tributes to Death itself in his wake.",
+    "imageKey": "unit_hellish_sculptor",
+    "asset": "assets_extracted/main/drawable/unit_hellish_sculptor.png"
+  },
+  {
+    "id": "HolyKnight",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 130,
+      "baseConstitution": 20,
+      "baseIntelligence": 10,
+      "baseDexterity": 7,
+      "baseDefense": 20,
+      "baseMagicDefense": 23,
+      "threat": 2,
+      "darknessReduction": 10,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_holy_knight"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_holy_knight_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_holy_knight_description"
+      },
+      "passiveSkill": "PASSIVE_BLINDING_I",
+      "activeSkill": "ACTIVE_CONDEMN",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Paladin"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/HolyKnight.java",
+    "nameKey": "adventurer_holy_knight_name",
+    "name": "Holy Knight",
+    "descriptionKey": "adventurer_holy_knight_description",
+    "description": "A knight devoted to the service of the Holy Temple, he is a protector of the righteous and a vanguard of justice, sworn to eradicate evil from every corner of the land.",
+    "imageKey": "unit_holy_knight",
+    "asset": "assets_extracted/main/drawable/unit_holy_knight.png"
+  },
+  {
+    "id": "HorseRider",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 65,
+      "baseConstitution": 6,
+      "baseIntelligence": 8,
+      "baseDexterity": 16,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "endOfTurnAction": "RIDER_I",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_horse_rider"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_horse_rider_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_horse_rider_description"
+      },
+      "passiveSkill": "PASSIVE_RIDER_I",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "WolfRider"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/HorseRider.java",
+    "nameKey": "adventurer_horse_rider_name",
+    "name": "Horse Rider",
+    "descriptionKey": "adventurer_horse_rider_description",
+    "description": "An archer who shifted the focus of her training to horse riding. Blends the danger of long-range attacks with the ability to deal melee damage with her ride.",
+    "imageKey": "unit_horse_rider",
+    "asset": "assets_extracted/main/drawable/unit_horse_rider.png"
+  },
+  {
+    "id": "Huntress",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 10,
+      "baseMaxHp": 45,
+      "baseConstitution": 5,
+      "baseIntelligence": 6,
+      "baseDexterity": 12,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_huntress"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_huntress_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_huntress_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "HorseRider",
+      "Marksman"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Huntress.java",
+    "nameKey": "adventurer_huntress_name",
+    "name": "Huntress",
+    "descriptionKey": "adventurer_huntress_description",
+    "description": "Refining her skills with her hunting experience in the wilderness, she can hit enemies with reliable shots.",
+    "imageKey": "unit_huntress",
+    "asset": "assets_extracted/main/drawable/unit_huntress.png"
+  },
+  {
+    "id": "Hurricane",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 240,
+      "baseConstitution": 11,
+      "baseIntelligence": 18,
+      "baseDexterity": 36,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_hurricane"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_hurricane_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_hurricane_description"
+      },
+      "passiveSkill": "PASSIVE_KEEN_VISION",
+      "activeSkill": "ACTIVE_BARRAGE_VII",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "CelestialRain"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Hurricane.java",
+    "nameKey": "adventurer_hurricane_name",
+    "name": "Hurricane",
+    "descriptionKey": "adventurer_hurricane_description",
+    "description": "This archer of unnatural precision is a coveted asset for any army. She can fend off a full-scale assault for hours, and can be reached only by sacrificing an enormous number of soldiers.",
+    "imageKey": "unit_hurricane",
+    "asset": "assets_extracted/main/drawable/unit_hurricane.png"
+  },
+  {
+    "id": "InfernalLord",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 265,
+      "baseConstitution": 28,
+      "baseIntelligence": 28,
+      "baseDexterity": 28,
+      "baseDefense": 28,
+      "baseMagicDefense": 28,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_infernal_lord"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_infernal_lord_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_infernal_lord_description"
+      },
+      "passiveSkill": "PASSIVE_CHAOTIC",
+      "activeSkill": "ACTIVE_OBLITERATE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "InfernalPrince"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/InfernalLord.java",
+    "nameKey": "adventurer_infernal_lord_name",
+    "name": "Infernal Lord",
+    "descriptionKey": "adventurer_infernal_lord_description",
+    "description": "Ascending through infernal ranks through its ruthlessness and cruelty, an Infernal Lord walking the realms is a threat that brings enemy kingdoms together in a desperate effort to prevent the entire world\\'s descent into chaos.",
+    "imageKey": "unit_infernal_lord",
+    "asset": "assets_extracted/main/drawable/unit_infernal_lord.png"
+  },
+  {
+    "id": "InfernalPrince",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 320,
+      "baseConstitution": 32,
+      "baseIntelligence": 32,
+      "baseDexterity": 32,
+      "baseDefense": 32,
+      "baseMagicDefense": 32,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_infernal_prince"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_infernal_prince_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_infernal_prince_description"
+      },
+      "passiveSkill": "PASSIVE_CHAOTIC",
+      "activeSkill": "ACTIVE_EXTIRPATE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Balrog"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/InfernalPrince.java",
+    "nameKey": "adventurer_infernal_prince_name",
+    "name": "Infernal Prince",
+    "descriptionKey": "adventurer_infernal_prince_description",
+    "description": "Rising from the ashes of conquest and tempered by the fires of countless battles, the Infernal Prince commands legions with a fearsome authority unmatched in the infernal realms. Now no longer a commander but a true sovereign of terror, the Infernal Prince stands as an unstoppable force, against whom resistance is little more than a fleeting hope.",
+    "imageKey": "unit_infernal_prince",
+    "asset": "assets_extracted/main/drawable/unit_infernal_prince.png"
+  },
+  {
+    "id": "Inferno",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 200,
+      "baseConstitution": 10,
+      "baseIntelligence": 50,
+      "baseDexterity": 12,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "ABLAZE",
+          "cause": "self",
+          "turns": 1,
+          "probability": 1
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_inferno"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_inferno_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_inferno_description"
+      },
+      "passiveSkill": "PASSIVE_PYROMANCY_II",
+      "activeSkill": "ACTIVE_METEOR_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Inferno.java",
+    "nameKey": "adventurer_inferno_name",
+    "name": "Inferno",
+    "descriptionKey": "adventurer_inferno_description",
+    "description": "An incredibly powerful, mystical able to invoke firestorms out of thin air, burning entire armies to ashes while meteor falls upon them. An army that can reliably protect him is an army that can win any battle.",
+    "imageKey": "unit_inferno",
+    "asset": "assets_extracted/main/drawable/unit_inferno.png"
+  },
+  {
+    "id": "Inquisitor",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 265,
+      "baseConstitution": 32,
+      "baseIntelligence": 16,
+      "baseDexterity": 10,
+      "baseDefense": 20,
+      "baseMagicDefense": 33,
+      "threat": 2,
+      "darknessReduction": 40,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_inquisitor"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_inquisitor_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_inquisitor_description"
+      },
+      "passiveSkill": "PASSIVE_BLINDING_IV",
+      "activeSkill": "ACTIVE_CONDEMN_ALL_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Justiciar"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Inquisitor.java",
+    "nameKey": "adventurer_inquisitor_name",
+    "name": "Inquisitor",
+    "descriptionKey": "adventurer_inquisitor_description",
+    "description": "As feared as he is respected, the Inquisitor\\'s might is rarely matched. He stands as the supreme lawgiver, overseeing the realms conquered by the Holy Temple.",
+    "imageKey": "unit_inquisitor",
+    "asset": "assets_extracted/main/drawable/unit_inquisitor.png"
+  },
+  {
+    "id": "IronDefender",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 170,
+      "baseConstitution": 24,
+      "baseIntelligence": 12,
+      "baseDexterity": 8,
+      "baseDefense": 24,
+      "baseMagicDefense": 24,
+      "threat": 3,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_iron_defender"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_iron_defender_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_iron_defender_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_II",
+      "activeSkill": "ACTIVE_TAUNT_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Juggernaut"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/IronDefender.java",
+    "nameKey": "adventurer_iron_defender_name",
+    "name": "Iron Defender",
+    "descriptionKey": "adventurer_iron_defender_description",
+    "description": "An enormous warden capable of withstanding a substantial amount of damage before succumbing.",
+    "imageKey": "unit_iron_defender",
+    "asset": "assets_extracted/main/drawable/unit_iron_defender.png"
+  },
+  {
+    "id": "IronWarden",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 130,
+      "baseConstitution": 20,
+      "baseIntelligence": 10,
+      "baseDexterity": 7,
+      "baseDefense": 22,
+      "baseMagicDefense": 22,
+      "threat": 3,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_iron_warden"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_iron_warden_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_iron_warden_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_II",
+      "activeSkill": "ACTIVE_TAUNT_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "IronDefender"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/IronWarden.java",
+    "nameKey": "adventurer_iron_warden_name",
+    "name": "Iron Warden",
+    "descriptionKey": "adventurer_iron_warden_description",
+    "description": "A seasoned guard rich in experience, clad in a heavy armor.",
+    "imageKey": "unit_iron_warden",
+    "asset": "assets_extracted/main/drawable/unit_iron_warden.png"
+  },
+  {
+    "id": "Juggernaut",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 215,
+      "baseConstitution": 28,
+      "baseIntelligence": 14,
+      "baseDexterity": 9,
+      "baseDefense": 25,
+      "baseMagicDefense": 25,
+      "threat": 4,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_juggernaut"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_juggernaut_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_juggernaut_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_III",
+      "activeSkill": "ACTIVE_TAUNT_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Titan"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Juggernaut.java",
+    "nameKey": "adventurer_juggernaut_name",
+    "name": "Juggernaut",
+    "descriptionKey": "adventurer_juggernaut_description",
+    "description": "A rare sight in the battlefield, these armored giants can easily shrug off strikes from siege weapons with ease.",
+    "imageKey": "unit_juggernaut",
+    "asset": "assets_extracted/main/drawable/unit_juggernaut.png"
+  },
+  {
+    "id": "Justiciar",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 320,
+      "baseConstitution": 36,
+      "baseIntelligence": 18,
+      "baseDexterity": 11,
+      "baseDefense": 20,
+      "baseMagicDefense": 36,
+      "threat": 2,
+      "darknessReduction": 50,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_justiciar"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_justiciar_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_justiciar_description"
+      },
+      "passiveSkill": "PASSIVE_BLINDING_V",
+      "activeSkill": "ACTIVE_CONDEMN_ALL_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "AngelOfWar"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Justiciar.java",
+    "nameKey": "adventurer_justiciar_name",
+    "name": "Justiciar",
+    "descriptionKey": "adventurer_justiciar_description",
+    "description": "The Justiciar serves as the Holy Temple’s arbiter, enforcing laws that everyone—from peasants to kings—must obey to avoid incurring the Temple\\'s wrath. A formidable warrior, he leads crusades against evil tyrants and unholy creatures that threaten the Realms.",
+    "imageKey": "unit_justiciar",
+    "asset": "assets_extracted/main/drawable/unit_justiciar.png"
+  },
+  {
+    "id": "KingsHand",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 265,
+      "baseConstitution": 32,
+      "baseIntelligence": 12,
+      "baseDexterity": 14,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 3,
+      "counterattack": 0.6,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_kings_hand"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_kings_hand_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_kings_hand_description"
+      },
+      "passiveSkill": "PASSIVE_SWORD_MASTERY_III",
+      "activeSkill": "ACTIVE_EN_GARDE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "DivineDuelist"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/KingsHand.java",
+    "nameKey": "adventurer_kings_hand_name",
+    "name": "King\\'s Hand",
+    "descriptionKey": "adventurer_kings_hand_description",
+    "description": "The king\\'s personal guard. Wreaks havoc during unrests, and singlehandedly guarantees His Majesty safety against any threat.",
+    "imageKey": "unit_kings_hand",
+    "asset": "assets_extracted/main/drawable/unit_kings_hand.png"
+  },
+  {
+    "id": "Knight",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 95,
+      "baseConstitution": 16,
+      "baseIntelligence": 8,
+      "baseDexterity": 6,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 2,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_knight"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_knight_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_knight_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_I",
+      "activeSkill": "ACTIVE_CRUSHING_STRIKE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "DarkKnight",
+      "HolyKnight"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Knight.java",
+    "nameKey": "adventurer_knight_name",
+    "name": "Knight",
+    "descriptionKey": "adventurer_knight_description",
+    "description": "Renowned for their steadfast loyalty and honor, they provide a first line for their allies while overpowering their foes.",
+    "imageKey": "unit_knight",
+    "asset": "assets_extracted/main/drawable/unit_knight.png"
+  },
+  {
+    "id": "Lich",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 95,
+      "baseConstitution": 7,
+      "baseIntelligence": 35,
+      "baseDexterity": 9,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "baseLifesteal": 50,
+      "healsMinionBound": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_lich"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_lich_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_lich_description"
+      },
+      "passiveSkill": "PASSIVE_WITHERING_LINK",
+      "activeSkill": "ACTIVE_CURSE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "AncientLich"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Lich.java",
+    "nameKey": "adventurer_lich_name",
+    "name": "Lich",
+    "descriptionKey": "adventurer_lich_description",
+    "description": "Through extraordinary willpower, the Lich endured his transformation for decades, without surrendering to the pain until only bare bones remained. Since muscles and tendons are long gone, this shell of a human is animated entirely by magic.",
+    "imageKey": "unit_lich",
+    "asset": "assets_extracted/main/drawable/unit_lich.png"
+  },
+  {
+    "id": "LightDisciple",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 10,
+      "baseMaxHp": 25,
+      "baseConstitution": 3,
+      "baseIntelligence": 15,
+      "baseDexterity": 5,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "healer": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_light_disciple"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_light_disciple_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_light_disciple_description"
+      },
+      "passiveSkill": "PASSIVE_HEALER_I",
+      "activeSkill": "ACTIVE_ENERGY_BURST_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Cleric"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/LightDisciple.java",
+    "nameKey": "adventurer_light_disciple_name",
+    "name": "Light Disciple",
+    "descriptionKey": "adventurer_light_disciple_description",
+    "description": "An inexperienced mage who tries to expand his knowledge towards a branch of magic that does not hurt foes, but help allies.",
+    "imageKey": "unit_light_disciple",
+    "asset": "assets_extracted/main/drawable/unit_light_disciple.png"
+  },
+  {
+    "id": "Lorekeeper",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 195,
+      "baseConstitution": 19,
+      "baseIntelligence": 20,
+      "baseDexterity": 19,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "endOfTurnAction": "SHIELD_INSPIRE_III",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_lorekeeper"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_lorekeeper_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_lorekeeper_description"
+      },
+      "passiveSkill": "PASSIVE_INSPIRING_III",
+      "activeSkill": "ACTIVE_PETRIFYING_MELODY",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "HeavenlyCantor"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Lorekeeper.java",
+    "nameKey": "adventurer_lorekeeper_name",
+    "name": "Lorekeeper",
+    "descriptionKey": "adventurer_lorekeeper_description",
+    "description": "The stories known by this keeper of ancient wisdom are almost endless. Drawing upon myths and legends, he channels forgotten magic through his instrument notes.",
+    "imageKey": "unit_lorekeeper",
+    "asset": "assets_extracted/main/drawable/unit_lorekeeper.png"
+  },
+  {
+    "id": "LorfOfDecay",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 160,
+      "baseConstitution": 9,
+      "baseIntelligence": 45,
+      "baseDexterity": 11,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "baseLifesteal": 50,
+      "healsMinionBound": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_lord_of_decay"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_lord_of_decay_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_lord_of_decay_description"
+      },
+      "passiveSkill": "PASSIVE_WITHERING_LINK",
+      "activeSkill": "ACTIVE_CURSE_IV",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "BlackIdol"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/LorfOfDecay.java",
+    "nameKey": "adventurer_lord_of_decay_name",
+    "name": "Lord of Decay",
+    "descriptionKey": "adventurer_lord_of_decay_description",
+    "description": "A demigod who mastered the control over death, capable of summoning terrifying monsters never seen before.",
+    "imageKey": "unit_lord_of_decay",
+    "asset": "assets_extracted/main/drawable/unit_lord_of_decay.png"
+  },
+  {
+    "id": "Marksman",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 65,
+      "baseConstitution": 6,
+      "baseIntelligence": 8,
+      "baseDexterity": 16,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_marksman"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_marksman_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_marksman_description"
+      },
+      "passiveSkill": "PASSIVE_KEEN_VISION",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "Sureshot",
+      "PoisonBow"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Marksman.java",
+    "nameKey": "adventurer_marksman_name",
+    "name": "Marksman",
+    "descriptionKey": "adventurer_marksman_description",
+    "description": "Rigorous training coupled with a keen vision blessed the Marksman with a perfect aim, even in the most hostile conditions.",
+    "imageKey": "unit_marksman",
+    "asset": "assets_extracted/main/drawable/unit_marksman.png"
+  },
+  {
+    "id": "MeatCarver",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 155,
+      "baseConstitution": 21,
+      "baseIntelligence": 9,
+      "baseDexterity": 21,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "BLEED",
+          "cause": "self",
+          "turns": 15,
+          "probability": 1
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_meat_carver"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_meat_carver_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_meat_carver_description"
+      },
+      "passiveSkill": "PASSIVE_DEADLY_FINESSE_I",
+      "activeSkill": "ACTIVE_THOUSAND_CUTS",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "WoundsWeaver"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/MeatCarver.java",
+    "nameKey": "adventurer_meat_carver_name",
+    "name": "Meat Carver",
+    "descriptionKey": "adventurer_meat_carver_description",
+    "description": "Working like a seasoned sculptor he meticolously shapes his creation, one precise strike after another. The final outcome is a grim tribute to death itself.",
+    "imageKey": "unit_meat_carver",
+    "asset": "assets_extracted/main/drawable/unit_meat_carver.png"
+  },
+  {
+    "id": "MeltingElder",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 160,
+      "baseConstitution": 9,
+      "baseIntelligence": 45,
+      "baseDexterity": 11,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "ABLAZE",
+          "cause": "self",
+          "turns": 1,
+          "probability": 1
+        }
+      },
+      "endOfTurnAction": "EXTRA_ATTACK_1",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_melting_elder"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_melting_elder_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_melting_elder_description"
+      },
+      "passiveSkill": "PASSIVE_PYROMANCY_I",
+      "activeSkill": "ACTIVE_METEOR_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Inferno"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/MeltingElder.java",
+    "nameKey": "adventurer_melting_elder_name",
+    "name": "Melting Elder",
+    "descriptionKey": "adventurer_melting_elder_description",
+    "description": "His blood and flesh turned into elemental fire. This incredibly powerful caster incinerates his enemies with a single gesture.",
+    "imageKey": "unit_melting_elder",
+    "asset": "assets_extracted/main/drawable/unit_melting_elder.png"
+  },
+  {
+    "id": "Minstrel",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 120,
+      "baseConstitution": 15,
+      "baseIntelligence": 14,
+      "baseDexterity": 15,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "endOfTurnAction": "SHIELD_INSPIRE_II",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_minstrel"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_minstrel_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_minstrel_description"
+      },
+      "passiveSkill": "PASSIVE_INSPIRING_II",
+      "activeSkill": "ACTIVE_FEINT",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "Bard"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Minstrel.java",
+    "nameKey": "adventurer_minstrel_name",
+    "name": "Minstrel",
+    "descriptionKey": "adventurer_minstrel_description",
+    "description": "A gifted performer whose melodies inspire allies and mislead foes, turning the tides of a battle with a song or a whispered word.",
+    "imageKey": "unit_minstrel",
+    "asset": "assets_extracted/main/drawable/unit_minstrel.png"
+  },
+  {
+    "id": "Necromancer",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 50,
+      "baseConstitution": 5,
+      "baseIntelligence": 25,
+      "baseDexterity": 7,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "baseLifesteal": 50,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_necromancer"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_necromancer_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_necromancer_description"
+      },
+      "passiveSkill": "PASSIVE_WITHERING_TOUCH",
+      "activeSkill": "ACTIVE_CURSE_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Demilich",
+      "Unchained"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Necromancer.java",
+    "nameKey": "adventurer_necromancer_name",
+    "name": "Necromancer",
+    "descriptionKey": "adventurer_necromancer_description",
+    "description": "Gifted with the magic of decay, antithesis of all that is holy. The Necromancer spells corrupt the flesh of his enemies and condemns them to an afterlife of servitude.",
+    "imageKey": "unit_necromancer",
+    "asset": "assets_extracted/main/drawable/unit_necromancer.png"
+  },
+  {
+    "id": "NightBlade",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 120,
+      "baseConstitution": 18,
+      "baseIntelligence": 8,
+      "baseDexterity": 18,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "nightVision": true,
+      "darknessDamageAmplification": 0.01,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_night_blade"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_night_blade_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_night_blade_description"
+      },
+      "passiveSkill": "PASSIVE_NIGHT_VISION_II",
+      "activeSkill": "ACTIVE_UMBRAL_STRIKE_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "NightSpecter"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/NightBlade.java",
+    "nameKey": "adventurer_night_blade_name",
+    "name": "Night Blade",
+    "descriptionKey": "adventurer_night_blade_description",
+    "description": "He adapted to darkness like a nocturnal animal. Campfire stories about them can make the night uneasy for any exploration team in foreign lands.",
+    "imageKey": "unit_night_blade",
+    "asset": "assets_extracted/main/drawable/unit_night_blade.png"
+  },
+  {
+    "id": "NightLament",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 290,
+      "baseConstitution": 30,
+      "baseIntelligence": 12,
+      "baseDexterity": 30,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "nightVision": true,
+      "darknessDamageAmplification": 0.02,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_night_lament"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_night_lament_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_night_lament_description"
+      },
+      "passiveSkill": "PASSIVE_NIGHT_VISION_IV",
+      "activeSkill": "ACTIVE_UMBRAL_STRIKE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/NightLament.java",
+    "nameKey": "adventurer_night_lament_name",
+    "name": "Night Lament",
+    "descriptionKey": "adventurer_night_lament_description",
+    "description": "Halfway between mortal and divine, entire cults were born to worship this force of death. Its presence in the darkness is revealed only by the laments of its victims.",
+    "imageKey": "unit_night_lament",
+    "asset": "assets_extracted/main/drawable/unit_night_lament.png"
+  },
+  {
+    "id": "NightSpecter",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 155,
+      "baseConstitution": 21,
+      "baseIntelligence": 9,
+      "baseDexterity": 21,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "nightVision": true,
+      "darknessDamageAmplification": 0.015,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_night_specter"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_night_specter_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_night_specter_description"
+      },
+      "passiveSkill": "PASSIVE_NIGHT_VISION_III",
+      "activeSkill": "ACTIVE_UMBRAL_STRIKE_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "NightTerror"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/NightSpecter.java",
+    "nameKey": "adventurer_night_specter_name",
+    "name": "Night Specter",
+    "descriptionKey": "adventurer_night_specter_description",
+    "description": "Blending seamlessly with the night\\'s terrain, in the cover of darkness, no human stands a chance against his ambush.",
+    "imageKey": "unit_night_specter",
+    "asset": "assets_extracted/main/drawable/unit_night_specter.png"
+  },
+  {
+    "id": "NightTerror",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 195,
+      "baseConstitution": 24,
+      "baseIntelligence": 10,
+      "baseDexterity": 24,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "nightVision": true,
+      "darknessDamageAmplification": 0.015,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_night_terror"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_night_terror_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_night_terror_description"
+      },
+      "passiveSkill": "PASSIVE_NIGHT_VISION_III",
+      "activeSkill": "ACTIVE_UMBRAL_STRIKE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "NightVeil"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/NightTerror.java",
+    "nameKey": "adventurer_night_terror_name",
+    "name": "Night Terror",
+    "descriptionKey": "adventurer_night_terror_description",
+    "description": "Ancient myths speak of Night Terrors, and how entire villages could vanish overnight because the wrong person was crossed.",
+    "imageKey": "unit_night_terror",
+    "asset": "assets_extracted/main/drawable/unit_night_terror.png"
+  },
+  {
+    "id": "NightVeil",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 240,
+      "baseConstitution": 27,
+      "baseIntelligence": 11,
+      "baseDexterity": 27,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "nightVision": true,
+      "darknessDamageAmplification": 0.02,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_night_veil"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_night_veil_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_night_veil_description"
+      },
+      "passiveSkill": "PASSIVE_NIGHT_VISION_IV",
+      "activeSkill": "ACTIVE_UMBRAL_STRIKE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "NightLament"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/NightVeil.java",
+    "nameKey": "adventurer_night_veil_name",
+    "name": "Night Veil",
+    "descriptionKey": "adventurer_night_veil_description",
+    "description": "Indistinguishable from the shadows that envelop its prey, every enemy—no matter how powerful—falls before they even sense its approach.",
+    "imageKey": "unit_night_veil",
+    "asset": "assets_extracted/main/drawable/unit_night_veil.png"
+  },
+  {
+    "id": "Overlord",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 320,
+      "baseConstitution": 36,
+      "baseIntelligence": 13,
+      "baseDexterity": 16,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 2,
+      "stunChanceOnLowerHp": 0.5,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_overlord"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_overlord_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_overlord_description"
+      },
+      "passiveSkill": "PASSIVE_SUBJUGATE_I",
+      "activeSkill": "ACTIVE_DECIMATE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "BlackRegent"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Overlord.java",
+    "nameKey": "adventurer_overlord_name",
+    "name": "Overlord",
+    "descriptionKey": "adventurer_overlord_description",
+    "description": "A ruthless ruler who respects no laws but his own. He will stop at nothing to eliminate his enemies and conquer rival kingdoms.",
+    "imageKey": "unit_overlord",
+    "asset": "assets_extracted/main/drawable/unit_overlord.png"
+  },
+  {
+    "id": "Paladin",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 170,
+      "baseConstitution": 24,
+      "baseIntelligence": 12,
+      "baseDexterity": 8,
+      "baseDefense": 20,
+      "baseMagicDefense": 26,
+      "threat": 2,
+      "darknessReduction": 20,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_paladin"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_paladin_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_paladin_description"
+      },
+      "passiveSkill": "PASSIVE_BLINDING_II",
+      "activeSkill": "ACTIVE_CONDEMN",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Templar"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Paladin.java",
+    "nameKey": "adventurer_paladin_name",
+    "name": "Paladin",
+    "descriptionKey": "adventurer_paladin_description",
+    "description": "An elite warrior of the Holy Temple, a beacon of light to the oppressed, upholds and enforces the laws of the kingdom.",
+    "imageKey": "unit_paladin",
+    "asset": "assets_extracted/main/drawable/unit_paladin.png"
+  },
+  {
+    "id": "PlagueSpreader",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 155,
+      "baseConstitution": 9,
+      "baseIntelligence": 14,
+      "baseDexterity": 28,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 2,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_plague_spreader"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_plague_spreader_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_plague_spreader_description"
+      },
+      "passiveSkill": "PASSIVE_POISONOUS_ARROWS_III",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "Blight"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/PlagueSpreader.java",
+    "nameKey": "adventurer_plague_spreader_name",
+    "name": "Plague Spreader",
+    "descriptionKey": "adventurer_plague_spreader_description",
+    "description": "Equipped with one of the strongest venom known to humanity, she can propagate deadly illnesses among the enemy ranks.",
+    "imageKey": "unit_plague_spreader",
+    "asset": "assets_extracted/main/drawable/unit_plague_spreader.png"
+  },
+  {
+    "id": "PoisonBow",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 90,
+      "baseConstitution": 7,
+      "baseIntelligence": 10,
+      "baseDexterity": 20,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 1,
+          "probability": 0.25
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_poison_bow"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_poison_bow_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_poison_bow_description"
+      },
+      "passiveSkill": "PASSIVE_POISONOUS_ARROWS_I",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "ToxicStalker"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/PoisonBow.java",
+    "nameKey": "adventurer_poison_bow_name",
+    "name": "Poison Bow",
+    "descriptionKey": "adventurer_poison_bow_description",
+    "description": "An expert archer who studied the art of poison mixing, she imbues her arrows with an unknown substance capable of weakening enemies.",
+    "imageKey": "unit_poison_bow",
+    "asset": "assets_extracted/main/drawable/unit_poison_bow.png"
+  },
+  {
+    "id": "RadiantElder",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 125,
+      "baseConstitution": 8,
+      "baseIntelligence": 40,
+      "baseDexterity": 10,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "healer": true,
+      "cleanser": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_radiant_elder"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_radiant_elder_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_radiant_elder_description"
+      },
+      "passiveSkill": "PASSIVE_HEALER_II",
+      "activeSkill": "ACTIVE_MASS_HEAL_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Angel"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/RadiantElder.java",
+    "nameKey": "adventurer_radiant_elder_name",
+    "name": "Radiant Elder",
+    "descriptionKey": "adventurer_radiant_elder_description",
+    "description": "Blessed with ancient knowledge and divine powers, few recorded instances of Radiant Elders are present in history books. They are exceptional healers, said to be able to bring anyone back from the brink of death.",
+    "imageKey": "unit_radiant_elder",
+    "asset": "assets_extracted/main/drawable/unit_radiant_elder.png"
+  },
+  {
+    "id": "RedArchmage",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 70,
+      "baseConstitution": 6,
+      "baseIntelligence": 30,
+      "baseDexterity": 8,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "ABLAZE",
+          "cause": "self",
+          "turns": 1,
+          "probability": 0.5
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_red_archmage"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_red_archmage_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_red_archmage_description"
+      },
+      "passiveSkill": "PASSIVE_FIRE_MAGIC_I",
+      "activeSkill": "ACTIVE_FIREBALL",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "RedElder"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/RedArchmage.java",
+    "nameKey": "adventurer_red_archmage_name",
+    "name": "Red Archmage",
+    "descriptionKey": "adventurer_red_archmage_description",
+    "description": "Only the most experienced mages are given the title of Archmage. Decades of training made this mage able to effortlessly wield fire magic to set his enemies ablaze.",
+    "imageKey": "unit_red_archmage",
+    "asset": "assets_extracted/main/drawable/unit_red_archmage.png"
+  },
+  {
+    "id": "RedElder",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 95,
+      "baseConstitution": 7,
+      "baseIntelligence": 35,
+      "baseDexterity": 9,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "ABLAZE",
+          "cause": "self",
+          "turns": 1,
+          "probability": 0.5
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_red_elder"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_red_elder_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_red_elder_description"
+      },
+      "passiveSkill": "PASSIVE_FIRE_MAGIC_I",
+      "activeSkill": "ACTIVE_METEOR_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "ScorchingElder"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/RedElder.java",
+    "nameKey": "adventurer_red_elder_name",
+    "name": "Red Elder",
+    "descriptionKey": "adventurer_red_elder_description",
+    "description": "Elders are mages regarded as masters of their art, keepers of dangerous secrets and wise enough to keep them as such. The Red Elder conjure meteors above the enemy ranks, dealing tremendous damage in a large area.",
+    "imageKey": "unit_red_elder",
+    "asset": "assets_extracted/main/drawable/unit_red_elder.png"
+  },
+  {
+    "id": "RedMage",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 50,
+      "baseConstitution": 5,
+      "baseIntelligence": 25,
+      "baseDexterity": 7,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_red_mage"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_red_mage_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_red_mage_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_FIREBALL",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "RedArchmage"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/RedMage.java",
+    "nameKey": "adventurer_red_mage_name",
+    "name": "Red Mage",
+    "descriptionKey": "adventurer_red_mage_description",
+    "description": "An experienced mage who can harness his powers to hurl fireballs into the enemy ranks. Can be often found in the ranks of defending armies, being a deterrent for any aggressor choosing to invade through an open field.",
+    "imageKey": "unit_red_mage",
+    "asset": "assets_extracted/main/drawable/unit_red_mage.png"
+  },
+  {
+    "id": "RedStalker",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 120,
+      "baseConstitution": 18,
+      "baseIntelligence": 8,
+      "baseDexterity": 18,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_red_stalker"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_red_stalker_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_red_stalker_description"
+      },
+      "passiveSkill": "PASSIVE_INFILTRATOR",
+      "activeSkill": "ACTIVE_THOUSAND_CUTS",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "MeatCarver"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/RedStalker.java",
+    "nameKey": "adventurer_red_stalker_name",
+    "name": "Red Stalker",
+    "descriptionKey": "adventurer_red_stalker_description",
+    "description": "A master of lethality, he waits for the best moment to strike with incredible precision inflicting a grievous wound that hardly heals.",
+    "imageKey": "unit_red_stalker",
+    "asset": "assets_extracted/main/drawable/unit_red_stalker.png"
+  },
+  {
+    "id": "Rogue",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 5,
+      "baseMaxHp": 30,
+      "baseConstitution": 6,
+      "baseIntelligence": 4,
+      "baseDexterity": 6,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_rogue"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_rogue_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_rogue_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_BACKSTAB_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "Thief"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Rogue.java",
+    "nameKey": "adventurer_rogue_name",
+    "name": "Rogue",
+    "descriptionKey": "adventurer_rogue_description",
+    "description": "An outcast who resorts to petty crimes to survive. Lacking in strength and cunning, he compensates with his streetwise knowledge and resourcefulness.",
+    "imageKey": "unit_rogue",
+    "asset": "assets_extracted/main/drawable/unit_rogue.png"
+  },
+  {
+    "id": "RoyalCaptain",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 215,
+      "baseConstitution": 28,
+      "baseIntelligence": 11,
+      "baseDexterity": 12,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 3,
+      "counterattack": 0.45,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_royal_captain"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_royal_captain_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_royal_captain_description"
+      },
+      "passiveSkill": "PASSIVE_SWORD_MASTERY_II",
+      "activeSkill": "ACTIVE_EN_GARDE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "KingsHand"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/RoyalCaptain.java",
+    "nameKey": "adventurer_royal_captain_name",
+    "name": "Royal Captain",
+    "descriptionKey": "adventurer_royal_captain_description",
+    "description": "The most skilled swordsman serving the royal family ascends to the role of Captain, overseeing palace security and determining the strategic tactics to be employed.",
+    "imageKey": "unit_royal_captain",
+    "asset": "assets_extracted/main/drawable/unit_royal_captain.png"
+  },
+  {
+    "id": "RoyalGuard",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 130,
+      "baseConstitution": 20,
+      "baseIntelligence": 9,
+      "baseDexterity": 8,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 3,
+      "counterattack": 0.3,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_royal_guard"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_royal_guard_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_royal_guard_description"
+      },
+      "passiveSkill": "PASSIVE_SWORD_MASTERY_I",
+      "activeSkill": "ACTIVE_MIGHTY_STRIKE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "RoyalSwordsman"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/RoyalGuard.java",
+    "nameKey": "adventurer_royal_guard_name",
+    "name": "Royal Guard",
+    "descriptionKey": "adventurer_royal_guard_description",
+    "description": "Commonly found in noble houses and palaces, these guards offer a balanced blend of offensive and defensive capabilities.",
+    "imageKey": "unit_royal_guard",
+    "asset": "assets_extracted/main/drawable/unit_royal_guard.png"
+  },
+  {
+    "id": "RoyalSwordsman",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 170,
+      "baseConstitution": 24,
+      "baseIntelligence": 10,
+      "baseDexterity": 10,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 3,
+      "counterattack": 0.3,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_royal_swordman"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_royal_swordsman_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_royal_swordsman_description"
+      },
+      "passiveSkill": "PASSIVE_SWORD_MASTERY_I",
+      "activeSkill": "ACTIVE_EN_GARDE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "RoyalCaptain"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/RoyalSwordsman.java",
+    "nameKey": "adventurer_royal_swordsman_name",
+    "name": "Royal Swordsman",
+    "descriptionKey": "adventurer_royal_swordsman_description",
+    "description": "Highly trained in the art of swordsmanship, these guards are usually assigned to the protection of royal families and their palace.",
+    "imageKey": "unit_royal_swordman",
+    "asset": "assets_extracted/main/drawable/unit_royal_swordman.png"
+  },
+  {
+    "id": "ScorchingElder",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 125,
+      "baseConstitution": 8,
+      "baseIntelligence": 40,
+      "baseDexterity": 10,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "ABLAZE",
+          "cause": "self",
+          "turns": 1,
+          "probability": 1
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_scorching_elder"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_scorching_elder_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_scorching_elder_description"
+      },
+      "passiveSkill": "PASSIVE_FIRE_MAGIC_II",
+      "activeSkill": "ACTIVE_METEOR_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "MeltingElder"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/ScorchingElder.java",
+    "nameKey": "adventurer_scorching_elder_name",
+    "name": "Scorching Elder",
+    "descriptionKey": "adventurer_scorching_elder_description",
+    "description": "A mythological entity who became one with the flame. The Scorched Elder conjures searing flames so powerful they can melt rocks, and crushes his enemies with the strength of a small star.",
+    "imageKey": "unit_scorching_elder",
+    "asset": "assets_extracted/main/drawable/unit_scorching_elder.png"
+  },
+  {
+    "id": "Scourge",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 215,
+      "baseConstitution": 28,
+      "baseIntelligence": 11,
+      "baseDexterity": 12,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 2,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_scourge"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_scourge_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_scourge_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_I",
+      "activeSkill": "ACTIVE_DECIMATE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Tyrant"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Scourge.java",
+    "nameKey": "adventurer_scourge_name",
+    "name": "Scourge",
+    "descriptionKey": "adventurer_scourge_description",
+    "description": "A force of nature capable of reshaping the borders of kingdoms. It\\'s said his devastating strikes can annihilate entire legions.",
+    "imageKey": "unit_scourge",
+    "asset": "assets_extracted/main/drawable/unit_scourge.png"
+  },
+  {
+    "id": "ShadowCrawler",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 65,
+      "baseConstitution": 12,
+      "baseIntelligence": 6,
+      "baseDexterity": 12,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "nightVision": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_shadow_crawler"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_shadow_crawler_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_shadow_crawler_description"
+      },
+      "passiveSkill": "PASSIVE_NIGHT_VISION_I",
+      "activeSkill": "ACTIVE_BACKSTAB_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "ShadowDancer"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/ShadowCrawler.java",
+    "nameKey": "adventurer_shadow_crawler_name",
+    "name": "Shadow Crawler",
+    "descriptionKey": "adventurer_shadow_crawler_description",
+    "description": "Specialized in concealment within the shadows, the Shadow Crawler can be very hard to hit in dark areas",
+    "imageKey": "unit_shadow_crawler",
+    "asset": "assets_extracted/main/drawable/unit_shadow_crawler.png"
+  },
+  {
+    "id": "ShadowDancer",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 90,
+      "baseConstitution": 15,
+      "baseIntelligence": 7,
+      "baseDexterity": 15,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "nightVision": true,
+      "darknessDamageAmplification": 0.01,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_shadow_dancer"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_shadow_dancer_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_shadow_dancer_description"
+      },
+      "passiveSkill": "PASSIVE_NIGHT_VISION_II",
+      "activeSkill": "ACTIVE_BACKSTAB_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "NightBlade"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/ShadowDancer.java",
+    "nameKey": "adventurer_shadow_dancer_name",
+    "name": "Shadow Dancer",
+    "descriptionKey": "adventurer_shadow_dancer_description",
+    "description": "Uses darkness as his hideout, and strike enemies when they least expect it.",
+    "imageKey": "unit_shadow_dancer",
+    "asset": "assets_extracted/main/drawable/unit_shadow_dancer.png"
+  },
+  {
+    "id": "SilverTongue",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 90,
+      "baseConstitution": 13,
+      "baseIntelligence": 11,
+      "baseDexterity": 13,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "endOfTurnAction": "SHIELD_INSPIRE_I",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_silver_tongue"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_silver_tongue_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_silver_tongue_description"
+      },
+      "passiveSkill": "PASSIVE_INSPIRING_I",
+      "activeSkill": "ACTIVE_FEINT",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "Minstrel"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/SilverTongue.java",
+    "nameKey": "adventurer_silver_tongue_name",
+    "name": "Silver Tongue",
+    "descriptionKey": "adventurer_silver_tongue_description",
+    "description": "A persuasive manipulator who bends hearts and minds, able to inspire his allies and push them over their limits.",
+    "imageKey": "unit_silver_tongue",
+    "asset": "assets_extracted/main/drawable/unit_silver_tongue.png"
+  },
+  {
+    "id": "Skeleton",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 170,
+      "baseConstitution": 50,
+      "baseIntelligence": 1,
+      "baseDexterity": 14,
+      "baseDefense": 50,
+      "baseMagicDefense": 0,
+      "threat": 2,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_skeleton"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "summoned_skeleton_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "summoned_skeleton_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_I",
+      "activeSkill": "ACTIVE_NONE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "NONE",
+      "summonedMinion": true
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Skeleton.java",
+    "nameKey": "summoned_skeleton_name",
+    "name": "Skeleton",
+    "descriptionKey": "summoned_skeleton_description",
+    "description": "A reanimated skeleton. It feels no pain, so physical damage is less effective.",
+    "imageKey": "unit_skeleton",
+    "asset": "assets_extracted/main/drawable/unit_skeleton.png"
+  },
+  {
+    "id": "SpireAcolyte",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 155,
+      "baseConstitution": 21,
+      "baseIntelligence": 9,
+      "baseDexterity": 21,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_spire_acolyte"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_spire_acolyte_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_spire_acolyte_description"
+      },
+      "passiveSkill": "PASSIVE_INFILTRATOR",
+      "activeSkill": "ACTIVE_ECLIPSE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "SpireLeader"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/SpireAcolyte.java",
+    "nameKey": "adventurer_spire_acolyte_name",
+    "name": "Spire Acolyte",
+    "descriptionKey": "adventurer_spire_acolyte_description",
+    "description": "Acolytes, as full-fledged members of the Spire, have mastered the organization\\'s secret technique. They are pivotal agents dispatched across the Realms, ensuring no target is beyond the reach of the Spire.",
+    "imageKey": "unit_spire_acolyte",
+    "asset": "assets_extracted/main/drawable/unit_spire_acolyte.png"
+  },
+  {
+    "id": "SpireInitiate",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 120,
+      "baseConstitution": 18,
+      "baseIntelligence": 8,
+      "baseDexterity": 18,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_spire_initiate"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_spire_initiate_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_spire_initiate_description"
+      },
+      "passiveSkill": "PASSIVE_INFILTRATOR",
+      "activeSkill": "ACTIVE_ECLIPSE_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "SpireAcolyte"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/SpireInitiate.java",
+    "nameKey": "adventurer_spire_initiate_name",
+    "name": "Spire Initiate",
+    "descriptionKey": "adventurer_spire_initiate_description",
+    "description": "The Spire, an age-old clandestine organization, recruits only the realm\\'s most skilled assassins. Its select few members wield profound influence over the political landscape of kingdoms, capable of eliminating virtually any target with a secretive technique known solely to them.",
+    "imageKey": "unit_spire_initiate",
+    "asset": "assets_extracted/main/drawable/unit_spire_initiate.png"
+  },
+  {
+    "id": "SpireLeader",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 195,
+      "baseConstitution": 24,
+      "baseIntelligence": 10,
+      "baseDexterity": 24,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_spire_leader"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_spire_leader_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_spire_leader_description"
+      },
+      "passiveSkill": "PASSIVE_INFILTRATOR",
+      "activeSkill": "ACTIVE_ECLIPSE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "SpireSage"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/SpireLeader.java",
+    "nameKey": "adventurer_spire_leader_name",
+    "name": "Spire Leader",
+    "descriptionKey": "adventurer_spire_leader_description",
+    "description": "Upon the passing of the former Spire leader, often under circumstances far from the natural, the most experienced Acolyte is entrusted with assuming their role, and the organization\\'s deepest secrets are revealed to them. Deployed only for exceptionally difficult tasks, and throughout history, they have been credited with toppling rulers and deities alike.",
+    "imageKey": "unit_spire_leader",
+    "asset": "assets_extracted/main/drawable/unit_spire_leader.png"
+  },
+  {
+    "id": "SpireSage",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 240,
+      "baseConstitution": 27,
+      "baseIntelligence": 11,
+      "baseDexterity": 27,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_spire_sage"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_spire_sage_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_spire_sage_description"
+      },
+      "passiveSkill": "PASSIVE_DESPISE_WEAKNESS",
+      "activeSkill": "ACTIVE_ECLIPSE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "Whisper"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/SpireSage.java",
+    "nameKey": "adventurer_spire_sage_name",
+    "name": "Spire Sage",
+    "descriptionKey": "adventurer_spire_sage_description",
+    "description": "Spire Sages are those who advance the lethal techniques of the spire assassins. New Sages may not emerge for centuries, as the cynical resolve needed to pursue such knowledge is extremely uncommon.",
+    "imageKey": "unit_spire_sage",
+    "asset": "assets_extracted/main/drawable/unit_spire_sage.png"
+  },
+  {
+    "id": "SpiritEngraver",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 290,
+      "baseConstitution": 30,
+      "baseIntelligence": 12,
+      "baseDexterity": 30,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "BLEED",
+          "cause": "self",
+          "turns": 60,
+          "probability": 1
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_spirit_engraver"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_spirit_engraver_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_spirit_engraver_description"
+      },
+      "passiveSkill": "PASSIVE_DEADLY_FINESSE_III",
+      "activeSkill": "ACTIVE_THOUSAND_CUTS_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/SpiritEngraver.java",
+    "nameKey": "adventurer_spirit_engraver_name",
+    "name": "Spirit Engraver",
+    "descriptionKey": "adventurer_spirit_engraver_description",
+    "description": "This one-of-a-kind assassin, gifted with unparalleled skill, can strike at the very essence of a being\\'s consciousness, reaching beyond mere flesh. No living creature, mortal or divine, is safe from his dark art.",
+    "imageKey": "unit_spirit_engraver",
+    "asset": "assets_extracted/main/drawable/unit_spirit_engraver.png"
+  },
+  {
+    "id": "SpitfangRider",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 155,
+      "baseConstitution": 9,
+      "baseIntelligence": 14,
+      "baseDexterity": 28,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "endOfTurnAction": "RIDER_IV",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_spitfang_rider"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_spitfang_rider_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_spitfang_rider_description"
+      },
+      "passiveSkill": "PASSIVE_RIDER_IV",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "DrakeRider"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/SpitfangRider.java",
+    "nameKey": "adventurer_spitfang_rider_name",
+    "name": "Spitfang Rider",
+    "descriptionKey": "adventurer_spitfang_rider_description",
+    "description": "Displaying an incredible riding ability, Spitfang Riders managed to tame the fearsome Spitfang Snakes, a fearsome beast that can attack from a distance.",
+    "imageKey": "unit_spitfang_rider",
+    "asset": "assets_extracted/main/drawable/unit_spitfang_rider.png"
+  },
+  {
+    "id": "Sureshot",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 90,
+      "baseConstitution": 7,
+      "baseIntelligence": 10,
+      "baseDexterity": 20,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_sureshot"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_sureshot_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_sureshot_description"
+      },
+      "passiveSkill": "PASSIVE_KEEN_VISION",
+      "activeSkill": "ACTIVE_BARRAGE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "Fury"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Sureshot.java",
+    "nameKey": "adventurer_sureshot_name",
+    "name": "Sureshot",
+    "descriptionKey": "adventurer_sureshot_description",
+    "description": "A master of archery, a Sureshot with a good positioning can take out even small groups of enemies all by herself.",
+    "imageKey": "unit_sureshot",
+    "asset": "assets_extracted/main/drawable/unit_sureshot.png"
+  },
+  {
+    "id": "Tempest",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 195,
+      "baseConstitution": 10,
+      "baseIntelligence": 16,
+      "baseDexterity": 32,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_tempest"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_tempest_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_tempest_description"
+      },
+      "passiveSkill": "PASSIVE_KEEN_VISION",
+      "activeSkill": "ACTIVE_BARRAGE_VI",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "Hurricane"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Tempest.java",
+    "nameKey": "adventurer_tempest_name",
+    "name": "Tempest",
+    "descriptionKey": "adventurer_tempest_description",
+    "description": "Bane of invading armies, the Tempest will haul barrages of arrows shot with devastating strength and precision, singlehandedly defending strategic hideouts from entire regiments.",
+    "imageKey": "unit_tempest",
+    "asset": "assets_extracted/main/drawable/unit_tempest.png"
+  },
+  {
+    "id": "Templar",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 215,
+      "baseConstitution": 28,
+      "baseIntelligence": 14,
+      "baseDexterity": 9,
+      "baseDefense": 20,
+      "baseMagicDefense": 30,
+      "threat": 2,
+      "darknessReduction": 30,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_templar"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_templar_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_templar_description"
+      },
+      "passiveSkill": "PASSIVE_BLINDING_III",
+      "activeSkill": "ACTIVE_CONDEMN_ALL_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Inquisitor"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Templar.java",
+    "nameKey": "adventurer_templar_name",
+    "name": "Templar",
+    "descriptionKey": "adventurer_templar_description",
+    "description": "Among the strongest crusaders of the Holy Temple, the Templar serves as a commander of the vanguard that enforces the law in undiscovered lands.",
+    "imageKey": "unit_templar",
+    "asset": "assets_extracted/main/drawable/unit_templar.png"
+  },
+  {
+    "id": "Thief",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 10,
+      "baseMaxHp": 45,
+      "baseConstitution": 9,
+      "baseIntelligence": 5,
+      "baseDexterity": 9,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_thief"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_thief_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_thief_description"
+      },
+      "passiveSkill": "PASSIVE_SABOTEUR",
+      "activeSkill": "ACTIVE_BACKSTAB_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "ShadowCrawler",
+      "Cutthroat",
+      "Trickster"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Thief.java",
+    "nameKey": "adventurer_thief_name",
+    "name": "Thief",
+    "descriptionKey": "adventurer_thief_description",
+    "description": "A nimble outlaw whose skills are invaluable for detecting dangers well in advance.",
+    "imageKey": "unit_thief",
+    "asset": "assets_extracted/main/drawable/unit_thief.png"
+  },
+  {
+    "id": "Titan",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 265,
+      "baseConstitution": 32,
+      "baseIntelligence": 16,
+      "baseDexterity": 10,
+      "baseDefense": 27,
+      "baseMagicDefense": 27,
+      "threat": 4,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_titan"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_titan_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_titan_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_III",
+      "activeSkill": "ACTIVE_TAUNT_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "UndyingBastion"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Titan.java",
+    "nameKey": "adventurer_titan_name",
+    "name": "Titan",
+    "descriptionKey": "adventurer_titan_description",
+    "description": "An unbreakable warrior, renowned for traversing the chaos of battle unscathed. Whole armies have attempted, yet failed, to inflict even the slightest injury upon him.",
+    "imageKey": "unit_titan",
+    "asset": "assets_extracted/main/drawable/unit_titan.png"
+  },
+  {
+    "id": "ToxicStalker",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 120,
+      "baseConstitution": 8,
+      "baseIntelligence": 12,
+      "baseDexterity": 24,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 1,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_toxic_stalker"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_toxic_stalker_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_toxic_stalker_description"
+      },
+      "passiveSkill": "PASSIVE_POISONOUS_ARROWS_II",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "PlagueSpreader",
+      "Alchemist"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/ToxicStalker.java",
+    "nameKey": "adventurer_toxic_stalker_name",
+    "name": "Toxic Stalker",
+    "descriptionKey": "adventurer_toxic_stalker_description",
+    "description": "The Toxic Stalker has perfected her art of creating deadly toxins, and can severely disrupt the activity of unaware hostile entities.",
+    "imageKey": "unit_toxic_stalker",
+    "asset": "assets_extracted/main/drawable/unit_toxic_stalker.png"
+  },
+  {
+    "id": "Trickster",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 65,
+      "baseConstitution": 11,
+      "baseIntelligence": 8,
+      "baseDexterity": 11,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_trickster"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_trickster_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_trickster_description"
+      },
+      "passiveSkill": "PASSIVE_SABOTEUR",
+      "activeSkill": "ACTIVE_FEINT",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "SilverTongue"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Trickster.java",
+    "nameKey": "adventurer_trickster_name",
+    "name": "Trickster",
+    "descriptionKey": "adventurer_trickster_description",
+    "description": "A cunning rogue who thrives on deception, adept at distracting foes and seizing unexpected opportunities in the chaos of battle.",
+    "imageKey": "unit_trickster",
+    "asset": "assets_extracted/main/drawable/unit_trickster.png"
+  },
+  {
+    "id": "Tyrant",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 265,
+      "baseConstitution": 32,
+      "baseIntelligence": 12,
+      "baseDexterity": 14,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 2,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_tyrant"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_tyrant_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_tyrant_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_I",
+      "activeSkill": "ACTIVE_DECIMATE_III",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Overlord"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Tyrant.java",
+    "nameKey": "adventurer_tyrant_name",
+    "name": "Tyrant",
+    "descriptionKey": "adventurer_tyrant_description",
+    "description": "A leader capable of unspeakable evil, he stands as the unrivaled champion in realms where only the mightiest prevail.",
+    "imageKey": "unit_tyrant",
+    "asset": "assets_extracted/main/drawable/unit_tyrant.png"
+  },
+  {
+    "id": "Unchained",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 170,
+      "baseConstitution": 20,
+      "baseIntelligence": 20,
+      "baseDexterity": 20,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_unchained"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_unchained_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_unchained_description"
+      },
+      "passiveSkill": "PASSIVE_CHAOTIC",
+      "activeSkill": "ACTIVE_FLAY",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "Demon"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Unchained.java",
+    "nameKey": "adventurer_unchained_name",
+    "name": "Unchained",
+    "descriptionKey": "adventurer_unchained_description",
+    "description": "Most of those who aspire to become a Lich through the forgotten rituals realize too late they cannot pay the price required. The necromancer who begs for the release of death is confronted with a grim offer: his mortal body as an instrument for the entities he communed with.",
+    "imageKey": "unit_unchained",
+    "asset": "assets_extracted/main/drawable/unit_unchained.png"
+  },
+  {
+    "id": "UndyingBastion",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 320,
+      "baseConstitution": 36,
+      "baseIntelligence": 18,
+      "baseDexterity": 11,
+      "baseDefense": 29,
+      "baseMagicDefense": 29,
+      "threat": 4,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_undying_bastion"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_undying_bastion_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_undying_bastion_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_III",
+      "activeSkill": "ACTIVE_TAUNT_IV",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "EternalFortress"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/UndyingBastion.java",
+    "nameKey": "adventurer_undying_bastion_name",
+    "name": "Undying Bastion",
+    "descriptionKey": "adventurer_undying_bastion_description",
+    "description": "A walking, impenetrable fortress clad in unbreakable battle gear. Deployed in epic battles to stabilize the frontline on newly conquered lands, he is able to withstand a full charge from opposing armies alone.",
+    "imageKey": "unit_undying_bastion",
+    "asset": "assets_extracted/main/drawable/unit_undying_bastion.png"
+  },
+  {
+    "id": "Warrior",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 10,
+      "baseMaxHp": 65,
+      "baseConstitution": 12,
+      "baseIntelligence": 6,
+      "baseDexterity": 5,
+      "baseDefense": 20,
+      "baseMagicDefense": 20,
+      "threat": 2,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_warrior"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_warrior_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_warrior_description"
+      },
+      "passiveSkill": "PASSIVE_THREATENING_I",
+      "activeSkill": "ACTIVE_MIGHTY_STRIKE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "WARRIOR"
+    },
+    "nextClasses": [
+      "Guard",
+      "Knight"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Warrior.java",
+    "nameKey": "adventurer_warrior_name",
+    "name": "Warrior",
+    "descriptionKey": "adventurer_warrior_description",
+    "description": "An infantry unit with some experience in the battlefield. Warriors constitutes the bulk of regular armies.",
+    "imageKey": "unit_warrior",
+    "asset": "assets_extracted/main/drawable/unit_warrior.png"
+  },
+  {
+    "id": "Whisper",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 290,
+      "baseConstitution": 30,
+      "baseIntelligence": 12,
+      "baseDexterity": 30,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_whisper"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_whisper_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_whisper_description"
+      },
+      "passiveSkill": "PASSIVE_DESPISE_WEAKNESS",
+      "activeSkill": "ACTIVE_ECLIPSE_IV",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Whisper.java",
+    "nameKey": "adventurer_whisper_name",
+    "name": "Whisper",
+    "descriptionKey": "adventurer_whisper_description",
+    "description": "Mythological beings from whom the Spire assassins appear to draw their powers, they exist on the boundary between realms, slaying their prey through mysterious means.",
+    "imageKey": "unit_whisper",
+    "asset": "assets_extracted/main/drawable/unit_whisper.png"
+  },
+  {
+    "id": "WhiteArchmage",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 70,
+      "baseConstitution": 6,
+      "baseIntelligence": 30,
+      "baseDexterity": 8,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "healer": true,
+      "cleanser": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_white_archmage"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_white_archmage_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_white_archmage_description"
+      },
+      "passiveSkill": "PASSIVE_HEALER_II",
+      "activeSkill": "ACTIVE_MASS_HEAL_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "WhiteElder"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/WhiteArchmage.java",
+    "nameKey": "adventurer_white_archmage_name",
+    "name": "White Archmage",
+    "descriptionKey": "adventurer_white_archmage_description",
+    "description": "Only the most experienced mages are given the title of Archmage. With their exceptional mastery of white magic, White Archmages are strategic units that can turn the tides of a battle.",
+    "imageKey": "unit_white_archmage",
+    "asset": "assets_extracted/main/drawable/unit_white_archmage.png"
+  },
+  {
+    "id": "WhiteElder",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 30,
+      "baseMaxHp": 95,
+      "baseConstitution": 7,
+      "baseIntelligence": 35,
+      "baseDexterity": 9,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "healer": true,
+      "cleanser": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_white_elder"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_white_elder_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_white_elder_description"
+      },
+      "passiveSkill": "PASSIVE_HEALER_II",
+      "activeSkill": "ACTIVE_MASS_HEAL_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "RadiantElder"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/WhiteElder.java",
+    "nameKey": "adventurer_white_elder_name",
+    "name": "White Elder",
+    "descriptionKey": "adventurer_white_elder_description",
+    "description": "Elders are mages regarded as masters of their art, keepers of dangerous secrets and wise enough to keep them as such. White elders unleash an unending stream of healing, making any frontline extremely resilient.",
+    "imageKey": "unit_white_elder",
+    "asset": "assets_extracted/main/drawable/unit_white_elder.png"
+  },
+  {
+    "id": "WhiteMage",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 50,
+      "baseConstitution": 5,
+      "baseIntelligence": 25,
+      "baseDexterity": 7,
+      "baseDefense": 0,
+      "baseMagicDefense": 30,
+      "healer": true,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_white_mage"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_white_mage_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_white_mage_description"
+      },
+      "passiveSkill": "PASSIVE_HEALER_I",
+      "activeSkill": "ACTIVE_MASS_HEAL_I",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_staff"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_light"
+      },
+      "potionDrinkerType": "MAGE"
+    },
+    "nextClasses": [
+      "WhiteArchmage"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/WhiteMage.java",
+    "nameKey": "adventurer_white_mage_name",
+    "name": "White mage",
+    "descriptionKey": "adventurer_white_mage_description",
+    "description": "Widely used in the ranks of any army, white mages divisions provide reliable healing from the backlines to the most exposed soldiers.",
+    "imageKey": "unit_white_mage",
+    "asset": "assets_extracted/main/drawable/unit_white_mage.png"
+  },
+  {
+    "id": "WolfRider",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 20,
+      "baseMaxHp": 90,
+      "baseConstitution": 7,
+      "baseIntelligence": 10,
+      "baseDexterity": 20,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "endOfTurnAction": "RIDER_II",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_wolf_rider"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_wolf_rider_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_wolf_rider_description"
+      },
+      "passiveSkill": "PASSIVE_RIDER_II",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "WorgRider"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/WolfRider.java",
+    "nameKey": "adventurer_wolf_rider_name",
+    "name": "Wolf Rider",
+    "descriptionKey": "adventurer_wolf_rider_description",
+    "description": "Not indicated for beginner riders, wolves provide a formidable companion that can viciously bite enemies already overwhelmed by arrows.",
+    "imageKey": "unit_wolf_rider",
+    "asset": "assets_extracted/main/drawable/unit_wolf_rider.png"
+  },
+  {
+    "id": "WorgRider",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 25,
+      "baseMaxHp": 120,
+      "baseConstitution": 8,
+      "baseIntelligence": 12,
+      "baseDexterity": 24,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "endOfTurnAction": "RIDER_III",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_worg_rider"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_worg_rider_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_worg_rider_description"
+      },
+      "passiveSkill": "PASSIVE_RIDER_III",
+      "activeSkill": "ACTIVE_BARRAGE_II",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "SpitfangRider"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/WorgRider.java",
+    "nameKey": "adventurer_worg_rider_name",
+    "name": "Worg Rider",
+    "descriptionKey": "adventurer_worg_rider_description",
+    "description": "An extremely vicious beast, the worg will tear apart the flesh of its enemies while his rider shoots with deadly aim.",
+    "imageKey": "unit_worg_rider",
+    "asset": "assets_extracted/main/drawable/unit_worg_rider.png"
+  },
+  {
+    "id": "WoundsWeaver",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 35,
+      "baseMaxHp": 195,
+      "baseConstitution": 24,
+      "baseIntelligence": 10,
+      "baseDexterity": 24,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "saboteur": true,
+      "flatDodgeChance": 0.1,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "BLEED",
+          "cause": "self",
+          "turns": 30,
+          "probability": 1
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_wound_weaver"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_wounds_weaver_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_wounds_weaver_description"
+      },
+      "passiveSkill": "PASSIVE_DEADLY_FINESSE_II",
+      "activeSkill": "ACTIVE_THOUSAND_CUTS",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_dagger"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "THIEF"
+    },
+    "nextClasses": [
+      "HellishSculptor"
+    ],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/WoundsWeaver.java",
+    "nameKey": "adventurer_wounds_weaver_name",
+    "name": "Wounds Weaver",
+    "descriptionKey": "adventurer_wounds_weaver_description",
+    "description": "Unparalleled in the knowledge of anatomy, his enemies are a living canvas to him. While victim\\'s realization rises with each stroke, his art comes to life while life comes to an end.",
+    "imageKey": "unit_wound_weaver",
+    "asset": "assets_extracted/main/drawable/unit_wound_weaver.png"
+  },
+  {
+    "id": "Wraith",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 40,
+      "baseMaxHp": 240,
+      "baseConstitution": 11,
+      "baseIntelligence": 18,
+      "baseDexterity": 36,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "alwaysHits": true,
+      "onTargetHit": {
+        "statusEffect": {
+          "type": "POISON",
+          "cause": "self",
+          "turns": 2,
+          "probability": 0.4
+        }
+      },
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_wraith"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_wraith_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_wraith_description"
+      },
+      "passiveSkill": "PASSIVE_POISONOUS_BLOOD",
+      "activeSkill": "ACTIVE_FOCUSED_BARRAGE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [
+      "CorrosiveWraith"
+    ],
+    "statusImmunities": [
+      "POISON"
+    ],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Wraith.java",
+    "nameKey": "adventurer_wraith_name",
+    "name": "Wraith",
+    "descriptionKey": "adventurer_wraith_description",
+    "description": "Gradually altered by constant exposure to various toxins, she has developed complete immunity to poison. This venomous demon slips through enemy towns under cover of night, hidden in shadows, leaving soldiers helpless before the coming invasion.",
+    "imageKey": "unit_wraith",
+    "asset": "assets_extracted/main/drawable/unit_wraith.png"
+  },
+  {
+    "id": "WyrmRider",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 45,
+      "baseMaxHp": 290,
+      "baseConstitution": 12,
+      "baseIntelligence": 20,
+      "baseDexterity": 40,
+      "baseDefense": 10,
+      "baseMagicDefense": 10,
+      "endOfTurnAction": "RIDER_VII",
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_wyrm_rider"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "adventurer_wyrm_rider_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "adventurer_wyrm_rider_description"
+      },
+      "passiveSkill": "PASSIVE_RIDER_VII",
+      "activeSkill": "ACTIVE_SUBLIMATE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_bow"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_medium"
+      },
+      "potionDrinkerType": "ARCHER"
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/WyrmRider.java",
+    "nameKey": "adventurer_wyrm_rider_name",
+    "name": "Wyrm Rider",
+    "descriptionKey": "adventurer_wyrm_rider_description",
+    "description": "Wyrms are colossal, legendary creatures famed for the chaos they unleash in myths and folklore. These magical beasts possess elemental breath powerful enough to level entire towns, which led to them being relentlessly hunted in centuries past. No human has ever been known to ride a wyrm—except, perhaps, in the tales told by bards.",
+    "imageKey": "unit_wyrm_rider",
+    "asset": "assets_extracted/main/drawable/unit_wyrm_rider.png"
+  },
+  {
+    "id": "Zombie",
+    "parent": "Adventurer",
+    "fields": {
+      "maxLevel": 15,
+      "baseMaxHp": 130,
+      "baseConstitution": 34,
+      "baseIntelligence": 1,
+      "baseDexterity": 11,
+      "baseDefense": 50,
+      "baseMagicDefense": 0,
+      "imageId": {
+        "resourceType": "drawable",
+        "key": "unit_zombie"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "summoned_zombie_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "summoned_zombie_description"
+      },
+      "passiveSkill": "PASSIVE_NONE",
+      "activeSkill": "ACTIVE_NONE",
+      "weaponType": {
+        "resourceType": "string",
+        "key": "type_sword"
+      },
+      "armorType": {
+        "resourceType": "string",
+        "key": "type_armor_heavy"
+      },
+      "potionDrinkerType": "NONE",
+      "summonedMinion": true
+    },
+    "nextClasses": [],
+    "statusImmunities": [],
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/entities/adventurers/units/Zombie.java",
+    "nameKey": "summoned_zombie_name",
+    "name": "Zombie",
+    "descriptionKey": "summoned_zombie_description",
+    "description": "A reanimated zombie. It feels no pain, so physical damage is less effective.",
+    "imageKey": "unit_zombie",
+    "asset": "assets_extracted/main/drawable/unit_zombie.png"
+  }
+]

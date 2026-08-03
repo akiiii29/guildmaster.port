@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-07-29T14:28:50.475Z",
+  "gameVersion": "2.147",
+  "counts": {
+    "adventurers": 116,
+    "enemies": 121,
+    "items": 607,
+    "pets": 21,
+    "recipes": 321,
+    "skills": 227,
+    "activeSkills": 101,
+    "passiveSkills": 126,
+    "activeSkillHandlersRequired": 11,
+    "areas": 23,
+    "strings": 2373
+  },
+  "coverage": {
+    "adventurersWithNames": 116,
+    "enemiesWithNames": 121,
+    "itemsWithNames": 607,
+    "petsWithNames": 21,
+    "adventurersWithAssets": 116,
+    "enemiesWithAssets": 121,
+    "itemsWithAssets": 607,
+    "petsWithAssets": 21,
+    "runtimeFormulas": 7,
+    "unresolvedStructuredExpressions": 0
+  },
+  "runtimeFormulas": [
+    {
+      "location": "skills[16].operations[1].value",
+      "runtimeFormula": "eldritchFeebleTetherMultiplier"
+    },
+    {
+      "location": "skills[30].operations[1].value",
+      "runtimeFormula": "darknessScaledMultiplier",
+      "multiplier": 2
+    },
+    {
+      "location": "skills[31].operations[1].value",
+      "runtimeFormula": "darknessScaledMultiplier",
+      "multiplier": 5
+    },
+    {
+      "location": "skills[32].operations[1].value",
+      "runtimeFormula": "darknessScaledMultiplier",
+      "multiplier": 6
+    },
+    {
+      "location": "skills[90].operations[2].value.statusEffect.probability",
+      "runtimeFormula": "localDarknessPercent"
+    },
+    {
+      "location": "areas[0].darkness",
+      "runtimeFormula": "progressOffset",
+      "offset": 25
+    },
+    {
+      "location": "areas[22].darkness",
+      "runtimeFormula": "progressEquals",
+      "progress": 31,
+      "whenTrue": 50,
+      "whenFalse": 0
+    }
+  ],
+  "unresolved": []
+}

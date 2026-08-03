@@ -1,0 +1,104 @@
+[
+  {
+    "id": 1,
+    "title": "The Old Prophecy",
+    "body": "To all the law abiding citizens:\n\nIt is with great sadness i have to announce that the 1000 years old prophecy of the Sha'huri, ignored by some and ridiculed by many, came true ten days ago.\n\nThe eye of the Serpent is watching our world, and every day we are losing contact with more of our allies in the north. We are a small mercantile state, and our army is very limited, but our wealth is large. Therefore, the King will provide some land and basic structures to any of you willing to form an adventurer guild and embark on a quest to the Golden City.\n\nYour mission is to find Kasimir, the immortal seer that served the emperor family for many generation and worked so hard to maintain peace across the Realms. He had been missing for almost a year, but we are sure he will find a solution.\n\nWe must succeed or, according to the prophecy, 100 years of darkness awaits us all.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": null
+  },
+  {
+    "id": 2,
+    "title": "The Sha'huri Desert",
+    "body": "So, the corruption already reached the Enchanted Forest. We may have less time than we thought.\n\nWhat awaits you in your travel towards the north is a vast desert, home of the Sha'huri people. They are peaceful people, who worship an immortal god living in a giant pyramid, but no one outside the desert could confirm the existence of either.\nThe Sha'huri were adamant on preventing the coming of the Great Serpent, spreading the prophecy that everyone refused to believe, and for unknown reasons in the last thousand years they waged an unsuccessful war against the Golden City called The Eternal War.\n\nWe used to have trade deals in place, but since two months ago they cut all contacts and every ambassador we sent went missing and we fear they have fell victim to the Corruption.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "TheDesert"
+  },
+  {
+    "id": 3,
+    "title": "The Eternal War",
+    "body": "I'm happy to see you made it through the desert, Guild Master.\n\nIn front of you lies the Eternal Battlefield, the place where the Eternal War took place. Both the Sha'huri and the Imperial armies were recalled when the eye appeared in the sky, so we expect it to be an uninhabited area. But be careful: it's speculated that living being aren't the only ones affected by the corruption. If it were the case…\n\nYou will need to cross these wretched lands, enter the Golden City and find out what happened to the immortal seer. The clock is ticking, and the time isn't on our side.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "EternalBattlefield"
+  },
+  {
+    "id": 4,
+    "title": "The Golden City",
+    "body": "In front of you are the unhinged gates to the Empire's capital, now overrun by the corruption and decay. The eye is watching its inhabitants, draining them of their remaining sanity like a vulture gazing over its dying prey.\n\nOur spies revealed that, despite the bulk of the imperial army traveling north some months ago to stop the cataclysm, loud noises are coming from the palace. We fear the seer didn't actually go missing, but was always kept prisoner inside for unknown reasons.\n\nWe have no time to lose: you must force your way to the imperial palace, so i can send a delegation to investigate it.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "TheGoldenCity"
+  },
+  {
+    "id": 5,
+    "title": "Betrayal",
+    "body": "Out of the 30 soldiers sent to investigate the palace, only one survived. The seer isn't there, but something else is, and it reduced our soldiers to a pulp with an overwhelming strength. The survivor managed to hide in the Seer's chambers, and by sheer luck found a stash of hidden documents. These contain detailed instructions on how to perform a ritual. You guessed right: a ritual about summoning an eldritch god.\n\nWe do not know why a benevolent ally of our people would commit such a terrible act, but we have no time for a better assessment: in this moment, your mission is to go north, follow the trails of the imperial army and stop the Seer's ritual. We don't know if this will end the ritual, but we have to try.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "BlackwaterPort"
+  },
+  {
+    "id": 6,
+    "title": "The Northern Lands",
+    "body": "I see you survived the fearsome pirates of Blackwater Port. Excellent!\n\nYou must now head North-East and cross the perilous Frostbite Peaks, where our sources say the Imperial Army traveled. Be careful though: these mountains are inhabited by Trolls, creatures with an incredible strength and resilience adapted to the extreme weather.\n\nWe also shed further light on the documents retrieved in the Seer's chambers: it seems the ritual has been performed every 1000 years since time immemorial, and the Black Serpent is summoned periodically to harvest the souls from this world.\nThe few survivors rebuild everything after its departure, and the world is ready to be consumed again in a thousand years, while the \\\"prophecy\\\" is dismissed in few generations.\nOnly the Sha'huri still believe it, because their immortal god survives being consumed at every iteration, and warns them of the danger.\n\nIf only we knew, we could have helped them win their Eternal War and stop Kasimir in time.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "FrostbitePeaks"
+  },
+  {
+    "id": 7,
+    "title": "A Dark Passage",
+    "body": "The destination is near, Guild Master. In a valley, between the mountains, lies the entrance to an abandoned cave where centuries ago precious obsidian used to be mined. The cave should run all the way below the mountains and emerge on the other side, where we will see what fate awaits us.\n\nYou must be very careful though: our historical records are incomplete, but at a certain point something from the depths scared the miner so much that, despite the incredible value obsidian presents for weapon manufacturing, the mines were left abandoned to this day.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "ObsidianMines"
+  },
+  {
+    "id": 8,
+    "title": "The Living Mountain",
+    "body": "The missing Imperial Army has been found. They came into contact with this… mass of spectral bodies, to give it a name. Trying to fight their way to the top they perished one by one, and became part of it as reanimated corpses, only increasing its size.\nWe can see a magic \\\"tendril\\\", lacking a better name, emanating from the summit into the dark clouds.\nWe believe Kasimir, the Seer, is up there performing the ritual that allows the presence of the evil Serpent, protected by the endless army below him.\n\nYou have to find a way to climb it, and end the ritual once and for all.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "TheDreadfulAscent"
+  },
+  {
+    "id": 9,
+    "title": "The Link is Severed",
+    "body": "Congratulation, Guild Master, to You and your brave Adventurers!\n\nKasimir is defeated, and the connection to the eldritch God is severed. It is still visible in the sky, but unable to feed on our energy. Our elder mages believe it will soon drift away in the distant space.\nThe effect of corruption, like a wound inflicted upon these realms, will persist for this generation but eventually die out with those afflicted, and its spread is to be considered halted.\n\nOur elder mages are analyzing the diary found on the body of Kasimir, a copy of which you will find attached to this letter, to understand more of the nature of our defeated enemy. Your guild is one of the most powerful assets at the service of our kingdom, and you will surely be notified if we discover anything important.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "TheSouthernGrove"
+  },
+  {
+    "id": 10,
+    "title": "The Apostle's Diary",
+    "body": "Year 0.\nAnother cycle is completed, my Master departs after having satiated its hunger for a hundred years. Hail great Yadalbaoth, my euphoria is endless!\n\nYear +5\nThe preparation of this iteration is almost done. I picked a boy, whose family managed to survive in a network of tunnels under the Capital for 100 years, to be the next Great Emperor. They were ecstatic!\nI will once again step into the shoes of the benevolent, eternal Seer, and guide the world into annihilation for my glorious master.\n\nYear +200\nThe repopulation plan is going well, as always.\nThe Golden City is flourishing, and so are the realms in the south. I made sure everyone is reassured enough to never build large armies and wage wars, as more deaths now means less food for the Eternal.\nOne exception, as always, is the constant attacks from the Sha'huri: but, my Master told me, it's a fair price to pay for a taste of the spirit of the God in the pyramid. For aeons i tried to find a way to clear its memory, but to no avail. It HAS to tell the prophecy at every occasion, doesn't it?\n\nYear +800.\nEverything is going as planned. The war in the south is locked into an impasse, the people of the realms trust my directions blindly. Soon we shall meet again, Master.\n\nYear + 1000.\nThe protocol is complete. I fled to the north to initiate the connection of the Astral Graft, to allow Him to manifest into this world.\nThe Emperor has been \\\"enhanced\\\" as an extra security measure, it's likely pointless but better be safe: those realms in the south sometimes send some late reinforcements to the party.\nNow, the ritual shall commence.\n\nYear -99.\nThe Astral Graft has been conjured, and not long ago Yadalbaoth manifested its presence. Everyone will soon be eager to offer their energy and life. The dead will come back to life, briefly, to give whatever essence remained attached to their rotten bones.\nThe Imperial Army generals caught on my plan eventually, but they will crash upon the Mountain of Souls, becoming additional soldiers for the next iteration. Isn't it ironic? An army fighting against thousands of its undead versions, only to lose and make it a stronger foe.\nOh, and i'm not worried about their fool's errand either: in the microscopic possibility that they succeed and kill me, my Master will simply send another of his apostles to perform the next ritual through the secret passage in the broken mantle. They literally cannot win!\nBut i digress. The feast has commenced, now i only need to focus and maintain the ritual for another 99 years. And then, a new iteration will take place, as always.",
+    "unlockAreaId": "TheSouthernGrove"
+  },
+  {
+    "id": 11,
+    "title": "A Turn of Events",
+    "body": "Guild Master, i must write to you once more to request your aid.\n\nIn the south, in the barren wastelands over the Southern Grove, there are sightings of blinding lights coming from a fiery battle. We have no idea about what the source could be: the area is inhabited by a terrifying breed of armored beasts, but they usually stay within their territory.\n\nWe will send an ambassador to try to speak with any invading force down there and i will come back to you if they make it back alive, but in the mean time every guild who wishes to help will have to cross the Southern Grove and prepare a line of defense between us and the attackers.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "TheSouthernGrove"
+  },
+  {
+    "id": 12,
+    "title": "Scorched Earth",
+    "body": "I am happy to see the party you sent made it to the Barren Wastelands.\n\nOur diplomatic delegation made it back. They saw a full blown war between the Wasteland's beasts and a breed of humanoid never seen before in all the realms. They spoke to one of the higher generals, who delivered a terrible news: our world has become the center of a cosmic war.\n\nThe enemy of Yadalbaoth, the Celestial Goddess, saw that her enemy briefly lost control over this world. He informed us that, while this cycle of corruption is stopped, the very core of this world is infected and another emissary like Kasimir will be sent here in 1000 years. Yadalbaoth draws its strength from the corrupted souls of the worlds he infects, therefore… the Celestial Army will try to eradicate all the life from our planet, so that it will be useless for the next cycles. Our wise elders believe that we have no way to oppose the invading army due to its sheer strength, but maybe we can close the portal inside the rotten core. This way, the Army of Light will have no more business here.\n\nIf you wish to help, you will have to cross the ongoing battle and head to the Gates of Hell. It's just a name, worry not: it's a hole in the ground leading to the depth of our world, hopefully going down all the way to the core.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "BarrenWastelands"
+  },
+  {
+    "id": 13,
+    "title": "The Gates of Hell",
+    "body": "I hope this letter, carried by avian messenger, reaches you, Guild Master. I have dispatched some of our finest soldiers via an alternative route to establish a camp near the Gates of Hell, though the journey may take several weeks.\n\nIn the meantime, I must deliver an urgent warning: while we remain uncertain whether anything resides beneath the Gates, our wizards have detected a strange disruption in the magical fields surrounding the entrance. We cannot determine if this is a natural phenomenon, but I urge you to exercise the utmost caution.\n\nMost importantly, please move swiftly toward the core—the Celestial Army is advancing with ruthless speed.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "HiddenCityOfLarox"
+  },
+  {
+    "id": 14,
+    "title": "A Forgotten World",
+    "body": "Guild Master,\n\nI write to share urgent developments. The Celestial Army has cleared the Barren Wasteland and is now visible to our sentinels at the Southern Grove’s edge. At their current pace, they will reach our Kingdom within two weeks.\n\nOn a brighter note, we’ve successfully established a camp near the Gates of Hell, improving supply lines and communication with your expedition. Analysis of the Nexus of Larox’s frequency patterns suggests they are constructing a weapon to combat the cyclical corruption of the upper realms. While their stance is hostile, we are confident they are not allied with the Black Serpent.\n\nWith this in mind, press onward into the caverns’ depths. We are certain the Portal is near.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "LostLands"
+  },
+  {
+    "id": 15,
+    "title": "Darkness Within",
+    "body": "I have dispatched our finest infiltrators through the City of Larox and the Forgotten Lands beneath the tunnels, hoping this missive reaches your valiant expedition.\n\nThe Army of Light have cleared the Southern Grove. Though their vanguard suffered heavy losses, their numbers are not faltering, with two soldiers seemingly replacing every one that falls. From our towers, we now see the banners of the Goddess of Light. At most, we have a few days before the cleansing of our homeland begins.\n\nGuild Master, I implore your expedition to advance with haste and eliminate whatever entity, spell, or device sustains the link with the Black Serpent. Time is against us.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "TheDireDescent"
+  },
+  {
+    "id": 16,
+    "title": "Victory",
+    "body": "You arrived just in time, Guild Master! The Army of Light has begun its retreat, only hours before they would have reached our gates. A multitude of ships can be seen lifting off on the horizon, and we’re confident they’ll soon depart from the Barren Wastelands as well.\n\nWe also received your missive regarding the strange, intact device discovered beneath the volcano. I have dispatched our most knowledgeable researchers to study it further and uncover its purpose.\n\nYou can return home now and enjoy your well-earned rest. A grand parade is being prepared to welcome you and your fellow adventurers with all the honors you deserve.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "SleepingPlanet"
+  },
+  {
+    "id": 17,
+    "title": "Through the Stars",
+    "body": "Guild Master,\n\nI write to inform you of the remarkable progress we have made in our research on the mysterious device you discovered. Our investigations have revealed that it was used by the three Harbingers to enter our world and establish yet another puppet regime in the Golden City, preparing the way for the next coming of the Serpent.\n\nThanks to the exceptional skill of our wizards, we have discovered a method to reverse the flow of essence within the device. In simpler terms, it can now be used to access other worlds ruled by Yaldabaoth that are linked to our own.\n\nThough the immediate threat has passed, these worlds remain open for exploration. They may hold not only crucial insight into the nature of the Serpent’s curse, but also unimaginable power and wealth. Keep in mind thatyou will be able to send considerably larger expeditions, since the time constraints requiring a small, faster group are no longer present.\n\nIn recognition of your invaluable service to the kingdom, I hereby grant you unrestricted access to the device, along with the freedom to explore these realms as you see fit.\n\nMay your path be guided by wisdom and strength.\n\nYour loyal Sovereign,\nKing Roderic XXXI",
+    "unlockAreaId": "SleepingPlanet"
+  }
+]

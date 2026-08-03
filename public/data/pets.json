@@ -1,0 +1,548 @@
+[
+  {
+    "id": "Beetle",
+    "family": "Insect",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_beetle"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_beetle_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_beetle_description"
+      },
+      "abilityNumber": 3
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Beetle.java",
+    "nameKey": "pet_beetle_name",
+    "name": "Beetle",
+    "descriptionKey": "pet_beetle_description",
+    "description": "A small, hard-shelled insect with sturdy legs and antennae. It scuttles with purpose, often gleaming in metallic colors.",
+    "imageKey": "pet_beetle",
+    "asset": "assets_extracted/main/drawable/pet_beetle.png"
+  },
+  {
+    "id": "Crocodile",
+    "family": "Reptile",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_crocodile"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_crocodile_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_crocodile_description"
+      },
+      "abilityNumber": 4
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Crocodile.java",
+    "nameKey": "pet_crocodile_name",
+    "name": "Crocodile",
+    "descriptionKey": "pet_crocodile_description",
+    "description": "A massive, armored reptile with powerful jaws and a stealthy, low-slung body. It lurks in water, ready to launch explosive ambushes with a swift lunge.",
+    "imageKey": "pet_crocodile",
+    "asset": "assets_extracted/main/drawable/pet_crocodile.png"
+  },
+  {
+    "id": "Dove",
+    "family": "Avian",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_dove"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_dove_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_dove_description"
+      },
+      "abilityNumber": 2
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Dove.java",
+    "nameKey": "pet_dove_name",
+    "name": "Dove",
+    "descriptionKey": "pet_dove_description",
+    "description": "A gentle bird with soft feathers and a cooing call. It soars gracefully through the air, often seen as a symbol of peace and harmony.",
+    "imageKey": "pet_dove",
+    "asset": "assets_extracted/main/drawable/pet_dove.png"
+  },
+  {
+    "id": "Eagle",
+    "family": "Avian",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_eagle"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_eagle_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_eagle_description"
+      },
+      "abilityNumber": 4
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Eagle.java",
+    "nameKey": "pet_eagle_name",
+    "name": "Eagle",
+    "descriptionKey": "pet_eagle_description",
+    "description": "A fierce bird of prey with sharp talons and keen vision. It flies high above, scanning for prey with intense focus, before diving with unmatched speed and precision.",
+    "imageKey": "pet_eagle",
+    "asset": "assets_extracted/main/drawable/pet_eagle.png"
+  },
+  {
+    "id": "FloatingEye",
+    "family": "Esoteric",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_floating_eye"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_floating_eye_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_floating_eye_description"
+      },
+      "abilityNumber": 2
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/FloatingEye.java",
+    "nameKey": "pet_floating_eye_name",
+    "name": "Floating Eye",
+    "descriptionKey": "pet_floating_eye_description",
+    "description": "A hovering orb of flesh, bristling with tendrils and stalks. Its gaze is unsettling, filled with cold, alien intelligence.",
+    "imageKey": "pet_floating_eye",
+    "asset": "assets_extracted/main/drawable/pet_floating_eye.png"
+  },
+  {
+    "id": "FloatingSeed",
+    "family": "Wooden",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_floating_seed"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_floating_seed_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_floating_seed_description"
+      },
+      "abilityNumber": 2
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/FloatingSeed.java",
+    "nameKey": "pet_floating_seed_name",
+    "name": "Floating Seed",
+    "descriptionKey": "pet_floating_seed_description",
+    "description": "A small, round seed with a helix-like appendage. It just shuffles about, searching for fertile ground.",
+    "imageKey": "pet_floating_seed",
+    "asset": "assets_extracted/main/drawable/pet_floating_seed.png"
+  },
+  {
+    "id": "Golem",
+    "family": "Construct",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_golem"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_golem_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_golem_description"
+      },
+      "abilityNumber": 3
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Golem.java",
+    "nameKey": "pet_golem_name",
+    "name": "Golem",
+    "descriptionKey": "pet_golem_description",
+    "description": "A small, compact figure of dense stone and clay. Despite its size, it’s incredibly tough and unyielding, moving with steady purpose, driven by an inner force.",
+    "imageKey": "pet_golem",
+    "asset": "assets_extracted/main/drawable/pet_golem.png"
+  },
+  {
+    "id": "HolyTree",
+    "family": "Wooden",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_holy_tree"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_holy_tree_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_holy_tree_description"
+      },
+      "abilityNumber": 4
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/HolyTree.java",
+    "nameKey": "pet_holy_tree_name",
+    "name": "Holy Tree",
+    "descriptionKey": "pet_holy_tree_description",
+    "description": "A small bonsai tree not taller than the average human. Despite its unassuming appearance, these trees belong to an almost extinct ancient species of sentient trees.",
+    "imageKey": "pet_holy_tree",
+    "asset": "assets_extracted/main/drawable/pet_holy_tree.png"
+  },
+  {
+    "id": "Lizard",
+    "family": "Reptile",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_lizard"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_lizard_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_lizard_description"
+      },
+      "abilityNumber": 2
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Lizard.java",
+    "nameKey": "pet_lizard_name",
+    "name": "Lizard",
+    "descriptionKey": "pet_lizard_description",
+    "description": "A small reptile with agile limbs and darting eyes. It scurries nimbly over rocks and through foliage, quick to flick its tongue and bask in the sun.",
+    "imageKey": "pet_lizard",
+    "asset": "assets_extracted/main/drawable/pet_lizard.png"
+  },
+  {
+    "id": "Mosquito",
+    "family": "Insect",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_mosquito"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_mosquito_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_mosquito_description"
+      },
+      "abilityNumber": 2
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Mosquito.java",
+    "nameKey": "pet_mosquito_name",
+    "name": "Mosquito",
+    "descriptionKey": "pet_mosquito_description",
+    "description": "A tiny, buzzing insect with needle-like mouthparts. It flits through the air with an annoying persistence, always seeking a warm-blooded host to siphon from.",
+    "imageKey": "pet_mosquito",
+    "asset": "assets_extracted/main/drawable/pet_mosquito.png"
+  },
+  {
+    "id": "Owl",
+    "family": "Avian",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_owl"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_owl_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_owl_description"
+      },
+      "abilityNumber": 3
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Owl.java",
+    "nameKey": "pet_owl_name",
+    "name": "Owl",
+    "descriptionKey": "pet_owl_description",
+    "description": "A nocturnal bird with large, forward-facing eyes and a round face. It glides silently on wide wings, its haunting hoot echoing through the darkness.",
+    "imageKey": "pet_owl",
+    "asset": "assets_extracted/main/drawable/pet_owl.png"
+  },
+  {
+    "id": "Rat",
+    "family": "Wild",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_rat"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_rat_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_rat_description"
+      },
+      "abilityNumber": 2
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Rat.java",
+    "nameKey": "pet_rat_name",
+    "name": "Rat",
+    "descriptionKey": "pet_rat_description",
+    "description": "A quick, wiry rodent with sharp teeth and twitching whiskers. It scurries in the shadows, scavenging for scraps and finding its way into the smallest crevices.",
+    "imageKey": "pet_rat",
+    "asset": "assets_extracted/main/drawable/pet_rat.png"
+  },
+  {
+    "id": "RedWolf",
+    "family": "Wild",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_red_wolf"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_red_wolf_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_red_wolf_description"
+      },
+      "abilityNumber": 4
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/RedWolf.java",
+    "nameKey": "pet_red_wolf_name",
+    "name": "Red Wolf",
+    "descriptionKey": "pet_red_wolf_description",
+    "description": "Rare wolf sometimes found roaming the forests looking for prey. It has a timid and elusive nature, but it\\'s also extremely loyal.",
+    "imageKey": "pet_red_wolf",
+    "asset": "assets_extracted/main/drawable/pet_red_wolf.png"
+  },
+  {
+    "id": "Rockling",
+    "family": "Construct",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_rockling"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_rockling_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_rockling_description"
+      },
+      "abilityNumber": 2
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Rockling.java",
+    "nameKey": "pet_rockling_name",
+    "name": "Rockling",
+    "descriptionKey": "pet_rockling_description",
+    "description": "A squat, rocky creature covered in jagged stone plates. It shuffles slowly, grinding against the earth, its mineral-rich body blending seamlessly with crags and boulders.",
+    "imageKey": "pet_rockling",
+    "asset": "assets_extracted/main/drawable/pet_rockling.png"
+  },
+  {
+    "id": "Squirrel",
+    "family": "Wild",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_squirrel"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_squirrel_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_squirrel_description"
+      },
+      "abilityNumber": 3
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Squirrel.java",
+    "nameKey": "pet_squirrel_name",
+    "name": "Squirrel",
+    "descriptionKey": "pet_squirrel_description",
+    "description": "A sleek, agile rodent with sharp claws and a bushy tail. It moves with a silent grace, watching its surroundings with a mix of curiosity and calculated intent. Loves to eat nuts.",
+    "imageKey": "pet_squirrel",
+    "asset": "assets_extracted/main/drawable/pet_squirrel.png"
+  },
+  {
+    "id": "Tarantula",
+    "family": "Insect",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_tarantula"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_tarantula_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_tarantula_description"
+      },
+      "abilityNumber": 4
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Tarantula.java",
+    "nameKey": "pet_tarantula_name",
+    "name": "Tarantula",
+    "descriptionKey": "pet_tarantula_description",
+    "description": "A large, hairy spider with eight watchful eyes and thick, bristling legs. It moves slowly and deliberately, ready to pounce or retreat into the shadows.",
+    "imageKey": "pet_tarantula",
+    "asset": "assets_extracted/main/drawable/pet_tarantula.png"
+  },
+  {
+    "id": "TentacleTangle",
+    "family": "Esoteric",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_tentacle_tangle"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_tentacle_tangle_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_tentacle_tangle_description"
+      },
+      "abilityNumber": 3
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/TentacleTangle.java",
+    "nameKey": "pet_tentacle_tangle_name",
+    "name": "Tentacle Tangle",
+    "descriptionKey": "pet_tentacle_tangle_description",
+    "description": "A writhing, pulsating clump of rubbery tendrils, constantly coiling and twisting. It slithers with unsettling grace, its searching limbs probing for anything to grasp.",
+    "imageKey": "pet_tentacle_tangle",
+    "asset": "assets_extracted/main/drawable/pet_tentacle_tangle.png"
+  },
+  {
+    "id": "Tesseract",
+    "family": "Construct",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_tesseract"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_tesseract_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_tesseract_description"
+      },
+      "abilityNumber": 4
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/Tesseract.java",
+    "nameKey": "pet_tesseract_name",
+    "name": "Tesseract",
+    "descriptionKey": "pet_tesseract_description",
+    "description": "A shimmering, geometric construct that defies conventional shapes. It twists in and out of itself, folding space in mind-bending ways, giving glimpses into other dimensions.",
+    "imageKey": "pet_tesseract",
+    "asset": "assets_extracted/main/drawable/pet_tesseract.png"
+  },
+  {
+    "id": "ThingFromTheAbyss",
+    "family": "Esoteric",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_thing_from_the_abyss"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_thing_from_the_abyss_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_thing_from_the_abyss_description"
+      },
+      "abilityNumber": 4
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/ThingFromTheAbyss.java",
+    "nameKey": "pet_thing_from_the_abyss_name",
+    "name": "Thing from the Abyss",
+    "descriptionKey": "pet_thing_from_the_abyss_description",
+    "description": "A shadowy, amorphous entity with flickering, spectral limbs and piercing, formless eyes. Very small for the abyssal horrors standards, but it still radiates a cold dread.",
+    "imageKey": "pet_thing_from_the_abyss",
+    "asset": "assets_extracted/main/drawable/pet_thing_from_the_abyss.png"
+  },
+  {
+    "id": "TreeFrog",
+    "family": "Reptile",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_tree_frog"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_tree_frog_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_tree_frog_description"
+      },
+      "abilityNumber": 3
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/TreeFrog.java",
+    "nameKey": "pet_tree_frog_name",
+    "name": "Tree Frog",
+    "descriptionKey": "pet_tree_frog_description",
+    "description": "A small, bright green amphibian with a powerful legs. Its sharp, resonant croak echoes through the forests, and it has a voracious appetite for anything it can swallow.",
+    "imageKey": "pet_tree_frog",
+    "asset": "assets_extracted/main/drawable/pet_tree_frog.png"
+  },
+  {
+    "id": "WalkingBush",
+    "family": "Wooden",
+    "fields": {
+      "idImage": {
+        "resourceType": "drawable",
+        "key": "pet_walking_bush"
+      },
+      "idName": {
+        "resourceType": "string",
+        "key": "pet_walking_bush_name"
+      },
+      "idDescription": {
+        "resourceType": "string",
+        "key": "pet_walking_bush_description"
+      },
+      "abilityNumber": 3
+    },
+    "source": "jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/storage/data/pets/instances/WalkingBush.java",
+    "nameKey": "pet_walking_bush_name",
+    "name": "Walking Bush",
+    "descriptionKey": "pet_walking_bush_description",
+    "description": "A dense, thorny shrub with rustling leaves that move on their own. It scuttles across the ground, roots writhing like legs, driven mostly by its curiosity.",
+    "imageKey": "pet_walking_bush",
+    "asset": "assets_extracted/main/drawable/pet_walking_bush.png"
+  }
+]

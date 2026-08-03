@@ -1,0 +1,1290 @@
+[
+  {
+    "id": "ActiveDeterrent",
+    "name": "Active Deterrent",
+    "description": "Use True Agony on %d enemies",
+    "defaultRarity": 3,
+    "minimumDifficulty": 10,
+    "targets": [
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "doctrines": [
+      "Illusion"
+    ]
+  },
+  {
+    "id": "AndStayDead",
+    "name": "And Stay Dead",
+    "description": "Defeat Ka'Bar, the Rotten %d times",
+    "defaultRarity": 2,
+    "minimumDifficulty": 5,
+    "targets": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "doctrines": [
+      "Grace"
+    ]
+  },
+  {
+    "id": "Annihilator",
+    "name": "Annihilator",
+    "description": "Deal over %d damage in a single hit",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      30,
+      80,
+      150,
+      250,
+      400,
+      700,
+      1000,
+      1500,
+      2000,
+      3000,
+      5000
+    ],
+    "doctrines": [
+      "Ruin"
+    ]
+  },
+  {
+    "id": "BotchedRitual",
+    "name": "Botched Ritual",
+    "description": "Defeat Claris and Thorvus %d times",
+    "defaultRarity": 2,
+    "minimumDifficulty": 8,
+    "targets": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "doctrines": [
+      "Ruin"
+    ]
+  },
+  {
+    "id": "ClashOfTitans",
+    "name": "Clash of Titans",
+    "description": "Defeat %d Banshee",
+    "defaultRarity": 2,
+    "minimumDifficulty": 9,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      25,
+      50,
+      75,
+      100
+    ],
+    "doctrines": [
+      "Fortitude"
+    ]
+  },
+  {
+    "id": "Conqueror",
+    "name": "Conqueror",
+    "description": "Defeat %d Sha'huri",
+    "defaultRarity": 1,
+    "minimumDifficulty": 2,
+    "targets": [
+      1,
+      1500,
+      3000,
+      4500,
+      6000,
+      7500,
+      9000,
+      10500,
+      12000,
+      13500,
+      15000
+    ],
+    "doctrines": [
+      "War"
+    ]
+  },
+  {
+    "id": "CoupDEtat",
+    "name": "Coup d'Etat",
+    "description": "Defeat %d Archmage of Larox",
+    "defaultRarity": 1,
+    "minimumDifficulty": 10,
+    "targets": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "doctrines": [
+      "Ruin"
+    ]
+  },
+  {
+    "id": "CriticalHit",
+    "name": "Critical Hit!",
+    "description": "Perform %d Critical Hits",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      100,
+      300,
+      1000,
+      3000,
+      5000,
+      7500,
+      10000,
+      13750,
+      17500,
+      21250,
+      25000
+    ],
+    "doctrines": [
+      "Ruin"
+    ]
+  },
+  {
+    "id": "CrystalClear",
+    "name": "Crystal Clear",
+    "description": "Avoid a status effect through Status Immunity %d times",
+    "defaultRarity": 3,
+    "minimumDifficulty": 5,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      25,
+      50,
+      75,
+      100,
+      125,
+      150,
+      175
+    ],
+    "doctrines": [
+      "Control"
+    ]
+  },
+  {
+    "id": "DarknessWithin",
+    "name": "Darkness Within",
+    "description": "Defeat %d Pale Hermit",
+    "defaultRarity": 4,
+    "minimumDifficulty": 8,
+    "targets": [
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "doctrines": [
+      "Grace"
+    ]
+  },
+  {
+    "id": "Delirious",
+    "name": "Delirious",
+    "description": "Defeat %d enemies affected by Delirium",
+    "defaultRarity": 4,
+    "minimumDifficulty": 4,
+    "targets": [
+      25,
+      50,
+      75,
+      100,
+      125,
+      150,
+      175,
+      200,
+      225,
+      250,
+      275
+    ],
+    "doctrines": [
+      "Affliction"
+    ]
+  },
+  {
+    "id": "EldritchHorror",
+    "name": "Eldritch Horror",
+    "description": "Defeat %d Avatar of the Ancient",
+    "defaultRarity": 2,
+    "minimumDifficulty": 9,
+    "targets": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "doctrines": [
+      "Illusion"
+    ]
+  },
+  {
+    "id": "EndlessAgony",
+    "name": "Endless Agony",
+    "description": "Defeat %d Primordial Titans",
+    "defaultRarity": 2,
+    "minimumDifficulty": 8,
+    "targets": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "doctrines": [
+      "War"
+    ]
+  },
+  {
+    "id": "Exorcism",
+    "name": "Exorcism",
+    "description": "Defeat %d Will o' Wisps",
+    "defaultRarity": 4,
+    "minimumDifficulty": 3,
+    "targets": [
+      20,
+      40,
+      60,
+      80,
+      100,
+      120,
+      140,
+      160,
+      180,
+      200,
+      220
+    ],
+    "doctrines": [
+      "Knowledge"
+    ]
+  },
+  {
+    "id": "ExpertDuelist",
+    "name": "Expert Duelist",
+    "description": "Counterattack %d times",
+    "defaultRarity": 1,
+    "minimumDifficulty": 4,
+    "targets": [
+      1,
+      1,
+      1,
+      1500,
+      3000,
+      4500,
+      6000,
+      7500,
+      9000,
+      10500,
+      12000
+    ],
+    "doctrines": [
+      "War"
+    ]
+  },
+  {
+    "id": "FallingApart",
+    "name": "Falling Apart",
+    "description": "Take %d damage from decay",
+    "defaultRarity": 1,
+    "minimumDifficulty": 6,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      5000,
+      10000,
+      15000,
+      20000,
+      25000,
+      30000
+    ],
+    "doctrines": [
+      "Affliction"
+    ]
+  },
+  {
+    "id": "FastLearner",
+    "name": "Fast Learner",
+    "description": "Gain experience %d times with a multiplier of at least 150%%",
+    "defaultRarity": 3,
+    "minimumDifficulty": 4,
+    "targets": [
+      100,
+      200,
+      300,
+      400,
+      500,
+      600,
+      700,
+      800,
+      900,
+      1000,
+      1100
+    ],
+    "doctrines": [
+      "Knowledge"
+    ]
+  },
+  {
+    "id": "FromHell",
+    "name": "From Hell",
+    "description": "Defeat %d Wicked Tribute",
+    "defaultRarity": 2,
+    "minimumDifficulty": 10,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      5,
+      10,
+      15,
+      20
+    ],
+    "doctrines": [
+      "Knowledge"
+    ]
+  },
+  {
+    "id": "GodFeared",
+    "name": "God Feared",
+    "description": "Defeat %d enemies while the Sha'huri defense system mechanism is active",
+    "defaultRarity": 4,
+    "minimumDifficulty": 2,
+    "targets": [
+      300,
+      300,
+      300,
+      300,
+      300,
+      300,
+      300,
+      300,
+      300,
+      300,
+      300
+    ],
+    "doctrines": [
+      "Fortitude"
+    ]
+  },
+  {
+    "id": "HeavyArmor",
+    "name": "Heavy Armor",
+    "description": "Mitigate %d damage",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      500,
+      850,
+      1444,
+      2456,
+      4176,
+      7099,
+      12068,
+      20516,
+      34878,
+      59293,
+      100799
+    ],
+    "doctrines": [
+      "Fortitude"
+    ]
+  },
+  {
+    "id": "HitOrMiss",
+    "name": "Hit or Miss",
+    "description": "Dodge %d times",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      100,
+      150,
+      225,
+      337,
+      506,
+      759,
+      1139,
+      1708,
+      2562,
+      3844,
+      5766
+    ],
+    "doctrines": [
+      "Illusion"
+    ]
+  },
+  {
+    "id": "IceBreaker",
+    "name": "Ice Breaker",
+    "description": "Defeat %d Ice Elemental",
+    "defaultRarity": 1,
+    "minimumDifficulty": 6,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30
+    ],
+    "doctrines": [
+      "Control"
+    ]
+  },
+  {
+    "id": "Innocence",
+    "name": "Innocence",
+    "description": "Defeat %d Dryad",
+    "defaultRarity": 1,
+    "minimumDifficulty": 8,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      5,
+      15,
+      25,
+      35,
+      45
+    ],
+    "doctrines": [
+      "Affliction"
+    ]
+  },
+  {
+    "id": "ItsATrap",
+    "name": "It's a trap",
+    "description": "Avoid a trap %d times",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      20,
+      40,
+      60,
+      80,
+      100,
+      120,
+      140,
+      160,
+      180,
+      200,
+      220
+    ],
+    "doctrines": [
+      "Illusion"
+    ]
+  },
+  {
+    "id": "LaroxianPower",
+    "name": "Laroxian Power",
+    "description": "Cast %d skills with a magic amplification of at least 60%%",
+    "defaultRarity": 4,
+    "minimumDifficulty": 10,
+    "targets": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "doctrines": [
+      "Control"
+    ]
+  },
+  {
+    "id": "LightBringer",
+    "name": "Light Bringer",
+    "description": "Have a team with a total Darkness Reduction of at least %d",
+    "defaultRarity": 1,
+    "minimumDifficulty": 3,
+    "targets": [
+      1,
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24,
+      27,
+      30
+    ],
+    "doctrines": [
+      "Grace"
+    ]
+  },
+  {
+    "id": "LongMarch",
+    "name": "Long March",
+    "description": "Clear %d areas in any dungeon",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      500,
+      3000,
+      6000,
+      9000,
+      12000,
+      15000,
+      18000,
+      21000,
+      24000,
+      27000,
+      30000
+    ],
+    "doctrines": [
+      "War"
+    ]
+  },
+  {
+    "id": "LuckyRoll",
+    "name": "Lucky Roll",
+    "description": "Roll the highest possible damage %d times",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      50,
+      100,
+      150,
+      200,
+      250,
+      300,
+      350,
+      400,
+      450,
+      500,
+      550
+    ],
+    "doctrines": [
+      "Illusion"
+    ]
+  },
+  {
+    "id": "Marathon",
+    "name": "Marathon",
+    "description": "Clear %d areas in the Southern Grove without getting caught by the Primeval Wurm",
+    "defaultRarity": 4,
+    "minimumDifficulty": 9,
+    "targets": [
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      60
+    ],
+    "doctrines": [
+      "Illusion"
+    ]
+  },
+  {
+    "id": "MasterCrafter",
+    "name": "Master Crafter",
+    "description": "Craft an item worth %d silver or more",
+    "defaultRarity": 1,
+    "minimumDifficulty": 2,
+    "targets": [
+      1,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "doctrines": [
+      "Knowledge"
+    ]
+  },
+  {
+    "id": "Medic",
+    "name": "Medic",
+    "description": "Heal a total of %d HP",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      5000,
+      20000,
+      35000,
+      50000,
+      65000,
+      80000,
+      95000,
+      110000,
+      125000,
+      140000,
+      155000
+    ],
+    "doctrines": [
+      "Grace"
+    ]
+  },
+  {
+    "id": "Miracle",
+    "name": "Miracle",
+    "description": "Resurrect %d dead adventurers with a skill",
+    "defaultRarity": 3,
+    "minimumDifficulty": 9,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "doctrines": [
+      "Grace"
+    ]
+  },
+  {
+    "id": "Myopia",
+    "name": "Myopia",
+    "description": "Defeat %d Beholder",
+    "defaultRarity": 1,
+    "minimumDifficulty": 7,
+    "targets": [
+      1,
+      50,
+      100,
+      150,
+      200,
+      250,
+      300,
+      350,
+      400,
+      450,
+      500
+    ],
+    "doctrines": [
+      "Knowledge"
+    ]
+  },
+  {
+    "id": "NiceTry",
+    "name": "Nice Try!",
+    "description": "Defeat %d Mimic",
+    "defaultRarity": 1,
+    "minimumDifficulty": 5,
+    "targets": [
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "doctrines": [
+      "Illusion"
+    ]
+  },
+  {
+    "id": "Paleontologist",
+    "name": "Paleontologist",
+    "description": "Crack open %d Geode",
+    "defaultRarity": 1,
+    "minimumDifficulty": 3,
+    "targets": [
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    "doctrines": [
+      "Knowledge"
+    ]
+  },
+  {
+    "id": "Protector",
+    "name": "Protector",
+    "description": "Receive %d cumulative damage",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      10000,
+      70000,
+      130000,
+      190000,
+      250000,
+      310000,
+      370000,
+      430000,
+      490000,
+      550000,
+      610000
+    ],
+    "doctrines": [
+      "Fortitude"
+    ]
+  },
+  {
+    "id": "Psychiatrist",
+    "name": "Psychiatrist",
+    "description": "Defeat %d Insane Citizen",
+    "defaultRarity": 1,
+    "minimumDifficulty": 4,
+    "targets": [
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000
+    ],
+    "doctrines": [
+      "Grace"
+    ]
+  },
+  {
+    "id": "Pulverization",
+    "name": "Pulverization",
+    "description": "Perform %d critical hit with a modifier over 2.5×",
+    "defaultRarity": 3,
+    "minimumDifficulty": 7,
+    "targets": [
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000,
+      1000
+    ],
+    "doctrines": [
+      "Ruin"
+    ]
+  },
+  {
+    "id": "RagingVolcano",
+    "name": "Raging Volcano",
+    "description": "Defeat %d Smoldering Titan",
+    "defaultRarity": 4,
+    "minimumDifficulty": 11,
+    "targets": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "doctrines": [
+      "War"
+    ]
+  },
+  {
+    "id": "Regicide",
+    "name": "Regicide",
+    "description": "Defeat the Slime King %d times",
+    "defaultRarity": 2,
+    "minimumDifficulty": 3,
+    "targets": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "doctrines": [
+      "Control"
+    ]
+  },
+  {
+    "id": "Shocking",
+    "name": "Shocking!",
+    "description": "STUN enemies %d times",
+    "defaultRarity": 1,
+    "minimumDifficulty": 4,
+    "targets": [
+      1,
+      1,
+      1,
+      50,
+      100,
+      150,
+      200,
+      250,
+      300,
+      350,
+      400
+    ],
+    "doctrines": [
+      "Control"
+    ]
+  },
+  {
+    "id": "SlowBurn",
+    "name": "Slow Burn",
+    "description": "Deal %d damage with status effects",
+    "defaultRarity": 1,
+    "minimumDifficulty": 4,
+    "targets": [
+      1,
+      1,
+      1,
+      2500,
+      5000,
+      7500,
+      10000,
+      12500,
+      15000,
+      17500,
+      20000
+    ],
+    "doctrines": [
+      "Control"
+    ]
+  },
+  {
+    "id": "SmartFighter",
+    "name": "Smart Fighter",
+    "description": "Deal %d damage with Critical Hits",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      1000,
+      15000,
+      25000,
+      35000,
+      45000,
+      55000,
+      65000,
+      75000,
+      85000,
+      95000,
+      105000
+    ],
+    "doctrines": [
+      "Ruin"
+    ]
+  },
+  {
+    "id": "SmokingHot",
+    "name": "Smoking Hot",
+    "description": "Set enemies ABLAZE %d times",
+    "defaultRarity": 1,
+    "minimumDifficulty": 4,
+    "targets": [
+      1,
+      1,
+      1,
+      100,
+      200,
+      300,
+      400,
+      500,
+      600,
+      700,
+      800
+    ],
+    "doctrines": [
+      "Control"
+    ]
+  },
+  {
+    "id": "SoftAndFluffy",
+    "name": "Soft and Fluffy",
+    "description": "Defeat %d Golden Rabbit",
+    "defaultRarity": 2,
+    "minimumDifficulty": 3,
+    "targets": [
+      1,
+      1,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      35,
+      40,
+      45
+    ],
+    "doctrines": [
+      "Affliction"
+    ]
+  },
+  {
+    "id": "SoothingRemedy",
+    "name": "Soothing Remedy",
+    "description": "Heal %d HP through regeneration.",
+    "defaultRarity": 1,
+    "minimumDifficulty": 6,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      2000,
+      4000,
+      6000,
+      8000,
+      10000,
+      12000
+    ],
+    "doctrines": [
+      "Grace"
+    ]
+  },
+  {
+    "id": "SpeedyHare",
+    "name": "Speedy Hare",
+    "description": "Defeat %d Giant Tortoise",
+    "defaultRarity": 1,
+    "minimumDifficulty": 8,
+    "targets": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      10,
+      30,
+      50,
+      70,
+      90,
+      110
+    ],
+    "doctrines": [
+      "Fortitude"
+    ]
+  },
+  {
+    "id": "Spiky",
+    "name": "Spiky",
+    "description": "Deal %d damage through Retaliation",
+    "defaultRarity": 1,
+    "minimumDifficulty": 3,
+    "targets": [
+      5000,
+      10000,
+      15000,
+      20000,
+      25000,
+      30000,
+      35000,
+      40000,
+      45000,
+      50000,
+      55000
+    ],
+    "doctrines": [
+      "Fortitude"
+    ]
+  },
+  {
+    "id": "Student",
+    "name": "Student",
+    "description": "Earn a total of %d experience",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      1000,
+      7500,
+      11250,
+      16875,
+      25312,
+      37968,
+      56953,
+      85429,
+      128144,
+      192216,
+      288325
+    ],
+    "doctrines": [
+      "Knowledge"
+    ]
+  },
+  {
+    "id": "TabulaRasa",
+    "name": "Tabula Rasa",
+    "description": "Defeat 4 or more enemies in a single turn %d times",
+    "defaultRarity": 3,
+    "minimumDifficulty": 3,
+    "targets": [
+      1,
+      1,
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      70,
+      80,
+      90
+    ],
+    "doctrines": [
+      "War"
+    ]
+  },
+  {
+    "id": "Thalassophobia",
+    "name": "Thalassophobia",
+    "description": "Defeat the horror below Blackwater Port %d times",
+    "defaultRarity": 4,
+    "minimumDifficulty": 6,
+    "targets": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    "doctrines": [
+      "Ruin"
+    ]
+  },
+  {
+    "id": "TheEnd",
+    "name": "The End",
+    "description": "Faint %d times",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      15,
+      30,
+      45,
+      60,
+      75,
+      90,
+      105,
+      120,
+      135,
+      150,
+      165
+    ],
+    "doctrines": [
+      "Affliction"
+    ]
+  },
+  {
+    "id": "Tormentor",
+    "name": "Tormentor",
+    "description": "Cast an offensive skill %d times",
+    "defaultRarity": 3,
+    "minimumDifficulty": 1,
+    "targets": [
+      100,
+      1000,
+      1500,
+      2000,
+      2500,
+      3000,
+      3500,
+      4000,
+      4500,
+      5000,
+      5500
+    ],
+    "doctrines": [
+      "Affliction"
+    ]
+  },
+  {
+    "id": "Unscathed",
+    "name": "Unscathed",
+    "description": "Reduce to 1 the damage of %d attacks",
+    "defaultRarity": 3,
+    "minimumDifficulty": 3,
+    "targets": [
+      1,
+      25,
+      50,
+      75,
+      100,
+      125,
+      150,
+      175,
+      200,
+      225,
+      250
+    ],
+    "doctrines": [
+      "Fortitude"
+    ]
+  },
+  {
+    "id": "VampiricThirst",
+    "name": "Vampiric Thirst",
+    "description": "Restore a total of %d HP through lifesteal",
+    "defaultRarity": 1,
+    "minimumDifficulty": 4,
+    "targets": [
+      1730,
+      2941,
+      5000,
+      8500,
+      14449,
+      24564,
+      41760,
+      70992,
+      120687,
+      205169,
+      348787
+    ],
+    "doctrines": [
+      "Affliction"
+    ]
+  },
+  {
+    "id": "Warrior",
+    "name": "Warrior",
+    "description": "Hit enemies %d times",
+    "defaultRarity": 1,
+    "minimumDifficulty": 1,
+    "targets": [
+      1000,
+      10000,
+      15000,
+      20000,
+      25000,
+      30000,
+      35000,
+      40000,
+      45000,
+      50000,
+      55000
+    ],
+    "doctrines": [
+      "War"
+    ]
+  }
+]
