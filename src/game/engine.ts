@@ -290,14 +290,14 @@ export function createInitialState(index: ContentIndex): GameState {
   const firstGuest = makeAdventurer(guestClass, 1)
   firstGuest.trait = null
   return {
-    version: 19,
+    version: 20,
     language: 'en',
     lastAccess: now,
     lastDailyReset: localDayStart(now),
     tutorialStep: 1,
     money: 0,
     gems: 0,
-    purchasedPacks: { starter: false, merchant: false },
+    purchasedPacks: { starter: true, merchant: true },
     loyalty: {
       Affliction: { level: 0, stars: 0 }, Control: { level: 0, stars: 0 },
       Fortitude: { level: 0, stars: 0 }, Grace: { level: 0, stars: 0 },

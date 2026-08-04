@@ -47,6 +47,7 @@ describe('original-compatible game loop', () => {
   it('queues, processes, cancels, and collects market listings with original timing', () => {
     const index = indexContent(content)
     const state = createInitialState(index)
+    state.purchasedPacks = { starter: false, merchant: false }
     state.inventory.push({ itemId: 'BeastPelt', stack: 5 })
     expect(marketSaleSeconds(1, 2, 0)).toBe(8)
     expect(listMarketItem(state, index, 'BeastPelt', 2)).toBe(true)
@@ -82,10 +83,10 @@ describe('original-compatible game loop', () => {
   it('applies Starter and Merchant Pack bonuses to the market as in the APK', () => {
     const index = indexContent(content)
     const state = createInitialState(index)
+    expect(state.purchasedPacks).toEqual({ starter: true, merchant: true })
     expect(marketListingsCapacity(0, 0, true, true)).toBe(4)
     expect(marketSaleSeconds(100, 1, 0, 0, true)).toBe(266)
 
-    state.purchasedPacks = { starter: true, merchant: true }
     state.inventory.push({ itemId: 'BeastPelt', stack: 1 })
     expect(listMarketItem(state, index, 'BeastPelt', 1)).toBe(true)
     expect(state.marketListings[0].totalSeconds).toBe(marketSaleSeconds(1, 1, 0, 0, true) + 1)
