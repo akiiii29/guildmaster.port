@@ -164,6 +164,17 @@ button { color: inherit; }
 .tavern-timer.locked svg { fill: #c4382e; }
 .tavern-upgrades { margin-top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
 .storage-upgrades { margin-bottom: 16px; }
+.storage-filter-toggle { width: 100%; margin-top: 12px; padding: 7px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.08); color: var(--muted); font-weight: 700; cursor: pointer; }
+.storage-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.storage-filters label { display: grid; gap: 5px; color: var(--muted); font-size: 12px; font-weight: 700; }
+.storage-filters select { min-width: 0; padding: 7px; border: 1px solid var(--line); border-radius: 7px; background: #303030; color: var(--text); font: inherit; }
+.item-detail { width: min(100%, 460px); display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; align-items: center; }
+.item-detail > img { width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated; }
+.item-detail h3, .item-detail p { margin: 0; }
+.item-detail p { margin-top: 5px; color: var(--muted); font-size: 13px; }
+.item-detail small { display: block; margin-top: 7px; color: var(--brass); }
+.item-detail > div:last-child { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+.item-detail button { padding: 7px; border: 0; background: transparent; color: var(--brass); font-weight: 700; cursor: pointer; }
 .tavern-upgrades > button { min-height: 61px; padding: 8px; display: grid; place-items: center; align-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.12); cursor: pointer; }
 .tavern-upgrades > button:hover:not(:disabled) { border-color: var(--brass-border); background: rgba(250,160,62,.08); }
 .tavern-upgrades > button:disabled { opacity: .46; cursor: default; }
@@ -233,6 +244,13 @@ button { color: inherit; }
 .recipe-card > button { grid-column: 4; grid-row: 1 / 3; padding: 8px; border: 0; background: transparent; color: var(--brass); font-weight: 700; cursor: pointer; }
 .recipe-card > button:disabled { color: var(--faint); opacity: .35; cursor: default; }
 .recipes-close { justify-self: start; }
+.craft-preview { display: grid; gap: 12px; align-content: start; }
+.craft-preview-result { display: grid; justify-items: center; gap: 6px; color: var(--brass); }
+.craft-preview-result img { width: 68px; height: 68px; object-fit: contain; image-rendering: pixelated; }
+.craft-preview-ingredients { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.craft-preview-ingredients span { display: inline-flex; align-items: center; gap: 4px; padding: 5px 7px; border: 1px solid var(--line); border-radius: 7px; font-size: 12px; }
+.craft-preview-ingredients img { width: 27px; height: 27px; object-fit: contain; image-rendering: pixelated; }
+.craft-preview > p { margin: 0; color: var(--muted); text-align: center; font-weight: 700; }
 .building-detail { text-align: center; }
 .building-detail > img { width: 72px; height: 90px; object-fit: contain; image-rendering: pixelated; }
 .building-detail p { color: var(--muted); }
@@ -530,6 +548,17 @@ button { color: inherit; }
  .pet-actions { display: flex; max-width: 150px; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
  .pet-actions button { min-width: 32px; min-height: 30px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.12); color: var(--text); }
  .pet-actions img { width: 22px; height: 22px; object-fit: contain; }
+ .pet-detail-selector { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+ .pet-detail-selector button.selected, .shelter-feed-mode.selected { border-color: #e5bd65; color: #ffe7a1; }
+ .shelter-feed-mode { display: block; margin: 12px auto 0; }
+ .pet-detail { max-width: 620px; align-items: start; }
+ .pet-detail > img { width: 96px; height: 96px; object-fit: contain; }
+ .pet-detail h3, .pet-detail h4 { margin: 0 0 8px; color: #e5bd65; }
+ .pet-detail p { margin: 0 0 10px; color: #d1c6b2; }
+ .pet-detail ul { margin: 0; padding-left: 20px; color: #e5bd65; }
+ .pet-detail .locked { color: #8e8270; }
+ .pet-detail-actions { display: flex; max-width: 150px; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+ .pet-detail-actions img { width: 20px; height: 20px; object-fit: contain; vertical-align: middle; }
 .doctrine-panel {
   margin-top: 14px;
   border: 1px solid var(--line);

@@ -37,6 +37,8 @@ import {
   shelterAutofeedPrice,
   quartersPrice,
   storagePrice,
+  workshopCraftSeconds,
+  workshopQueueCapacity,
   workshopQueuePrice,
   workshopTimePrice,
 } from './formulas'
@@ -360,7 +362,7 @@ const addStack = (list: InventoryStack[], stack: InventoryStack) => {
 function hasStorageSpaceFor(state: GameState, stacks: InventoryStack[]) {
   const existing = new Set(state.inventory.map((entry) => entry.itemId))
   const newIds = new Set(stacks.filter((stack) => stack.stack > 0 && !existing.has(stack.itemId)).map((stack) => stack.itemId))
-  const capacity = buildingCapacity('storage', state.buildings.storage, state.permanentUpgrades.UpgradeStorage ?? 0)
+  const capacity = buildingCapacity('storage', state.buildings.storage, state.permanentUpgrades.UpgradeStorage ?? 0, state.purchasedPacks)
   return state.inventory.length + newIds.size <= capacity
 }
 
@@ -391,7 +393,7 @@ function spawnTavernVisitor(state: GameState, index: ContentIndex, rng = Math.ra
     state.tutorialStep = 8
   }
   state.tavernGuests.unshift(visitor)
-  state.tavernGuests = state.tavernGuests.slice(0, buildingCapacity('tavern', state.buildings.tavernCapacity, state.permanentUpgrades.UpgradeTavernCapacity ?? 0))
+  state.tavernGuests = state.tavernGuests.slice(0, buildingCapacity('tavern', state.buildings.tavernCapacity, state.permanentUpgrades.UpgradeTavernCapacity ?? 0, state.purchasedPacks))
   return true
 }
 
@@ -405,14 +407,14 @@ export function progressTavernTime(state: GameState, index: ContentIndex, second
     arrivals += 1
   }
   state.nextTavernVisit = nextVisit
-  const arrivalLimit = Math.min(arrivals, buildingCapacity('tavern', state.buildings.tavernCapacity, state.permanentUpgrades.UpgradeTavernCapacity ?? 0))
+  const arrivalLimit = Math.min(arrivals, buildingCapacity('tavern', state.buildings.tavernCapacity, state.permanentUpgrades.UpgradeTavernCapacity ?? 0, state.purchasedPacks))
   for (let arrival = 0; arrival < arrivalLimit; arrival += 1) spawnTavernVisitor(state, index)
 }
 
 function workshopSeconds(state: GameState, itemPrice: number, stack: number, recipeId: string) {
   if (state.tutorialStep === 3 && recipeId === 'Leather') return 10
   if (state.tutorialStep === 4 && recipeId === 'CopperArmor') return 20
-  return Math.max(1, Math.trunc((0.9 ** (state.buildings.workshopTime + (state.permanentUpgrades.UpgradeWorkshopTime ?? 0) - 1)) * Math.max(itemPrice - 1, 1) * 6 * stack))
+  return Math.max(1, workshopCraftSeconds(itemPrice, stack, state.buildings.workshopTime, state.permanentUpgrades.UpgradeWorkshopTime ?? 0, state.purchasedPacks.merchant))
 }
 
 function tickWorkshop(state: GameState) {
@@ -436,7 +438,7 @@ function rollEncounter(state: GameState, run: AreaRun, index: ContentIndex) {
     return rollEnchantedForestEncounter(
       run.event,
       Math.random(),
-      buildingCapacity('quarters', state.buildings.quarters, state.permanentUpgrades.UpgradeQuarters ?? 0) <= 2,
+      buildingCapacity('quarters', state.buildings.quarters, state.permanentUpgrades.UpgradeQuarters ?? 0, state.purchasedPacks) <= 2,
     )
   }
   if (run.areaId === 'TheDesert') return rollTheDesertEncounter(run.event, Math.random())
@@ -2990,11 +2992,21 @@ export function feedPet(state: GameState, index: ContentIndex, petUid: number, f
 export function mergePet(state: GameState, sourceUid: number, targetUid: number) {
   const source = state.pets.find((entry) => entry.uid === sourceUid)
   const target = state.pets.find((entry) => entry.uid === targetUid)
-  if (!source || !target || source === target) return false
+  if (!source || !target || source === target || (source.level <= 1 && source.food === 0)) return false
   let totalFood = source.food
   for (let level = 1; level < source.level; level += 1) totalFood += petFoodToNextLevel(level)
   givePetFood(target, gameRound(totalFood * 0.8))
   state.pets.splice(state.pets.indexOf(source), 1)
+  return true
+}
+
+export function releasePet(state: GameState, petUid: number, index?: ContentIndex) {
+  const pet = state.pets.find((entry) => entry.uid === petUid)
+  if (!pet || ((pet.level > 1 || pet.food > 0) && state.pets.length > 1)) return false
+  for (const [areaId, run] of Object.entries(state.runs)) {
+    if (!run.finished && run.petUid === petUid) retreatRun(state, areaId, index)
+  }
+  state.pets.splice(state.pets.indexOf(pet), 1)
   return true
 }
 
@@ -3213,7 +3225,7 @@ export function refreshMerchantCooldowns(state: GameState, index: ContentIndex, 
 }
 
 export function hireGuest(state: GameState, guestUid: number, index?: ContentIndex) {
-  if (state.adventurers.length >= buildingCapacity('quarters', state.buildings.quarters, state.permanentUpgrades.UpgradeQuarters ?? 0)) return false
+  if (state.adventurers.length >= buildingCapacity('quarters', state.buildings.quarters, state.permanentUpgrades.UpgradeQuarters ?? 0, state.purchasedPacks)) return false
   const guest = state.tavernGuests.find((entry) => entry.uid === guestUid)
   if (!guest) return false
   state.tavernGuests = state.tavernGuests.filter((entry) => entry.uid !== guestUid)
@@ -3377,7 +3389,7 @@ export function dismissAdventurer(state: GameState, uid: number, now = Date.now(
 
 export function recallAdventurer(state: GameState, uid: number, now = Date.now()) {
   const dismissed = state.dismissedAdventurers.find((entry) => entry.member.uid === uid)
-  const capacity = buildingCapacity('quarters', state.buildings.quarters, state.permanentUpgrades.UpgradeQuarters ?? 0)
+  const capacity = buildingCapacity('quarters', state.buildings.quarters, state.permanentUpgrades.UpgradeQuarters ?? 0, state.purchasedPacks)
   if (!dismissed || now - dismissed.dismissedAt >= 86_400_000 || state.adventurers.length >= capacity) return false
   state.dismissedAdventurers = state.dismissedAdventurers.filter((entry) => entry.member.uid !== uid)
   state.adventurers.push(dismissed.member)
@@ -3411,7 +3423,7 @@ export function equipItem(
   const projectedInventory = state.inventory.map((stack) => ({ ...stack }))
   if (!removeStack(projectedInventory, itemId, 1)) return false
   if (oldItemId && !(slot === 'weapon' && oldItemId === defaultId)) addStack(projectedInventory, { itemId: oldItemId, stack: 1 })
-  const storageCapacity = buildingCapacity('storage', state.buildings.storage, state.permanentUpgrades.UpgradeStorage ?? 0)
+  const storageCapacity = buildingCapacity('storage', state.buildings.storage, state.permanentUpgrades.UpgradeStorage ?? 0, state.purchasedPacks)
   if (projectedInventory.length > storageCapacity) return false
   if (!removeStack(state.inventory, itemId, 1)) return false
   if (oldItemId && !(slot === 'weapon' && oldItemId === defaultId)) addStack(state.inventory, { itemId: oldItemId, stack: 1 })
@@ -3528,18 +3540,21 @@ export function collectChest(state: GameState, areaId: string, index?: ContentIn
   return true
 }
 
-export function queueWorkshopRecipe(state: GameState, index: ContentIndex, recipeId: string) {
+export function queueWorkshopRecipe(state: GameState, index: ContentIndex, recipeId: string, amount = 1) {
   const recipe = recipeById.get(recipeId)
   const result = recipe && index.items.get(recipe.result.itemId)
-  if (!recipe || !result || maxCraftable(state, recipe) < 1) return false
-  if (state.workshopQueue.length >= state.buildings.workshopQueue + (state.permanentUpgrades.UpgradeWorkshopQueue ?? 0) + 1) return false
-  recipe.ingredients.forEach((ingredient) => removeStack(state.inventory, ingredient.itemId, ingredient.stack))
-  const seconds = workshopSeconds(state, result.fields.price ?? 1, recipe.result.stack, recipe.id)
+  const batches = Math.trunc(amount)
+  if (!recipe || !result || batches < 1 || maxCraftable(state, recipe) < batches) return false
+  const capacity = workshopQueueCapacity(state.buildings.workshopQueue, state.permanentUpgrades.UpgradeWorkshopQueue ?? 0, state.purchasedPacks.starter, state.purchasedPacks.merchant)
+  if (state.workshopQueue.length + state.completedWorkshopItems.length >= capacity) return false
+  recipe.ingredients.forEach((ingredient) => removeStack(state.inventory, ingredient.itemId, ingredient.stack * batches))
+  const resultStack = recipe.result.stack * batches
+  const seconds = workshopSeconds(state, result.fields.price ?? 1, resultStack, recipe.id)
   state.workshopQueue.push({
     uid: state.nextWorkshopJobId++,
     recipeId: recipe.id,
     itemId: recipe.result.itemId,
-    stack: recipe.result.stack,
+    stack: resultStack,
     totalSeconds: seconds,
     remainingSeconds: seconds,
   })
@@ -3566,8 +3581,10 @@ export function collectWorkshopJob(state: GameState, uid: number, index?: Conten
 export function cancelWorkshopJob(state: GameState, uid: number) {
   const job = state.workshopQueue.find((entry) => entry.uid === uid)
   const recipe = job && recipeById.get(job.recipeId)
-  if (!job || !recipe || !hasStorageSpaceFor(state, recipe.ingredients.map((ingredient) => ({ ...ingredient })))) return false
+  const batches = job && recipe ? Math.max(1, Math.trunc(job.stack / recipe.result.stack)) : 0
+  const refund = recipe?.ingredients.map((ingredient) => ({ itemId: ingredient.itemId, stack: ingredient.stack * batches })) ?? []
+  if (!job || !recipe || !hasStorageSpaceFor(state, refund)) return false
   state.workshopQueue = state.workshopQueue.filter((entry) => entry.uid !== uid)
-  recipe.ingredients.forEach((ingredient) => addStack(state.inventory, { ...ingredient }))
+  refund.forEach((ingredient) => addStack(state.inventory, ingredient))
   return true
 }

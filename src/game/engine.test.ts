@@ -2,8 +2,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { indexContent } from './content'
-import { areaTeamSize, ascendAdventurer, buyMerchantOffer, buyQuestRefresh, cancelMarketListing, changeDoctrineAbility, claimQuest, collectChest, collectMarketSale, collectWorkshopJob, combatTurn, completedEpicRaid, consumePotion, consumeSpecial, createInitialState, dismissAdventurer, equipItem, feedPet, hatchPetEgg, hireGuest, incrementQuest, listMarketItem, markTavernGuestsSeen, mergePet, moveAdventurer, openGeodes, potionLimit, promoteAdventurer, promotionChoices, progressTavernTime, queueWorkshopRecipe, questRefreshPrice, raidTryCost, recallAdventurer, refillRaidTry, refreshDailyRaidTries, refreshMerchantCooldowns, refreshMerchantRegular, refreshMerchantSpecial, refreshQuests, resetDoctrine, retreatRun, selectDoctrine, setTavernLocked, startRun, tickGame, togglePetFavourite, upgradeFacility, upgradeMarket, upgradeShelter, upgradeTavern } from './engine'
-import { adventurerAttackBounds, applyDamage, experienceToNextLevel, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, offlineSeconds, quartersPrice, shelterAutofeedPrice, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, workshopQueuePrice, workshopTimePrice } from './formulas'
+import { areaTeamSize, ascendAdventurer, buyMerchantOffer, buyQuestRefresh, cancelMarketListing, changeDoctrineAbility, claimQuest, collectChest, collectMarketSale, collectWorkshopJob, combatTurn, completedEpicRaid, consumePotion, consumeSpecial, createInitialState, dismissAdventurer, equipItem, feedPet, hatchPetEgg, hireGuest, incrementQuest, listMarketItem, markTavernGuestsSeen, mergePet, moveAdventurer, openGeodes, potionLimit, promoteAdventurer, promotionChoices, progressTavernTime, queueWorkshopRecipe, questRefreshPrice, raidTryCost, recallAdventurer, refillRaidTry, refreshDailyRaidTries, refreshMerchantCooldowns, refreshMerchantRegular, refreshMerchantSpecial, refreshQuests, releasePet, resetDoctrine, retreatRun, selectDoctrine, setTavernLocked, startRun, tickGame, togglePetFavourite, upgradeFacility, upgradeMarket, upgradeShelter, upgradeTavern } from './engine'
+import { adventurerAttackBounds, applyDamage, buildingCapacity, experienceToNextLevel, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, offlineSeconds, quartersPrice, shelterAutofeedPrice, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, workshopCraftSeconds, workshopQueueCapacity, workshopQueuePrice, workshopTimePrice } from './formulas'
+import { RECIPES } from './recipes'
 import { adventurerStats } from './stats'
 import type { GameContent } from './types'
 import { ACTIVE_SKILLS } from './combatSkills'
@@ -90,6 +91,20 @@ describe('original-compatible game loop', () => {
     state.inventory.push({ itemId: 'BeastPelt', stack: 1 })
     expect(listMarketItem(state, index, 'BeastPelt', 1)).toBe(true)
     expect(state.marketListings[0].totalSeconds).toBe(marketSaleSeconds(1, 1, 0, 0, true) + 1)
+  })
+
+  it('applies the enabled packs to every capacity and Workshop craft speed', () => {
+    const state = createInitialState(indexContent(content))
+    expect(buildingCapacity('quarters', 0, 0, state.purchasedPacks)).toBe(3)
+    expect(buildingCapacity('tavern', 0, 0, state.purchasedPacks)).toBe(2)
+    expect(buildingCapacity('storage', 0, 0, state.purchasedPacks)).toBe(140)
+    expect(workshopQueueCapacity(0, 0, true, true)).toBe(4)
+    expect(workshopCraftSeconds(20, 2, 0, 0, true)).toBe(152)
+  })
+
+  it('ports all 321 APK Workshop recipes', () => {
+    expect(RECIPES).toHaveLength(321)
+    expect(new Set(RECIPES.map((recipe) => recipe.id)).size).toBe(321)
   })
 
   it('rolls and buys regular and special merchant offers from unlocked area tables', () => {
@@ -291,6 +306,9 @@ describe('original-compatible game loop', () => {
     expect(hireGuest(state, 1)).toBe(true)
     expect(startRun(state, 'EnchantedForest', [1], index, target.uid)).toBe(true)
     expect(state.runs.EnchantedForest.petUid).toBe(target.uid)
+    expect(releasePet(state, target.uid, index)).toBe(true)
+    expect(state.pets).toHaveLength(0)
+    expect(state.runs.EnchantedForest).toBeUndefined()
   })
 
   it('upgrades the shelter and auto-feeds collected food to favourite pets', () => {
@@ -405,6 +423,7 @@ describe('original-compatible game loop', () => {
   it('keeps a dungeon chest intact when Storage has no free item slots', () => {
     const index = indexContent(content)
     const state = createInitialState(index)
+    state.purchasedPacks = { starter: false, merchant: false }
     expect(hireGuest(state, 1)).toBe(true)
     expect(startRun(state, 'EnchantedForest', [1], index)).toBe(true)
     state.inventory = Array.from({ length: 35 }, (_, id) => ({ itemId: `Stored${id}`, stack: 1 }))

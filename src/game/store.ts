@@ -35,6 +35,7 @@ import {
   moveAdventurer,
   openGeodes,
   recallAdventurer,
+  releasePet,
   togglePetFavourite,
   upgradeShelter,
   selectDoctrine,
@@ -331,8 +332,8 @@ export class GameStore {
     this.commit((draft) => { draft.language = language })
   }
 
-  craft(recipeId: string) {
-    this.commit((draft) => { queueWorkshopRecipe(draft, this.index, recipeId) })
+  craft(recipeId: string, amount = 1) {
+    this.commit((draft) => { queueWorkshopRecipe(draft, this.index, recipeId, amount) })
   }
 
   collectCraft(uid: number) {
@@ -408,6 +409,10 @@ export class GameStore {
 
   mergePet(sourceUid: number, targetUid: number) {
     this.commit((draft) => { mergePet(draft, sourceUid, targetUid) })
+  }
+
+  releasePet(uid: number) {
+    this.commit((draft) => { releasePet(draft, uid, this.index) })
   }
 
   togglePetFavourite(uid: number) {

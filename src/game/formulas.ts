@@ -91,10 +91,10 @@ export function adventurerAttackBounds(
 
 export const rollBetween = (min: number, max: number, rng = Math.random) => min + rng() * (max - min)
 
-export function buildingCapacity(kind: 'quarters' | 'tavern' | 'storage', level: number, permanentUpgrade = 0) {
-  if (kind === 'quarters') return level + permanentUpgrade + 2
-  if (kind === 'tavern') return level + permanentUpgrade + 1
-  return level + permanentUpgrade + 35
+export function buildingCapacity(kind: 'quarters' | 'tavern' | 'storage', level: number, permanentUpgrade = 0, packs: { starter?: boolean; merchant?: boolean } = {}) {
+  if (kind === 'quarters') return level + permanentUpgrade + 2 + (packs.starter ? 1 : 0)
+  if (kind === 'tavern') return level + permanentUpgrade + 1 + (packs.starter ? 1 : 0)
+  return level + permanentUpgrade + 35 + (packs.starter ? 35 : 0) + (packs.merchant ? 70 : 0)
 }
 
 export const offlineSeconds = (now: number, last: number) => last === 0
@@ -142,6 +142,12 @@ export const workshopQueuePrice = (level: number) =>
 
 export const workshopTimePrice = (level: number) =>
   truncatePrice(1.7 ** level * 10)
+
+export const workshopQueueCapacity = (level: number, permanentUpgrade = 0, starterPack = false, merchantPack = false) =>
+  level + 1 + permanentUpgrade + (starterPack ? 1 : 0) + (merchantPack ? 2 : 0)
+
+export const workshopCraftSeconds = (price: number, stack: number, timeLevel: number, permanentUpgrade = 0, merchantPack = false) =>
+  Math.trunc((merchantPack ? 0.6 : 1) * 0.9 ** (timeLevel + permanentUpgrade - 1) * Math.max(price - 1, 1) * 6 * stack)
 
 export const marketListingsCapacity = (level: number, permanentUpgrade = 0, starterPack = false, merchantPack = false) =>
   level + 1 + permanentUpgrade + (starterPack ? 1 : 0) + (merchantPack ? 2 : 0)
