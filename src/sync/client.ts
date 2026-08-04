@@ -27,7 +27,21 @@ function isOffline() {
   return typeof navigator !== 'undefined' && !navigator.onLine
 }
 
-function messageFrom(error: unknown) {
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
+async function messageFrom(error: unknown) {
+  if (isRecord(error) && error.context instanceof Response) {
+    try {
+      const payload = await error.context.clone().json() as unknown
+      if (isRecord(payload) && typeof payload.error === 'string') {
+        return typeof payload.code === 'string' ? `${payload.error} (${payload.code})` : payload.error
+      }
+    } catch {
+      // Fall back to the SDK error when the response does not contain JSON.
+    }
+  }
   return error instanceof Error ? error.message : String(error)
 }
 
@@ -47,7 +61,7 @@ class SupabaseGameSync implements GameSync {
   async initialize() {
     const { data, error } = await this.client.auth.getSession()
     if (error) {
-      this.setStatus({ kind: 'error', message: messageFrom(error) })
+      this.setStatus({ kind: 'error', message: await messageFrom(error) })
       return
     }
     this.user = data.session?.user ?? null
@@ -74,13 +88,13 @@ class SupabaseGameSync implements GameSync {
       provider: 'google',
       options: { redirectTo: window.location.origin },
     })
-    if (error) this.setStatus({ kind: 'error', message: messageFrom(error) })
+    if (error) this.setStatus({ kind: 'error', message: await messageFrom(error) })
   }
 
   async signOut() {
     const { error } = await this.client.auth.signOut()
     if (error) {
-      this.setStatus({ kind: 'error', message: messageFrom(error) })
+      this.setStatus({ kind: 'error', message: await messageFrom(error) })
       return
     }
     this.user = null
@@ -91,8 +105,8 @@ class SupabaseGameSync implements GameSync {
     if (!this.user) return
     void this.enqueueSnapshot(state).then(() => {
       if (!this.hasUnresolvedConflict) this.scheduleSync()
-    }).catch((error: unknown) => {
-      this.setStatus({ kind: 'error', message: messageFrom(error) })
+    }).catch(async (error: unknown) => {
+      this.setStatus({ kind: 'error', message: await messageFrom(error) })
     })
   }
 
@@ -114,7 +128,7 @@ class SupabaseGameSync implements GameSync {
     this.setStatus({ kind: 'syncing' })
     const { data, error } = await this.client.functions.invoke('sync', { body: { action: 'pull', protocolVersion: SYNC_PROTOCOL_VERSION } })
     if (error) {
-      this.setStatus({ kind: 'error', message: messageFrom(error) })
+      this.setStatus({ kind: 'error', message: await messageFrom(error) })
       return null
     }
     const save = (data as { save?: unknown }).save
@@ -187,7 +201,7 @@ class SupabaseGameSync implements GameSync {
       body: { action: 'push', snapshot: queued.snapshot },
     })
     if (error) {
-      this.setStatus({ kind: 'error', message: messageFrom(error) })
+      this.setStatus({ kind: 'error', message: await messageFrom(error) })
       return this.status
     }
     const response = data as { status?: string; save?: unknown }

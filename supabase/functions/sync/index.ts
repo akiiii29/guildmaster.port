@@ -53,6 +53,14 @@ function toSave(row: JsonRecord) {
   }
 }
 
+function errorDetail(error: unknown) {
+  if (!isRecord(error)) return { code: 'SYNC_UNKNOWN', message: 'Cloud sync backend failed.' }
+  return {
+    code: typeof error.code === 'string' ? error.code : 'SYNC_UNKNOWN',
+    message: typeof error.message === 'string' ? error.message : 'Cloud sync backend failed.',
+  }
+}
+
 Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405)
@@ -96,7 +104,11 @@ Deno.serve(async (request) => {
     p_client_updated_at: snapshot.clientUpdatedAt,
     p_events: body.events ?? [],
   })
-  if (error || !Array.isArray(data) || !data[0]) return json({ error: 'Unable to apply the sync batch.' }, 500)
+  if (error || !Array.isArray(data) || !data[0]) {
+    const detail = errorDetail(error)
+    console.error('apply_sync_batch failed', detail)
+    return json({ error: detail.message, code: detail.code }, 500)
+  }
   const result = data[0] as JsonRecord
   return json({ status: result.result_status, save: toSave(result), acceptedEvents: Number(result.accepted_events) })
 })
