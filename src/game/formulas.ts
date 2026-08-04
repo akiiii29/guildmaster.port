@@ -143,8 +143,8 @@ export const workshopQueuePrice = (level: number) =>
 export const workshopTimePrice = (level: number) =>
   truncatePrice(1.7 ** level * 10)
 
-export const marketListingsCapacity = (level: number, permanentUpgrade = 0) =>
-  level + 1 + permanentUpgrade
+export const marketListingsCapacity = (level: number, permanentUpgrade = 0, starterPack = false, merchantPack = false) =>
+  level + 1 + permanentUpgrade + (starterPack ? 1 : 0) + (merchantPack ? 2 : 0)
 
 export const marketListingsPrice = (level: number) =>
   truncatePrice(4.5 ** level * 20)
@@ -152,8 +152,8 @@ export const marketListingsPrice = (level: number) =>
 export const marketTimePrice = (level: number) =>
   truncatePrice(1.7 ** level * 10)
 
-export const marketSaleSeconds = (price: number, stack: number, timeLevel: number, permanentUpgrade = 0) =>
-  Math.trunc(0.9 ** (timeLevel + permanentUpgrade - 1) * price * 4 * stack)
+export const marketSaleSeconds = (price: number, stack: number, timeLevel: number, permanentUpgrade = 0, merchantPack = false) =>
+  Math.trunc((merchantPack ? 0.6 : 1) * 0.9 ** (timeLevel + permanentUpgrade - 1) * price * 4 * stack)
 
 export const petFoodToNextLevel = (level: number) =>
   Math.trunc(1.085 ** level * 30)

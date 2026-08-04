@@ -3,7 +3,7 @@ import './App.css'
 import type { ContentIndex } from './game/content'
 import { assetUrl } from './game/content'
 import type { AdventurerDefinition, AdventurerState, AreaDefinition, AreaRun, EnemyDefinition, EnemyState, EquipmentSlot, GameContent, ItemDefinition, PetDefinition, PetState, ScreenId, StatusEffectState } from './game/types'
-import { buildingCapacity, marketListingsCapacity, marketListingsPrice, marketTimePrice, petFoodToNextLevel, quartersPrice, shelterAutofeedPrice, shelterCapacity, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, tavernVisitorIntervalSeconds, workshopQueuePrice, workshopTimePrice } from './game/formulas'
+import { buildingCapacity, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, petFoodToNextLevel, quartersPrice, shelterAutofeedPrice, shelterCapacity, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, tavernVisitorIntervalSeconds, workshopQueuePrice, workshopTimePrice } from './game/formulas'
 import { GameStore, useGame } from './game/store'
 import { I18nProvider, useI18n } from './game/i18n'
 import { inventoryCount, maxCraftable, RECIPES } from './game/recipes'
@@ -430,13 +430,31 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
 function MarketDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
   const { t, name } = useI18n()
-  const capacity = marketListingsCapacity(state.buildings.marketListings, state.permanentUpgrades.UpgradeMarketQueue ?? 0)
+  const [sellingItemId, setSellingItemId] = useState<string | null>(null)
+  const [sellingAmount, setSellingAmount] = useState(1)
+  const capacity = marketListingsCapacity(state.buildings.marketListings, state.permanentUpgrades.UpgradeMarketQueue ?? 0, state.purchasedPacks.starter, state.purchasedPacks.merchant)
   const listingCost = marketListingsPrice(state.buildings.marketListings)
   const timeCost = marketTimePrice(state.buildings.marketTime)
   const jobs = [...state.soldMarketItems.map((job) => ({ ...job, sold: true })), ...state.marketListings.map((job) => ({ ...job, sold: false }))]
+  const sellingStack = state.inventory.find((stack) => stack.itemId === sellingItemId)
+  const sellingItem = sellingStack && index.items.get(sellingStack.itemId)
+  const maxSellingAmount = sellingStack?.stack ?? 1
+  const amount = Math.max(1, Math.min(sellingAmount, maxSellingAmount))
+  const sellingPrice = Number(sellingItem?.fields.price ?? 0) * amount
+  const sellingTime = marketSaleSeconds(Number(sellingItem?.fields.price ?? 0), amount, state.buildings.marketTime, state.permanentUpgrades.UpgradeMarketTime ?? 0, state.purchasedPacks.merchant)
+  const openSale = (itemId: string) => {
+    setSellingItemId(itemId)
+    setSellingAmount(1)
+  }
+  const confirmSale = () => {
+    if (!sellingItemId) return
+    store.listForSale(sellingItemId, amount)
+    setSellingItemId(null)
+  }
   return (
     <Modal title={t('building.market')} onClose={onClose} wide>
       <div className="workshop-summary"><strong>{t('market.listings', { used: jobs.length, max: capacity })}</strong><span>{t('market.speed', { speed: (1 / (0.9 ** (state.buildings.marketTime + (state.permanentUpgrades.UpgradeMarketTime ?? 0)))).toFixed(2) })}</span></div>
+      {(state.purchasedPacks.starter || state.purchasedPacks.merchant) && <div className="market-pack-bonuses">{state.purchasedPacks.starter && <span>{t('market.starterPackBonus')}</span>}{state.purchasedPacks.merchant && <span>{t('market.merchantPackBonus')}</span>}</div>}
       <div className="tavern-upgrades">
         {state.buildings.marketListings < 10 && <button disabled={state.money < listingCost} onClick={() => store.upgradeMarket('listings')}><strong>{t('market.upgradeListings')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{listingCost.toLocaleString()}</span></button>}
         {state.buildings.marketTime < 25 && <button disabled={state.money < timeCost} onClick={() => store.upgradeMarket('time')}><strong>{t('market.upgradeTime')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{timeCost.toLocaleString()}</span></button>}
@@ -448,11 +466,21 @@ function MarketDialog({ store, index, onClose }: { store: GameStore; index: Cont
         return <article className={`workshop-job ${job.sold ? 'complete' : ''}`} key={job.uid}><span className="workshop-job-item"><img src={assetUrl(item?.imageKey)} alt="" /><b>{job.stack}</b></span><span className="workshop-job-copy"><strong>{name(item?.name ?? job.itemId)}</strong><small>{job.sold ? t('market.sold') : formatSeconds(job.remainingSeconds)}</small>{!job.sold && <i><b style={{ width: `${progress}%` }} /></i>}</span><button className={job.sold ? 'collect-craft' : 'cancel-craft'} onClick={() => job.sold ? store.collectSale(job.uid) : store.cancelSale(job.uid)}>{job.sold ? Number(item?.fields.price ?? 0) * job.stack : '×'}</button></article>
       })}</div>
       <h3 className="market-inventory-title">{t('market.chooseItem')}</h3>
-      <div className="item-grid">{state.inventory.filter((stack) => Number(index.items.get(stack.itemId)?.fields.price ?? 0) > 0).map((stack) => {
+      <div className="item-grid">{state.inventory.filter((stack) => Number(index.items.get(stack.itemId)?.fields.price ?? 0) > 0 && !index.items.get(stack.itemId)?.fields.notSellable).map((stack) => {
         const item = index.items.get(stack.itemId)
-        return <button className="item-slot market-sell-slot" disabled={jobs.length >= capacity} key={stack.itemId} onClick={() => store.listForSale(stack.itemId, stack.stack)}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{stack.stack}</strong><span>{name(item?.name ?? stack.itemId)}</span><small>{Number(item?.fields.price ?? 0) * stack.stack}</small></button>
+        return <button className="item-slot market-sell-slot" disabled={jobs.length >= capacity} key={stack.itemId} onClick={() => openSale(stack.itemId)}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{stack.stack}</strong><span>{name(item?.name ?? stack.itemId)}</span><small>{Number(item?.fields.price ?? 0) * stack.stack}</small></button>
       })}</div>
       <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
+      {sellingStack && sellingItem && <div className="market-sell-layer" onMouseDown={() => setSellingItemId(null)}>
+        <section className="market-sell-panel" onMouseDown={(event) => event.stopPropagation()}>
+          <h3>{t('market.sellTitle', { item: name(sellingItem.name) })}</h3>
+          <div className="market-sale-preview"><span className="workshop-job-item"><img src={assetUrl(sellingItem.imageKey)} alt="" /><b>{amount}</b></span><strong>{sellingPrice.toLocaleString()}</strong></div>
+          <p>{t('market.saleTime', { time: formatSeconds(sellingTime) })}</p>
+          <div className="market-quantity"><button aria-label={t('market.decreaseAmount')} disabled={amount <= 1} onClick={() => setSellingAmount(amount - 1)}>-</button><strong>{amount}</strong><button aria-label={t('market.increaseAmount')} disabled={amount >= maxSellingAmount} onClick={() => setSellingAmount(amount + 1)}>+</button></div>
+          <input className="market-quantity-slider" aria-label={t('market.amount')} type="range" min="1" max={maxSellingAmount} value={amount} onChange={(event) => setSellingAmount(Number(event.target.value))} />
+          <div className="workshop-actions"><button onClick={() => setSellingItemId(null)}>{t('common.close')}</button><button onClick={confirmSale}>{t('market.confirmSale')}</button></div>
+        </section>
+      </div>}
     </Modal>
   )
 }

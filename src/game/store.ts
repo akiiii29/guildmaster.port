@@ -75,7 +75,7 @@ export class GameStore {
       const raw = localStorage.getItem(SAVE_KEY)
       if (!raw) return createInitialState(this.index)
       const parsed = JSON.parse(raw) as GameState
-      if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].includes(parsed.version) || !parsed.buildings || !parsed.runs) return createInitialState(this.index)
+      if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].includes(parsed.version) || !parsed.buildings || !parsed.runs) return createInitialState(this.index)
       const normalizeAdventurer = (entry: AdventurerState): AdventurerState => {
         const definition = this.index.adventurers.get(entry.classId)
         return {
@@ -138,8 +138,9 @@ export class GameStore {
 
       return {
         ...parsed,
-        version: 18,
+        version: 19,
         language: parsed.language ?? 'en',
+        purchasedPacks: { starter: parsed.purchasedPacks?.starter ?? false, merchant: parsed.purchasedPacks?.merchant ?? false },
         lastDailyReset: parsed.lastDailyReset ?? (() => {
           const date = new Date(parsed.lastAccess || Date.now())
           date.setHours(0, 0, 0, 0)

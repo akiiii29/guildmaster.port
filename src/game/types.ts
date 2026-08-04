@@ -396,6 +396,10 @@ export interface GameState {
   tutorialStep: number
   money: number
   gems: number
+  purchasedPacks: {
+    starter: boolean
+    merchant: boolean
+  }
   loyalty: Record<DoctrineId, LoyaltyProgress>
   activeQuests: QuestState[]
   lastQuestReset: number

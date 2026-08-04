@@ -290,13 +290,14 @@ export function createInitialState(index: ContentIndex): GameState {
   const firstGuest = makeAdventurer(guestClass, 1)
   firstGuest.trait = null
   return {
-    version: 18,
+    version: 19,
     language: 'en',
     lastAccess: now,
     lastDailyReset: localDayStart(now),
     tutorialStep: 1,
     money: 0,
     gems: 0,
+    purchasedPacks: { starter: false, merchant: false },
     loyalty: {
       Affliction: { level: 0, stars: 0 }, Control: { level: 0, stars: 0 },
       Fortitude: { level: 0, stars: 0 }, Grace: { level: 0, stars: 0 },
@@ -2768,9 +2769,9 @@ export function listMarketItem(state: GameState, index: ContentIndex, itemId: st
   const item = index.items.get(itemId)
   const stack = Math.trunc(amount)
   if (!item || stack < 1 || Number(item.fields.price ?? 0) < 1 || Boolean(item.fields.notSellable)) return false
-  if (state.marketListings.length + state.soldMarketItems.length >= marketListingsCapacity(state.buildings.marketListings, state.permanentUpgrades.UpgradeMarketQueue ?? 0)) return false
+  if (state.marketListings.length + state.soldMarketItems.length >= marketListingsCapacity(state.buildings.marketListings, state.permanentUpgrades.UpgradeMarketQueue ?? 0, state.purchasedPacks.starter, state.purchasedPacks.merchant)) return false
   if (!removeStack(state.inventory, itemId, stack)) return false
-  const totalSeconds = Math.max(1, marketSaleSeconds(Number(item.fields.price), stack, state.buildings.marketTime, state.permanentUpgrades.UpgradeMarketTime ?? 0) + 1)
+  const totalSeconds = Math.max(1, marketSaleSeconds(Number(item.fields.price), stack, state.buildings.marketTime, state.permanentUpgrades.UpgradeMarketTime ?? 0, state.purchasedPacks.merchant) + 1)
   state.marketListings.push({ uid: state.nextMarketListingId++, itemId, stack, totalSeconds, remainingSeconds: totalSeconds })
   return true
 }

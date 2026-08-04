@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { indexContent } from './content'
 import { areaTeamSize, ascendAdventurer, buyMerchantOffer, buyQuestRefresh, cancelMarketListing, changeDoctrineAbility, claimQuest, collectChest, collectMarketSale, collectWorkshopJob, combatTurn, completedEpicRaid, consumePotion, consumeSpecial, createInitialState, dismissAdventurer, equipItem, feedPet, hatchPetEgg, hireGuest, incrementQuest, listMarketItem, markTavernGuestsSeen, mergePet, moveAdventurer, openGeodes, potionLimit, promoteAdventurer, promotionChoices, progressTavernTime, queueWorkshopRecipe, questRefreshPrice, raidTryCost, recallAdventurer, refillRaidTry, refreshDailyRaidTries, refreshMerchantCooldowns, refreshMerchantRegular, refreshMerchantSpecial, refreshQuests, resetDoctrine, retreatRun, selectDoctrine, setTavernLocked, startRun, tickGame, togglePetFavourite, upgradeFacility, upgradeMarket, upgradeShelter, upgradeTavern } from './engine'
-import { adventurerAttackBounds, applyDamage, experienceToNextLevel, marketListingsPrice, marketSaleSeconds, marketTimePrice, offlineSeconds, quartersPrice, shelterAutofeedPrice, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, workshopQueuePrice, workshopTimePrice } from './formulas'
+import { adventurerAttackBounds, applyDamage, experienceToNextLevel, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, offlineSeconds, quartersPrice, shelterAutofeedPrice, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, workshopQueuePrice, workshopTimePrice } from './formulas'
 import { adventurerStats } from './stats'
 import type { GameContent } from './types'
 import { ACTIVE_SKILLS } from './combatSkills'
@@ -77,6 +77,18 @@ describe('original-compatible game loop', () => {
     state.money = Number.MAX_SAFE_INTEGER
     expect(upgradeMarket(state, 'listings')).toBe(false)
     expect(upgradeMarket(state, 'time')).toBe(false)
+  })
+
+  it('applies Starter and Merchant Pack bonuses to the market as in the APK', () => {
+    const index = indexContent(content)
+    const state = createInitialState(index)
+    expect(marketListingsCapacity(0, 0, true, true)).toBe(4)
+    expect(marketSaleSeconds(100, 1, 0, 0, true)).toBe(266)
+
+    state.purchasedPacks = { starter: true, merchant: true }
+    state.inventory.push({ itemId: 'BeastPelt', stack: 1 })
+    expect(listMarketItem(state, index, 'BeastPelt', 1)).toBe(true)
+    expect(state.marketListings[0].totalSeconds).toBe(marketSaleSeconds(1, 1, 0, 0, true) + 1)
   })
 
   it('rolls and buys regular and special merchant offers from unlocked area tables', () => {
