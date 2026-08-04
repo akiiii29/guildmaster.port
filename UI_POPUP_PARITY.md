@@ -1,5 +1,7 @@
 # UI popup parity audit (APK 2.147)
 
+Second-pass status (2026-08-05): this checklist is not an acceptance sign-off. The APK menu has additional non-payment surfaces (Settings, Redeem code, achievement intent, and adventure Report). The web drawer also had text-click no-op paths for Messages/FAQ/Bestiary; those were fixed, but the remaining items below must be ported before UI parity can be claimed.
+
 Nguồn đối chiếu: `../jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/ui/dialogs`.
 
 ## Đã có luồng tương ứng, cần hoàn thiện chi tiết
@@ -20,11 +22,11 @@ Nguồn đối chiếu: `../jadx_decompiled/sources/it/paranoidsquirrels/idlegui
 ## Chưa có popup/luồng APK
 
 - [ ] `DialogIdleProgress`: báo cáo offline progress khi mở lại game.
-- [ ] `DialogSettings`: màn cài đặt APK (ngoài ngôn ngữ và cloud account hiện có).
-- [ ] `DialogReport`: báo cáo/feedback.
-- [ ] `DialogRedeemCode`: redeem code.
+- [ ] `DialogSettings`: cài đặt sell/craft amount, confirmation, auto-open, verbose log và colorblind mode; riêng restore purchase bị loại khỏi scope IAP.
+- [ ] `DialogReport`: báo cáo kết quả adventure (thời gian, area clear, wipe, XP và enemy kill).
+- [ ] `DialogRedeemCode`: nhập/redeem code; các code cấp gem/IAP sẽ không được port theo phạm vi payment/IAP, còn code gameplay phải có policy server-side trước khi public.
 - [ ] `DialogShop`: vẫn bị khóa theo quyết định trước đó (không thanh toán); cần quyết định có hiển thị UI shop read-only hay vẫn coi là ngoài phạm vi.
-- [ ] Achievements drawer/popup: nút hiện chưa có hành động và hệ achievement cũng chưa hoàn tất.
+- [ ] Achievements drawer/popup: APK mở Google Play Games achievement intent. Web cần màn achievement nội bộ; nút hiện chưa có hành động và hệ tracking chưa hoàn tất.
 
 ## Quy tắc nghiệm thu
 

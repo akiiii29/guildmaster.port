@@ -1557,14 +1557,16 @@ function AppShell({ content, index, store }: AppProps) {
   }
 
   const handleShellClick = (event: MouseEvent) => {
-    const icon = (event.target as HTMLElement).closest('button')?.querySelector('img')?.src ?? ''
-    if (icon.includes('drawer_icon_king_message')) {
+    const button = (event.target as HTMLElement).closest('button')
+    const icon = button?.querySelector('img')?.src ?? ''
+    const label = button?.textContent ?? ''
+    if (icon.includes('drawer_icon_king_message') || label.includes(t('drawer.messages'))) {
       setDrawer(false)
       setDialog({ type: 'messages' })
-    } else if (icon.includes('drawer_icon_bestiary')) {
+    } else if (icon.includes('drawer_icon_bestiary') || label.includes(t('drawer.bestiary'))) {
       setDrawer(false)
       setDialog({ type: 'bestiary' })
-    } else if (icon.includes('drawer_icon_faq')) {
+    } else if (icon.includes('drawer_icon_faq') || label.includes(t('drawer.faq'))) {
       setDrawer(false)
       setDialog({ type: 'faq' })
     }
