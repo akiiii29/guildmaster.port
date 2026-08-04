@@ -11,7 +11,7 @@ import { adventurerStats, defaultWeaponId, equipmentDifference, equipmentItemId,
 import { activeSkillLabel } from './game/combatSkills'
 import { Modal } from './components/Modal'
 import { ProgressBar } from './components/ProgressBar'
-import { areaTeamSize, canConsumeSpecial, completedEpicRaid, potionLimit, potionTypeForItem, promotionChoices, questRefreshPrice, raidTryAvailable, raidTryCost, RARE_TRAITS, statusIconKey } from './game/engine'
+import { areaTeamSize, canConsumeSpecial, completedEpicRaid, epicRaidProgressTarget, potionLimit, potionTypeForItem, promotionChoices, questRefreshPrice, raidTryAvailable, raidTryCost, RARE_TRAITS, statusIconKey } from './game/engine'
 import { DOCTRINE_ABILITIES, DOCTRINES, doctrineIds, doctrinePointsAvailable } from './game/doctrines'
 
 interface AppProps {
@@ -132,6 +132,7 @@ function AreaCard({
   onClick,
   onCollect,
   raidTry,
+  nextUnlock,
 }: {
   area: AreaDefinition
   run?: AreaRun
@@ -139,11 +140,14 @@ function AreaCard({
   onClick: () => void
   onCollect: () => void
   raidTry?: boolean
+  nextUnlock?: { name: string; progress: number }
 }) {
   const { t, name } = useI18n()
   const lootCount = run?.chest.reduce((total, item) => total + item.stack, 0) ?? 0
   const activeRun = run && !run.finished && run.partyIds.length > 0 ? run : undefined
   const actionProgress = activeRun ? (activeRun.actionTotal - activeRun.actionRemaining) / Math.max(1, activeRun.actionTotal) * 100 : 0
+  const epicTarget = area.areaType === 2 ? epicRaidProgressTarget(area.id) : undefined
+  const currentProgress = activeRun?.progress ?? (area.areaType === 2 ? run?.maxProgress : undefined)
   return (
     <article className="area-card">
       <button className="area-card-open" onClick={onClick} aria-label={activeRun ? `${name(area.name)}, ${t(`action.${activeRun.action}`)}` : name(area.name)}>
@@ -156,6 +160,10 @@ function AreaCard({
             <img src={assetUrl(raidTry ? 'raid_try_available' : 'raid_try_unavailable')} alt="" />
           </span>
         )}
+        {currentProgress !== undefined && <small className="area-map-progress">{area.areaType === 2 && epicTarget
+          ? t('raid.epicProgress', { current: currentProgress, target: epicTarget })
+          : t('map.roomProgress', { current: currentProgress })}</small>}
+        {nextUnlock && <small className="area-unlock-progress">{t('map.nextUnlock', { current: Math.min(activeRun?.progress ?? 0, nextUnlock.progress), target: nextUnlock.progress, area: nextUnlock.name })}</small>}
         {activeRun ? (
           <>
             <div className="expedition-party" aria-label={t('dungeon.exploring', { count: party.length })}>
@@ -196,6 +204,7 @@ function AreasView({
   onOpen: (areaId: string) => void
 }) {
   const state = useGame(store)
+  const { t, name } = useI18n()
   const dungeonOrder = ['EnchantedForest', 'TheDesert', 'EternalBattlefield', 'TheGoldenCity', 'BlackwaterPort', 'FrostbitePeaks', 'ObsidianMines', 'TheSouthernGrove', 'BarrenWastelands', 'HiddenCityOfLarox', 'LostLands']
   const raidOrder = ['DivineArcheology', 'AncientGraveDigging', 'ImperialRescue', 'TheCultistRebels', 'TheLostExpedition', 'TheDreadfulAscent', 'CelestialMothership', 'TheDireDescent', 'SleepingPlanet', 'Kaunis', 'TheTower']
   const order = raid ? raidOrder : dungeonOrder
@@ -204,8 +213,22 @@ function AreasView({
     .filter((area) => state.unlockedAreas.includes(area.id))
     .filter((area) => !completedEpicRaid(state.runs[area.id]))
     .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))
+  const nextRaidUnlock = content.areas
+    .filter((area) => state.unlockedAreas.includes(area.id))
+    .flatMap((area) => area.unlocks.map((unlock) => ({ source: area, unlock, target: index.areas.get(unlock.areaGetter) })))
+    .filter((entry) => entry.target && entry.target.areaType !== 0 && !state.unlockedAreas.includes(entry.unlock.areaGetter))
+    .sort((left, right) => left.unlock.progress - right.unlock.progress)[0]
   return (
     <div className="area-list view-enter">
+      {areas.length === 0 && raid && <>
+        <EmptyState text={t('raid.noneUnlocked')} />
+        {nextRaidUnlock?.target && <p className="raid-unlock-hint">{t('raid.nextUnlock', {
+          area: name(nextRaidUnlock.target.name),
+          source: name(nextRaidUnlock.source.name),
+          current: Math.min(state.runs[nextRaidUnlock.source.id]?.progress ?? 0, nextRaidUnlock.unlock.progress),
+          target: nextRaidUnlock.unlock.progress,
+        })}</p>}
+      </>}
       {areas.map((area) => (
         <AreaCard
           key={area.id}
@@ -219,6 +242,10 @@ function AreasView({
           onClick={() => onOpen(area.id)}
           onCollect={() => store.collect(area.id)}
           raidTry={area.areaType !== 0 ? raidTryAvailable(state, area.id) : undefined}
+          nextUnlock={area.unlocks
+            .filter((unlock) => !state.unlockedAreas.includes(unlock.areaGetter))
+            .sort((left, right) => left.progress - right.progress)
+            .map((unlock) => ({ name: name(index.areas.get(unlock.areaGetter)?.name ?? unlock.areaGetter), progress: unlock.progress }))[0]}
         />
       ))}
     </div>
@@ -934,11 +961,14 @@ function AreaDialog({ areaId, store, index, onClose }: { areaId: string; store: 
   const petDefinition = pet && index.pets.get(pet.petId)
   const hasDarkness = areaDarknessValue(area, run) !== 0
   const progress = run.actionTotal > 0 ? Math.max(0, Math.min(100, (run.actionTotal - run.actionRemaining) / run.actionTotal * 100)) : 0
+  const epicTarget = area.areaType === 2 ? epicRaidProgressTarget(area.id) : undefined
   const renderPartyMember = ({ member, definition }: { member: AdventurerState; definition: AdventurerDefinition }) => <BattleEntity key={member.uid} image={definition.imageKey} name={member.name} hp={member.hp} maxHp={adventurerStats(member, index).maxHp} mana={member.mana} shield={member.shield} statuses={[...member.positiveStatusEffects, ...member.negativeStatusEffects]} activeSkill={Boolean(definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE')} onInspect={() => setInspect({ kind: 'adventurer', state: member, definition })} />
   return (
     <div className="battle-dialog-backdrop" role="presentation">
       <section className="battle-dialog" role="dialog" aria-modal="true" aria-label={name(area.name)}>
-        <header className="battle-dialog-title"><h2>{name(area.name)}</h2></header>
+        <header className="battle-dialog-title"><div><h2>{name(area.name)}</h2><small>{epicTarget
+          ? t('raid.epicProgress', { current: run.maxProgress, target: epicTarget })
+          : t('map.roomProgress', { current: run.progress })}</small></div></header>
         <div className="battle-scene-frame">
           <img className="battle-background" src={assetUrl(area.detailImageKey)} alt="" />
           {hasDarkness && <button className="battle-moon" onClick={() => setShowDarkness(true)} aria-label={t('battle.darknessTitle')}><img src={assetUrl(darknessAsset(run.localDarkness))} alt="" /></button>}

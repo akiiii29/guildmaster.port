@@ -216,14 +216,22 @@ export function raidTryAvailable(state: GameState, areaId: string) {
   return state.raidTries[areaId] ?? true
 }
 
+const EPIC_RAID_PROGRESS_TARGETS: Record<string, number> = {
+  TheDreadfulAscent: 13,
+  CelestialMothership: 18,
+  TheDireDescent: 7,
+  DivineArcheology: 13,
+  ImperialRescue: 15,
+}
+
+export function epicRaidProgressTarget(areaId: string) {
+  return EPIC_RAID_PROGRESS_TARGETS[areaId]
+}
+
 export function completedEpicRaid(run: AreaRun | undefined) {
   if (!run?.finished || run.chest.length > 0) return false
-  if (run.areaId === 'TheDreadfulAscent') return run.maxProgress >= 13
-  if (run.areaId === 'CelestialMothership') return run.maxProgress >= 18
-  if (run.areaId === 'TheDireDescent') return run.maxProgress >= 7
-  if (run.areaId === 'DivineArcheology') return run.maxProgress >= 13
-  if (run.areaId === 'ImperialRescue') return run.maxProgress >= 15
-  return false
+  const target = epicRaidProgressTarget(run.areaId)
+  return target !== undefined && run.maxProgress >= target
 }
 
 function localDayStart(timestamp: number) {
