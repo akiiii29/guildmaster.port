@@ -3,7 +3,7 @@ import './App.css'
 import type { ContentIndex } from './game/content'
 import { assetUrl } from './game/content'
 import type { AdventurerDefinition, AdventurerState, AreaDefinition, AreaRun, EnemyDefinition, EnemyState, EquipmentSlot, GameContent, ItemDefinition, PetDefinition, PetState, ScreenId, StatusEffectState } from './game/types'
-import { buildingCapacity, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, petFoodToNextLevel, quartersPrice, shelterAutofeedPrice, shelterCapacity, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, tavernVisitorIntervalSeconds, workshopCraftSeconds, workshopQueueCapacity, workshopQueuePrice, workshopTimePrice } from './game/formulas'
+import { buildingCapacity, experienceToNextLevel, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, petFoodToNextLevel, quartersPrice, shelterAutofeedPrice, shelterCapacity, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, tavernVisitorIntervalSeconds, workshopCraftSeconds, workshopQueueCapacity, workshopQueuePrice, workshopTimePrice } from './game/formulas'
 import { GameStore, useGame } from './game/store'
 import { I18nProvider, useI18n } from './game/i18n'
 import { inventoryCount, maxCraftable, RECIPES } from './game/recipes'
@@ -517,15 +517,18 @@ function MarketDialog({ store, index, onClose }: { store: GameStore; index: Cont
 function MerchantDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
   const { t, name } = useI18n()
+  const [selectedOfferUid, setSelectedOfferUid] = useState<number | null>(null)
   useEffect(() => {
     if (state.nextMerchantOfferId === 1) store.refreshMerchant()
   }, [state.nextMerchantOfferId, store])
   const section = (title: string, offers: typeof state.merchantRegularStock) => <section className="merchant-section"><h3>{title}</h3>{offers.length === 0 ? <EmptyState text={t('merchant.empty')} /> : <div className="item-grid">{offers.map((offer) => {
     const item = index.items.get(offer.itemId)
     const affordable = offer.gems ? state.gems >= offer.price : state.money >= offer.price
-    return <button className="item-slot merchant-offer" disabled={!affordable} key={offer.uid} onClick={() => store.buyMerchant(offer.uid)}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{offer.stack}</strong><span>{name(item?.name ?? offer.itemId)}</span><small><img src={assetUrl(offer.gems ? 'gem' : 'coin_copper')} alt="" />{offer.price}</small></button>
+    return <button className="item-slot merchant-offer" disabled={!affordable} key={offer.uid} onClick={() => setSelectedOfferUid(offer.uid)}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{offer.stack}</strong><span>{name(item?.name ?? offer.itemId)}</span><small><img src={assetUrl(offer.gems ? 'gem' : 'coin_copper')} alt="" />{offer.price}</small></button>
   })}</div>}</section>
-  return <Modal title={t('tool.merchant')} onClose={onClose} wide>{section(t('merchant.regular'), state.merchantRegularStock)}{section(t('merchant.special'), state.merchantSpecialStock)}<div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div></Modal>
+  const selectedOffer = [...state.merchantRegularStock, ...state.merchantSpecialStock].find((offer) => offer.uid === selectedOfferUid)
+  const selectedItem = selectedOffer && index.items.get(selectedOffer.itemId)
+  return <Modal title={t('tool.merchant')} onClose={onClose} wide>{section(t('merchant.regular'), state.merchantRegularStock)}{section(t('merchant.special'), state.merchantSpecialStock)}<div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>{selectedOffer && selectedItem && <div className="confirm-layer"><section className="confirm-box merchant-confirm"><img src={assetUrl(selectedItem.imageKey)} alt="" /><div><h3>{name(selectedItem.name)}</h3><p>{t('merchant.buyConfirm', { count: selectedOffer.stack, item: name(selectedItem.name), price: selectedOffer.price })}</p></div><div><button onClick={() => setSelectedOfferUid(null)}>{t('common.cancel')}</button><button onClick={() => { store.buyMerchant(selectedOffer.uid); setSelectedOfferUid(null) }}><img src={assetUrl(selectedOffer.gems ? 'gem' : 'coin_copper')} alt="" />{selectedOffer.price}</button></div></section></div>}</Modal>
 }
 
 function QuestsDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
@@ -1117,6 +1120,10 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
   const promotions = promotionChoices(member, index)
   const canAscend = !member.ascended && member.level >= definition.fields.maxLevel && definition.fields.maxLevel >= 45
   const slots: EquipmentSlot[] = ['weapon', 'armor', 'accessory']
+  const activeSkill = definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE' ? activeSkillLabel(definition.fields.activeSkill) : t('adventurer.noSkill')
+  const passiveSkill = definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE' ? definition.fields.passiveSkill.replace(/^PASSIVE_/, '').replaceAll('_', ' ') : t('adventurer.noSkill')
+  const xpRequired = member.level >= definition.fields.maxLevel ? 0 : experienceToNextLevel(member.level, member.ascended)
+  const traits = [member.trait, member.rareTrait].filter((trait): trait is string => Boolean(trait)).map((trait) => trait.replaceAll('_', ' '))
   return (
     <Modal title={member.name} onClose={onClose}>
       <div className={`entity-detail ${member.ascended ? 'ascended' : ''}`}>
@@ -1127,6 +1134,15 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
         <span>CON <b>{stats.constitution}</b></span><span>INT <b>{stats.intelligence}</b></span><span>DEX <b>{stats.dexterity}</b></span>
         <span>HP <b>{member.hp}/{stats.maxHp}</b></span><span>DEF <b>{stats.defense}</b></span><span>MDEF <b>{stats.magicDefense}</b></span>
       </div>
+      <section className="adventurer-progress">
+        <div><strong>{t('battle.experience')}</strong><span>{xpRequired === 0 ? t('common.max') : `${member.xp.toLocaleString()}/${xpRequired.toLocaleString()}`}</span></div>
+        {xpRequired > 0 && <ProgressBar value={member.xp} max={xpRequired} />}
+        {traits.length > 0 && <p><strong>{t('battle.traits')}:</strong> {traits.join(' · ')}</p>}
+      </section>
+      <section className="adventurer-skills">
+        <article><small>{t('battle.active')}</small><strong>{activeSkill}</strong></article>
+        <article><small>{t('battle.passive')}</small><strong>{passiveSkill}</strong></article>
+      </section>
       <div className="equipment-row">
         {slots.map((slot) => {
           const itemId = equipmentItemId(member, slot)
@@ -1412,6 +1428,7 @@ function BestiaryDialog({ store, index, onClose }: { store: GameStore; index: Co
             <div><dt>DEX</dt><dd>{enemy.fields.baseDexterity}</dd></div>
             <div><dt>XP</dt><dd>{enemy.fields.expGiven}</dd></div>
           </dl>
+          <section className="adventurer-skills"><article><small>{t('battle.active')}</small><strong>{enemy.fields.activeSkill && enemy.fields.activeSkill !== 'ACTIVE_NONE' ? activeSkillLabel(enemy.fields.activeSkill) : t('adventurer.noSkill')}</strong></article><article><small>{t('battle.passive')}</small><strong>{enemy.fields.passiveSkill && enemy.fields.passiveSkill !== 'PASSIVE_NONE' ? enemy.fields.passiveSkill.replace(/^PASSIVE_/, '').replaceAll('_', ' ') : t('adventurer.noSkill')}</strong></article></section>
           {enemy.drops.length > 0 && <h3>{t('bestiary.drops')}</h3>}
           <div className="bestiary-drops">
             {enemy.drops.map((drop, position) => {
