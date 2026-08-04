@@ -46,6 +46,8 @@ import {
 } from './engine'
 import { offlineSeconds } from './formulas'
 import { defaultWeaponId } from './stats'
+import { createGameSync, type GameSync } from '../sync/client'
+import type { CloudSyncStatus, RemoteSave } from '../sync/protocol'
 
 const SAVE_KEY = 'guild-master-web-save-v1'
 
@@ -54,10 +56,13 @@ export class GameStore {
   private listeners = new Set<() => void>()
   private timer: number | undefined
   private index: ContentIndex
+  private cloudSync: GameSync | null
 
   constructor(index: ContentIndex) {
     this.index = index
     this.state = this.load()
+    this.cloudSync = createGameSync()
+    void this.cloudSync?.initialize()
     const elapsed = offlineSeconds(Date.now(), this.state.lastAccess)
     tickGame(this.state, this.index, elapsed)
     this.persist()
@@ -181,6 +186,7 @@ export class GameStore {
 
   private persist() {
     localStorage.setItem(SAVE_KEY, JSON.stringify(this.state))
+    this.cloudSync?.queueSnapshot(this.state)
   }
 
   private commit(mutator: (draft: GameState) => void) {
@@ -198,6 +204,35 @@ export class GameStore {
   }
 
   getSnapshot = () => this.state
+
+  getCloudSyncStatus = (): CloudSyncStatus => this.cloudSync?.getStatus() ?? { kind: 'disabled' }
+
+  subscribeCloudSync = (listener: () => void) => this.cloudSync?.subscribe(listener) ?? (() => {})
+
+  getCloudUser = () => this.cloudSync?.getUser() ?? null
+
+  signInWithGoogle() {
+    return this.cloudSync?.signInWithGoogle() ?? Promise.resolve()
+  }
+
+  signOut() {
+    return this.cloudSync?.signOut() ?? Promise.resolve()
+  }
+
+  syncNow() {
+    return this.cloudSync?.syncNow(this.state) ?? Promise.resolve(this.getCloudSyncStatus())
+  }
+
+  pullCloudSave() {
+    return this.cloudSync?.pullLatest() ?? Promise.resolve(null)
+  }
+
+  replaceWithCloudSave(save: RemoteSave) {
+    this.state = structuredClone(save.state)
+    localStorage.setItem(SAVE_KEY, JSON.stringify(this.state))
+    void this.cloudSync?.adoptRemote(save)
+    this.listeners.forEach((listener) => listener())
+  }
 
   markMessageRead = (id: number) => this.commit((draft) => {
     draft.unreadMessages = draft.unreadMessages.filter((messageId) => messageId !== id)

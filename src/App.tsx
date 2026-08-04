@@ -34,6 +34,7 @@ type DialogState =
   | { type: 'potion'; itemId: string }
   | { type: 'roster' }
   | { type: 'faq' }
+  | { type: 'account' }
   | null
 
 function Currency({ amount, icon, label }: { amount: number; icon: string; label: string }) {
@@ -1322,6 +1323,54 @@ function BestiaryDialog({ store, index, onClose }: { store: GameStore; index: Co
   )
 }
 
+function AccountDialog({ store, onClose }: { store: GameStore; onClose: () => void }) {
+  const { t } = useI18n()
+  const [status, setStatus] = useState(store.getCloudSyncStatus())
+  const [working, setWorking] = useState(false)
+
+  useEffect(() => store.subscribeCloudSync(() => setStatus(store.getCloudSyncStatus())), [store])
+
+  const sync = async () => {
+    setWorking(true)
+    await store.syncNow()
+    setWorking(false)
+  }
+  const restore = async () => {
+    const remote = status.kind === 'conflict' ? status.remote : await store.pullCloudSave()
+    if (remote && window.confirm(t('account.restoreConfirm'))) store.replaceWithCloudSave(remote)
+  }
+
+  if (status.kind === 'disabled') {
+    return <Modal title={t('account.title')} onClose={onClose}><p className="dialog-intro">{t('account.disabled')}</p></Modal>
+  }
+
+  const detail = status.kind === 'signed-out' ? t('account.signedOut')
+    : status.kind === 'syncing' ? t('account.syncing')
+      : status.kind === 'offline' ? t('account.offline')
+        : status.kind === 'conflict' ? t('account.conflict')
+          : status.kind === 'error' ? `${t('account.error')}: ${status.message}`
+            : t('account.synced', { revision: status.revision })
+  const user = store.getCloudUser()
+
+  return (
+    <Modal title={t('account.title')} onClose={onClose}>
+      <p className="dialog-intro">{t('account.intro')}</p>
+      <section className="account-sync">
+        <strong>{user?.email ?? t('account.guest')}</strong>
+        <p>{detail}</p>
+      </section>
+      <div className="account-actions">
+        {!user && <button className="primary-button" disabled={working} onClick={() => void store.signInWithGoogle()}>{t('account.signIn')}</button>}
+        {user && <>
+          <button className="primary-button" disabled={working || status.kind === 'syncing'} onClick={() => void sync()}>{t('account.sync')}</button>
+          <button className="secondary-button" disabled={working || status.kind === 'syncing'} onClick={() => void restore()}>{t('account.restore')}</button>
+          <button className="danger-button" disabled={working} onClick={() => void store.signOut()}>{t('account.signOut')}</button>
+        </>}
+      </div>
+    </Modal>
+  )
+}
+
 function AppShell({ content, index, store }: AppProps) {
   const state = useGame(store)
   const { t } = useI18n()
@@ -1410,7 +1459,7 @@ function AppShell({ content, index, store }: AppProps) {
         ))}
       </nav>
 
-      {drawer && <div className="drawer-backdrop" onMouseDown={() => setDrawer(false)}><aside className="drawer" onMouseDown={(event) => event.stopPropagation()}><div className="drawer-title">Guild Master</div><button><img src={assetUrl('drawer_icon_king_message')} alt="" />{t('drawer.messages')}</button><button><img src={assetUrl('drawer_icon_faq')} alt="" />{t('drawer.faq')}</button><button><img src={assetUrl('drawer_icon_bestiary')} alt="" />{t('drawer.bestiary')}</button><button><img src={assetUrl('drawer_icon_achievements')} alt="" />{t('drawer.achievements')}</button><div className="drawer-language"><span>{t('drawer.language')}</span><div><button className={state.language === 'en' ? 'active' : ''} onClick={() => store.setLanguage('en')}>English</button><button className={state.language === 'vi' ? 'active' : ''} onClick={() => store.setLanguage('vi')}>Tiếng Việt</button></div></div><div className="drawer-spacer" /><button className="reset-button" onClick={() => { if (window.confirm(t('drawer.resetConfirm'))) { store.reset(); setDrawer(false) } }}>{t('drawer.newGuild')}</button></aside></div>}
+      {drawer && <div className="drawer-backdrop" onMouseDown={() => setDrawer(false)}><aside className="drawer" onMouseDown={(event) => event.stopPropagation()}><div className="drawer-title">Guild Master</div><button><img src={assetUrl('drawer_icon_king_message')} alt="" />{t('drawer.messages')}</button><button><img src={assetUrl('drawer_icon_faq')} alt="" />{t('drawer.faq')}</button><button><img src={assetUrl('drawer_icon_bestiary')} alt="" />{t('drawer.bestiary')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'account' }) }}><span className="drawer-cloud">☁</span>{t('drawer.account')}</button><button><img src={assetUrl('drawer_icon_achievements')} alt="" />{t('drawer.achievements')}</button><div className="drawer-language"><span>{t('drawer.language')}</span><div><button className={state.language === 'en' ? 'active' : ''} onClick={() => store.setLanguage('en')}>English</button><button className={state.language === 'vi' ? 'active' : ''} onClick={() => store.setLanguage('vi')}>Tiếng Việt</button></div></div><div className="drawer-spacer" /><button className="reset-button" onClick={() => { if (window.confirm(t('drawer.resetConfirm'))) { store.reset(); setDrawer(false) } }}>{t('drawer.newGuild')}</button></aside></div>}
 
       {dialog?.type === 'building' && <BuildingDialog id={dialog.id} store={store} index={index} onClose={() => setDialog(null)} onConsume={(itemId) => setDialog({ type: 'potion', itemId })} />}
       {dialog?.type === 'send' && <SendTeamDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} onSent={() => setDialog({ type: 'area', areaId: dialog.areaId })} />}
@@ -1425,6 +1474,7 @@ function AppShell({ content, index, store }: AppProps) {
       {dialog?.type === 'potion' && <ConsumePotionDialog itemId={dialog.itemId} store={store} index={index} onClose={() => setDialog({ type: 'building', id: 'storage' })} />}
       {dialog?.type === 'roster' && <RosterDialog store={store} index={index} onClose={() => setDialog(null)} />}
       {dialog?.type === 'faq' && <FaqDialog onClose={() => setDialog(null)} />}
+      {dialog?.type === 'account' && <AccountDialog store={store} onClose={() => setDialog(null)} />}
     </div>
   )
 }

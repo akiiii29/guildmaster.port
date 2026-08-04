@@ -59,7 +59,12 @@ npm test
 npm run build
 ```
 
-The remaining parity slices are rare-trait mutation/effects, the last
-specialized quest-event counters, a browser-native achievements equivalent,
-and final visual/localization parity. Real-money payment remains intentionally
-deferred.
+## Optional account and cloud-save backend
+
+The game remains playable without an account. When Supabase is configured,
+players can sign in with Google from **Account & backup** and sync their local
+save through an optimistic-revision API. Backend migrations and deployment
+instructions live in [`supabase/README.md`](supabase/README.md).
+
+Achievement conditions, full localization, save-migration coverage and final
+visual/E2E parity remain. Real-money payment remains intentionally deferred.

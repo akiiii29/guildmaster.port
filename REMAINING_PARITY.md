@@ -28,7 +28,7 @@ Hiện đã có đủ 56 quest trong content và phần lớn event/counter đã
 
 Game Android dùng Google Play Games; bản web cần một hệ achievement nội bộ có hành vi tương đương.
 
-- [ ] Tạo schema lưu achievement, progress và trạng thái đã mở khóa.
+- [x] Tạo schema backend lưu achievement, progress, event idempotent và reward ledger; client sync qua account/revision đã sẵn sàng.
 - [ ] Theo dõi các số liệu lịch sử không thể suy ra từ state hiện tại:
   - wealth cao nhất;
   - số adventurer cao nhất;
