@@ -50,6 +50,7 @@ import { createGameSync, type GameSync } from '../sync/client'
 import type { CloudSyncStatus, RemoteSave } from '../sync/protocol'
 
 const SAVE_KEY = 'guild-master-web-save-v1'
+const CLOUD_TICK_SYNC_INTERVAL_MS = 60_000
 
 export class GameStore {
   private state: GameState
@@ -57,6 +58,7 @@ export class GameStore {
   private timer: number | undefined
   private index: ContentIndex
   private cloudSync: GameSync | null
+  private lastCloudPersistAt = 0
 
   constructor(index: ContentIndex) {
     this.index = index
@@ -184,17 +186,20 @@ export class GameStore {
     }
   }
 
-  private persist() {
+  private persist(queueCloud = true) {
     localStorage.setItem(SAVE_KEY, JSON.stringify(this.state))
-    this.cloudSync?.queueSnapshot(this.state)
+    if (queueCloud && this.cloudSync?.getUser()) {
+      this.lastCloudPersistAt = Date.now()
+      this.cloudSync?.queueSnapshot(this.state)
+    }
   }
 
-  private commit(mutator: (draft: GameState) => void) {
+  private commit(mutator: (draft: GameState) => void, queueCloud = true) {
     const draft = structuredClone(this.state)
     mutator(draft)
     draft.lastAccess = Date.now()
     this.state = draft
-    this.persist()
+    this.persist(queueCloud)
     this.listeners.forEach((listener) => listener())
   }
 
@@ -270,7 +275,10 @@ export class GameStore {
 
   start() {
     if (this.timer) return
-    this.timer = window.setInterval(() => this.commit((draft) => tickGame(draft, this.index)), 1_000)
+    this.timer = window.setInterval(() => {
+      const queueCloud = Date.now() - this.lastCloudPersistAt >= CLOUD_TICK_SYNC_INTERVAL_MS
+      this.commit((draft) => tickGame(draft, this.index), queueCloud)
+    }, 1_000)
   }
 
   stop() {
