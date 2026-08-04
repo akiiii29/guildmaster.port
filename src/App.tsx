@@ -112,7 +112,7 @@ function AdventurersView({ store, index, onOpen, onManage }: { store: GameStore;
               <strong>{adventurer.name}</strong>
               <small>{traits || name(definition.name)}</small>
             </div>
-            {equipment.map(({ slot, item }) => <span className="adventurer-list-equipment" key={slot}><img src={assetUrl(item?.imageKey ?? 'object_empty_space_8dp')} alt="" /></span>)}
+            {equipment.map(({ slot, item }) => <span className="adventurer-list-equipment" key={slot}><img src={assetUrl(item?.imageKey ?? 'empty_equipment')} alt="" /></span>)}
           </button>
         )
       })}

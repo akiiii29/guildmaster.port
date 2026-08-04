@@ -18,6 +18,21 @@ export interface RemoteSave {
   state: GameState
 }
 
+/**
+ * A compact, deterministic fingerprint of the full persisted game state.
+ * It is only used to avoid uploading a snapshot that the cloud has already
+ * accepted; the server remains the authority for revisions and conflicts.
+ */
+export function gameStateFingerprint(state: GameState) {
+  const serialized = JSON.stringify(state)
+  let hash = 0x811c9dc5
+  for (let index = 0; index < serialized.length; index += 1) {
+    hash ^= serialized.charCodeAt(index)
+    hash = Math.imul(hash, 0x01000193)
+  }
+  return `${serialized.length}:${(hash >>> 0).toString(16).padStart(8, '0')}`
+}
+
 export type CloudSyncStatus =
   | { kind: 'disabled' }
   | { kind: 'signed-out' }

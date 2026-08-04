@@ -5,18 +5,21 @@ const DATABASE_VERSION = 1
 const SNAPSHOT_KEY = 'latest'
 const DEVICE_KEY = 'device-id'
 const REVISION_KEY = 'server-revision'
+const FINGERPRINT_KEY = 'synced-fingerprint'
 const ACCOUNT_KEY = 'queue-account'
 
 interface StoredSnapshot {
   key: typeof SNAPSHOT_KEY
   queuedAt: number
   snapshot: SyncSnapshot
+  fingerprint: string
 }
 
 const memory = {
   snapshot: undefined as StoredSnapshot | undefined,
   deviceId: undefined as string | undefined,
   revision: 0,
+  fingerprint: undefined as string | undefined,
   accountId: undefined as string | undefined,
 }
 
@@ -89,6 +92,7 @@ export class SyncQueue {
       if (memory.accountId !== accountId) {
         memory.accountId = accountId
         memory.revision = 0
+        memory.fingerprint = undefined
         memory.snapshot = undefined
       }
       return
@@ -98,6 +102,7 @@ export class SyncQueue {
     await Promise.all([
       remove('snapshots', SNAPSHOT_KEY),
       write('meta', REVISION_KEY, 0),
+      remove('meta', FINGERPRINT_KEY),
       write('meta', ACCOUNT_KEY, accountId),
     ])
   }
@@ -127,8 +132,21 @@ export class SyncQueue {
     await write('meta', REVISION_KEY, revision)
   }
 
-  async enqueue(snapshot: SyncSnapshot) {
-    const stored: StoredSnapshot = { key: SNAPSHOT_KEY, queuedAt: Date.now(), snapshot }
+  async getSyncedFingerprint() {
+    if (!hasIndexedDb()) return memory.fingerprint
+    return read<string>('meta', FINGERPRINT_KEY)
+  }
+
+  async setSyncedFingerprint(fingerprint: string) {
+    if (!hasIndexedDb()) {
+      memory.fingerprint = fingerprint
+      return
+    }
+    await write('meta', FINGERPRINT_KEY, fingerprint)
+  }
+
+  async enqueue(snapshot: SyncSnapshot, fingerprint: string) {
+    const stored: StoredSnapshot = { key: SNAPSHOT_KEY, queuedAt: Date.now(), snapshot, fingerprint }
     if (!hasIndexedDb()) {
       memory.snapshot = stored
       return stored

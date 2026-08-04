@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient, type User } from '@supabase/supabase-js'
 import type { GameState } from '../game/types'
 import { SyncQueue } from './queue'
-import { isRemoteSave, SYNC_PROTOCOL_VERSION, type CloudSyncStatus, type RemoteSave, type SyncSnapshot } from './protocol'
+import { gameStateFingerprint, isRemoteSave, SYNC_PROTOCOL_VERSION, type CloudSyncStatus, type RemoteSave, type SyncSnapshot } from './protocol'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
@@ -147,7 +147,11 @@ class SupabaseGameSync implements GameSync {
   }
 
   async adoptRemote(save: RemoteSave) {
-    await Promise.all([this.queue.setServerRevision(save.revision), this.queue.clear()])
+    await Promise.all([
+      this.queue.setServerRevision(save.revision),
+      this.queue.setSyncedFingerprint(gameStateFingerprint(save.state)),
+      this.queue.clear(),
+    ])
     this.hasUnresolvedConflict = false
     this.setStatus({ kind: 'idle', revision: save.revision })
   }
@@ -160,6 +164,10 @@ class SupabaseGameSync implements GameSync {
   }
 
   private async enqueueSnapshot(state: GameState) {
+    const fingerprint = gameStateFingerprint(state)
+    const [queued, syncedFingerprint] = await Promise.all([this.queue.peek(), this.queue.getSyncedFingerprint()])
+    if (queued?.fingerprint === fingerprint || (!queued && syncedFingerprint === fingerprint)) return false
+
     const [deviceId, baseRevision] = await Promise.all([this.queue.getDeviceId(), this.queue.getServerRevision()])
     const snapshot: SyncSnapshot = {
       protocolVersion: SYNC_PROTOCOL_VERSION,
@@ -169,7 +177,8 @@ class SupabaseGameSync implements GameSync {
       clientUpdatedAt: new Date(state.lastAccess).toISOString(),
       state: structuredClone(state),
     }
-    await this.queue.enqueue(snapshot)
+    await this.queue.enqueue(snapshot, fingerprint)
+    return true
   }
 
   private scheduleSync() {
@@ -215,6 +224,7 @@ class SupabaseGameSync implements GameSync {
       this.setStatus({ kind: 'conflict', remote: response.save })
       return this.status
     }
+    await this.queue.setSyncedFingerprint(queued.fingerprint)
     this.hasUnresolvedConflict = false
     await this.queue.removeIfCurrent(queued.queuedAt)
     this.setStatus({ kind: 'idle', revision: response.save.revision })

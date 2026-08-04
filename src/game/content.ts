@@ -19,7 +19,11 @@ export async function loadGameContent(): Promise<GameContent> {
   return { adventurers, enemies, areas, items, pets, quests, messages }
 }
 
-export const assetUrl = (key?: string) => key ? `/assets/${key}.png` : ''
+const assetExtensions: Record<string, 'png' | 'svg'> = {
+  bottom_nav_castle: 'svg',
+}
+
+export const assetUrl = (key?: string) => key ? `/assets/${key}.${assetExtensions[key] ?? 'png'}` : ''
 
 export const indexContent = (content: GameContent) => ({
   adventurers: new Map(content.adventurers.map((entry) => [entry.id, entry])),
