@@ -198,7 +198,7 @@ class SupabaseGameSync implements GameSync {
     }
     this.setStatus({ kind: 'syncing' })
     const { data, error } = await this.client.functions.invoke('sync', {
-      body: { action: 'push', snapshot: queued.snapshot },
+      body: { action: 'push', protocolVersion: SYNC_PROTOCOL_VERSION, snapshot: queued.snapshot },
     })
     if (error) {
       this.setStatus({ kind: 'error', message: await messageFrom(error) })
