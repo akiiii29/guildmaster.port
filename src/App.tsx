@@ -541,7 +541,7 @@ function BuildingDialog({ id, store, index, onClose, onConsume }: { id: string; 
     return (
       <Modal title={t('building.storage')} onClose={onClose} wide>
         <div className="section-heading"><strong>{t('storage.items')}</strong><span>{state.inventory.length} / {capacity}</span></div>
-        {state.buildings.storage < 80 && <div className="tavern-upgrades"><button disabled={state.money < price} onClick={() => store.upgradeFacility('storage')}><strong>{t('storage.upgrade')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{price.toLocaleString()}</span></button></div>}
+        {state.buildings.storage < 80 && <div className="tavern-upgrades storage-upgrades"><button disabled={state.money < price} onClick={() => store.upgradeFacility('storage')}><strong>{t('storage.upgrade')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{price.toLocaleString()}</span></button></div>}
         {state.inventory.length === 0 && <EmptyState text={t('storage.empty')} />}
         <div className="item-grid">
           {state.inventory.map((stack) => {

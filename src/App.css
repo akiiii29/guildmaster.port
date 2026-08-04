@@ -163,6 +163,7 @@ button { color: inherit; }
 .tavern-timer svg { width: 100%; height: 100%; fill: #fff; }
 .tavern-timer.locked svg { fill: #c4382e; }
 .tavern-upgrades { margin-top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+.storage-upgrades { margin-bottom: 16px; }
 .tavern-upgrades > button { min-height: 61px; padding: 8px; display: grid; place-items: center; align-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.12); cursor: pointer; }
 .tavern-upgrades > button:hover:not(:disabled) { border-color: var(--brass-border); background: rgba(250,160,62,.08); }
 .tavern-upgrades > button:disabled { opacity: .46; cursor: default; }
