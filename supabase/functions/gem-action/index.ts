@@ -34,7 +34,7 @@ function isGameState(value: unknown): value is GameState {
     && isRecord(value.runs)
 }
 
-Deno.serve(async (request) => {
+async function handleRequest(request: Request) {
   if (request.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405)
   const authorization = request.headers.get('Authorization')
@@ -73,7 +73,12 @@ Deno.serve(async (request) => {
   // across once. Its legacy gem balance is always discarded below. This is a
   // compatibility migration, not a trusted gameplay reward submission.
   const legacyState = isRecord(body.legacyState) && isGameState(body.legacyState) ? body.legacyState : null
-  const state = saved && isGameState(saved.state)
+  const savedStateIsCurrent = saved && isGameState(saved.state) && saved.state.version >= 24
+  // Version 19 saves predate fields the current engine requires. The browser
+  // has already run the compatible save migration before it sends this intent,
+  // so accept that migrated state exactly once to repair these old accounts.
+  // Once version 24 is stored, browser state is never accepted again.
+  const state = savedStateIsCurrent
     ? structuredClone(saved.state)
     : legacyState ? structuredClone(legacyState) : createInitialState(index)
   const cutover = saved?.authority_mode !== 'gem_authoritative'
@@ -110,4 +115,15 @@ Deno.serve(async (request) => {
     })
   }
   return json({ status: result.result_status, save: { revision: Number(result.revision), gameVersion: Number(result.game_version), updatedAt: result.updated_at, state: result.state } })
+}
+
+Deno.serve(async (request) => {
+  try {
+    return await handleRequest(request)
+  } catch (error) {
+    // Never let an unexpected server error become a browser-level CORS error.
+    // The detailed exception remains in Edge Function logs for diagnosis.
+    console.error('gem-action failed unexpectedly', error)
+    return json({ error: 'Unable to process the authoritative game action.', code: 'GEM_ACTION_FAILED' }, 500)
+  }
 })
