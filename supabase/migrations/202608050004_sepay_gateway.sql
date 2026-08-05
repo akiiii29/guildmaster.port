@@ -22,7 +22,7 @@ declare product public.payment_products%rowtype;
 declare next_code text;
 begin
   if p_provider <> 'sepay' then raise exception 'Unsupported payment provider.' using errcode = '22023'; end if;
-  select * into product from public.payment_products where product_id = p_product_id and active;
+  select * into product from public.payment_products where payment_products.product_id = p_product_id and payment_products.active;
   if not found or product.currency <> 'VND' then raise exception 'Payment product is unavailable.' using errcode = '22023'; end if;
   next_code := 'GM' || upper(replace(gen_random_uuid()::text, '-', ''));
   insert into public.profiles (id) values (p_account_id) on conflict (id) do nothing;
