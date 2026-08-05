@@ -409,6 +409,13 @@ export interface GameSettings {
   colorblindMode: boolean
 }
 
+export interface AchievementStats {
+  craftedItems: number
+  soldItems: number
+  claimedQuests: number
+  defeatedEnemies: Record<string, number>
+}
+
 export interface GameState {
   version: number
   language: Language
@@ -455,5 +462,8 @@ export interface GameState {
   unreadMessages: number[]
   raidTries: Record<string, boolean>
   runs: Record<string, AreaRun>
+  achievementStats: AchievementStats
+  unlockedAchievements: string[]
+  pendingAchievementNotifications: string[]
   totalTicks: number
 }

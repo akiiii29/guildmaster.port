@@ -47,11 +47,17 @@ import {
 } from './engine'
 import { offlineSeconds } from './formulas'
 import { defaultWeaponId } from './stats'
+import { reconcileAchievements } from './achievements'
 import { createGameSync, type GameSync } from '../sync/client'
 import type { CloudSyncStatus, RemoteSave } from '../sync/protocol'
 
 const SAVE_KEY = 'guild-master-web-save-v1'
 const CLOUD_TICK_SYNC_INTERVAL_MS = 60_000
+const SUPPORTED_SAVE_VERSIONS = new Set(Array.from({ length: 24 }, (_, index) => index + 1))
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+}
 
 export class GameStore {
   private state: GameState
@@ -61,6 +67,13 @@ export class GameStore {
   private cloudSync: GameSync | null
   private lastCloudPersistAt = 0
   private offlineProgressSeconds = 0
+  private onStorage = (event: StorageEvent) => {
+    if (event.key !== SAVE_KEY || !event.newValue) return
+    const incoming = this.migrateSerialized(event.newValue)
+    if (!incoming || incoming.lastAccess <= this.state.lastAccess) return
+    this.state = incoming
+    this.listeners.forEach((listener) => listener())
+  }
 
   constructor(index: ContentIndex) {
     this.index = index
@@ -71,14 +84,18 @@ export class GameStore {
     this.offlineProgressSeconds = elapsed
     tickGame(this.state, this.index, elapsed)
     this.persist()
+    if (typeof window !== 'undefined') window.addEventListener('storage', this.onStorage)
   }
 
   private load() {
+    return this.migrateSerialized(localStorage.getItem(SAVE_KEY)) ?? createInitialState(this.index)
+  }
+
+  private migrateSerialized(raw: string | null): GameState | null {
     try {
-      const raw = localStorage.getItem(SAVE_KEY)
-      if (!raw) return createInitialState(this.index)
+      if (!raw) return null
       const parsed = JSON.parse(raw) as GameState
-      if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22].includes(parsed.version) || !parsed.buildings || !parsed.runs) return createInitialState(this.index)
+      if (!isRecord(parsed) || !SUPPORTED_SAVE_VERSIONS.has(parsed.version) || !isRecord(parsed.buildings) || !isRecord(parsed.runs)) return null
       const normalizeAdventurer = (entry: AdventurerState): AdventurerState => {
         const definition = this.index.adventurers.get(entry.classId)
         return {
@@ -97,8 +114,8 @@ export class GameStore {
           negativeStatusEffects: entry.negativeStatusEffects ?? [],
         }
       }
-      const adventurers = (parsed.adventurers ?? []).map(normalizeAdventurer)
-      const tavernGuests = (parsed.tavernGuests ?? []).map(normalizeAdventurer)
+      const adventurers = (Array.isArray(parsed.adventurers) ? parsed.adventurers : []).map(normalizeAdventurer)
+      const tavernGuests = (Array.isArray(parsed.tavernGuests) ? parsed.tavernGuests : []).map(normalizeAdventurer)
 
       // Saves made by the first web prototype rolled a random tutorial recruit.
       // The original game always starts with a Footman so Copper Armor remains usable at step 5.
@@ -140,9 +157,9 @@ export class GameStore {
           return [area.id, parsed.raidTries?.[area.id] ?? !wasActive]
         }))
 
-      return {
+      const migrated: GameState = {
         ...parsed,
-        version: 22,
+        version: 24,
         language: parsed.language ?? 'en',
         settings: {
           sellMaxAmount: parsed.settings?.sellMaxAmount ?? 1,
@@ -161,7 +178,7 @@ export class GameStore {
           return date.getTime()
         })(),
         adventurers,
-        dismissedAdventurers: (parsed.dismissedAdventurers ?? []).map((entry) => ({ ...entry, member: normalizeAdventurer(entry.member) })),
+        dismissedAdventurers: (Array.isArray(parsed.dismissedAdventurers) ? parsed.dismissedAdventurers : []).map((entry) => ({ ...entry, member: normalizeAdventurer(entry.member) })),
         tavernGuests,
         runs,
         raidTries,
@@ -195,14 +212,29 @@ export class GameStore {
         pets: parsed.pets ?? [],
         buildings: { ...parsed.buildings, shelterAutofeed: parsed.buildings.shelterAutofeed ?? 0 },
         seenItems: parsed.seenItems ?? [],
+        achievementStats: isRecord(parsed.achievementStats) ? {
+          craftedItems: Number.isFinite(parsed.achievementStats.craftedItems) ? Math.max(0, parsed.achievementStats.craftedItems) : 0,
+          soldItems: Number.isFinite(parsed.achievementStats.soldItems) ? Math.max(0, parsed.achievementStats.soldItems) : 0,
+          claimedQuests: Number.isFinite(parsed.achievementStats.claimedQuests) ? Math.max(0, parsed.achievementStats.claimedQuests) : 0,
+          defeatedEnemies: isRecord(parsed.achievementStats.defeatedEnemies) ? Object.fromEntries(Object.entries(parsed.achievementStats.defeatedEnemies).filter(([, value]) => typeof value === 'number' && value > 0)) : {},
+        } : { craftedItems: 0, soldItems: 0, claimedQuests: 0, defeatedEnemies: Object.fromEntries((Array.isArray(parsed.seenEnemies) ? parsed.seenEnemies : []).map((enemyId) => [enemyId, 1])) },
+        unlockedAchievements: Array.isArray(parsed.unlockedAchievements) ? [...new Set(parsed.unlockedAchievements.filter((id): id is string => typeof id === 'string'))] : [],
+        pendingAchievementNotifications: [],
       }
+      reconcileAchievements(migrated, this.index)
+      return migrated
     } catch {
-      return createInitialState(this.index)
+      return null
     }
   }
 
   private persist(queueCloud = true) {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(this.state))
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(this.state))
+    } catch (error) {
+      console.error('Unable to persist local game save.', error)
+      return
+    }
     if (queueCloud && this.cloudSync?.getUser()) {
       this.lastCloudPersistAt = Date.now()
       this.cloudSync?.queueSnapshot(this.state)
@@ -212,6 +244,8 @@ export class GameStore {
   private commit(mutator: (draft: GameState) => void, queueCloud = true) {
     const draft = structuredClone(this.state)
     mutator(draft)
+    const newlyUnlocked = reconcileAchievements(draft, this.index)
+    draft.pendingAchievementNotifications = [...draft.pendingAchievementNotifications, ...newlyUnlocked]
     draft.lastAccess = Date.now()
     this.state = draft
     this.persist(queueCloud)
@@ -226,6 +260,30 @@ export class GameStore {
   getSnapshot = () => this.state
 
   getOfflineProgressSeconds = () => this.offlineProgressSeconds
+
+  exportSave() {
+    return JSON.stringify({ format: 'guild-master-web-save', exportedAt: new Date().toISOString(), state: this.state }, null, 2)
+  }
+
+  importSave(serialized: string) {
+    try {
+      const parsed = JSON.parse(serialized) as unknown
+      const candidate = isRecord(parsed) && parsed.format === 'guild-master-web-save' ? parsed.state : parsed
+      const migrated = this.migrateSerialized(JSON.stringify(candidate))
+      if (!migrated) return { ok: false, message: 'This backup is invalid or uses an unsupported save version.' }
+      this.state = migrated
+      this.persist()
+      this.listeners.forEach((listener) => listener())
+      return { ok: true, message: 'Backup restored successfully.' }
+    } catch {
+      return { ok: false, message: 'This backup is not valid JSON.' }
+    }
+  }
+
+  acknowledgeAchievementNotifications() {
+    if (this.state.pendingAchievementNotifications.length === 0) return
+    this.commit((draft) => { draft.pendingAchievementNotifications = [] }, false)
+  }
 
   getCloudSyncStatus = (): CloudSyncStatus => this.cloudSync?.getStatus() ?? { kind: 'disabled' }
 
@@ -262,10 +320,13 @@ export class GameStore {
   }
 
   replaceWithCloudSave(save: RemoteSave) {
-    this.state = structuredClone(save.state)
-    localStorage.setItem(SAVE_KEY, JSON.stringify(this.state))
+    const migrated = this.migrateSerialized(JSON.stringify(save.state))
+    if (!migrated) return false
+    this.state = migrated
+    this.persist(false)
     void this.cloudSync?.adoptRemote(save)
     this.listeners.forEach((listener) => listener())
+    return true
   }
 
   markMessageRead = (id: number) => this.commit((draft) => {

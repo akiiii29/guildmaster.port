@@ -2,17 +2,17 @@ import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import './App.css'
 import type { ContentIndex } from './game/content'
 import { assetUrl } from './game/content'
-import type { AdventurerDefinition, AdventurerState, AreaDefinition, AreaRun, EnemyDefinition, EnemyState, EquipmentSlot, GameContent, ItemDefinition, PetDefinition, PetState, ScreenId, StatusEffectState } from './game/types'
+import type { AdventurerDefinition, AdventurerState, AreaDefinition, AreaRun, EnemyDefinition, EnemyState, EquipmentSlot, GameContent, ItemDefinition, PetAbilityType, PetDefinition, PetState, ScreenId, StatusEffectState } from './game/types'
 import { adventurerAttackBounds, buildingCapacity, experienceToNextLevel, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, petFoodToNextLevel, quartersPrice, shelterAutofeedPrice, shelterCapacity, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, tavernVisitorIntervalSeconds, workshopCraftSeconds, workshopQueueCapacity, workshopQueuePrice, workshopTimePrice } from './game/formulas'
 import { GameStore, useGame } from './game/store'
-import { I18nProvider, useI18n } from './game/i18n'
+import { I18nProvider, localizeActiveSkill, localizeDoctrineAbility, localizeKingMessage, localizePassiveSkill, localizeQuestDescription, localizeRareTrait, useI18n } from './game/i18n'
 import { inventoryCount, maxCraftable, RECIPES } from './game/recipes'
 import { adventurerStats, defaultWeaponId, equipmentDifference, equipmentItemId, itemMatchesSlot, weaponIsMagic, weaponIsRanged, weaponTypeKey } from './game/stats'
-import { activeSkillLabel } from './game/combatSkills'
 import { Modal } from './components/Modal'
 import { ProgressBar } from './components/ProgressBar'
 import { areaTeamSize, canConsumeSpecial, completedEpicRaid, epicRaidProgressTarget, potionLimit, potionTypeForItem, promotionChoices, questRefreshPrice, raidTryAvailable, raidTryCost, RARE_TRAITS, statusIconKey } from './game/engine'
-import { DOCTRINE_ABILITIES, DOCTRINES, doctrineIds, doctrinePointsAvailable } from './game/doctrines'
+import { DOCTRINE_ABILITIES, DOCTRINES, doctrineAbilityValue, doctrineIds, doctrinePointsAvailable } from './game/doctrines'
+import { ACHIEVEMENTS, achievementProgress } from './game/achievements'
 
 interface AppProps {
   content: GameContent
@@ -22,6 +22,7 @@ interface AppProps {
 
 type DialogState =
   | { type: 'building'; id: string }
+  | { type: 'market'; itemId?: string }
   | { type: 'area'; areaId: string }
   | { type: 'send'; areaId: string }
   | { type: 'refillRaid'; areaId: string }
@@ -37,6 +38,7 @@ type DialogState =
   | { type: 'account' }
   | { type: 'settings' }
   | { type: 'achievements' }
+  | { type: 'shop' }
   | { type: 'reset' }
   | null
 
@@ -301,12 +303,31 @@ function IdleProgressDialog({ seconds, onClose }: { seconds: number; onClose: ()
   return <div className="confirm-layer"><section className="confirm-box idle-progress"><h3>{t('idle.title')}</h3><p>{t('idle.body', { time: formatSeconds(seconds) })}</p><ProgressBar value={seconds} max={Math.max(1, seconds)} label={formatSeconds(seconds)} /><div><button onClick={onClose}>{t('common.close')}</button></div></section></div>
 }
 
+function ShopDialog({ onClose }: { onClose: () => void }) {
+  const { t } = useI18n()
+  return <Modal title={t('shop.title')} onClose={onClose}>
+    <section className="iap-dialog">
+      <img className="iap-gem-icon" src={assetUrl('gem')} alt="" />
+      <p>{t('shop.intro')}</p>
+      <div className="iap-qr-placeholder" role="img" aria-label={t('shop.qrPending')}>
+        <span>QR</span>
+        <small>{t('shop.qrPending')}</small>
+      </div>
+      <p className="iap-note">{t('shop.note')}</p>
+    </section>
+    <div className="workshop-actions"><span>{t('shop.comingSoon')}</span><button onClick={onClose}>{t('common.close')}</button></div>
+  </Modal>
+}
+
 function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
   const { t, name } = useI18n()
   const [showRecipes, setShowRecipes] = useState(false)
   const [craftingRecipeId, setCraftingRecipeId] = useState<string | null>(null)
   const [craftAmount, setCraftAmount] = useState(1)
+  const [recipeFilter, setRecipeFilter] = useState<'all' | 'materials' | 'weapons' | 'armors' | 'accessories'>('all')
+  const [recipeSort, setRecipeSort] = useState<'type' | 'craftable' | 'alphabetical'>('type')
+  const [hideInsufficient, setHideInsufficient] = useState(false)
   const [cancelJobUid, setCancelJobUid] = useState<number | null>(null)
   const [upgrade, setUpgrade] = useState<'queue' | 'time' | null>(null)
   const capacity = workshopQueueCapacity(state.buildings.workshopQueue, state.permanentUpgrades.UpgradeWorkshopQueue ?? 0, state.purchasedPacks.starter, state.purchasedPacks.merchant)
@@ -323,6 +344,20 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
   const craftingTime = craftingRecipe && craftingResult
     ? state.tutorialStep === 3 && craftingRecipe.id === 'Leather' ? 10 : state.tutorialStep === 4 && craftingRecipe.id === 'CopperArmor' ? 20 : workshopCraftSeconds(Number(craftingResult.fields.price ?? 1), craftingRecipe.result.stack * amount, state.buildings.workshopTime, state.permanentUpgrades.UpgradeWorkshopTime ?? 0, state.purchasedPacks.merchant)
     : 0
+  const filteredRecipes = visibleRecipes.filter((recipe) => {
+    const type = index.items.get(recipe.result.itemId)?.type ?? ''
+    const matches = recipeFilter === 'all' ? true
+      : recipeFilter === 'weapons' ? ['Bow', 'Dagger', 'Staff', 'Sword'].includes(type)
+        : recipeFilter === 'armors' ? ['HeavyArmor', 'MediumArmor', 'LightArmor'].includes(type)
+          : recipeFilter === 'accessories' ? type === 'Accessory'
+            : !['Bow', 'Dagger', 'Staff', 'Sword', 'HeavyArmor', 'MediumArmor', 'LightArmor', 'Accessory'].includes(type)
+    return matches && (!hideInsufficient || maxCraftable(state, recipe) > 0)
+  }).sort((left, right) => {
+    const leftItem = index.items.get(left.result.itemId); const rightItem = index.items.get(right.result.itemId)
+    if (recipeSort === 'craftable') return maxCraftable(state, right) - maxCraftable(state, left)
+    if (recipeSort === 'alphabetical') return name(leftItem?.name ?? left.result.itemId).localeCompare(name(rightItem?.name ?? right.result.itemId))
+    return (leftItem?.type ?? '').localeCompare(rightItem?.type ?? '') || name(leftItem?.name ?? left.result.itemId).localeCompare(name(rightItem?.name ?? right.result.itemId))
+  })
 
   return (
     <Modal title={t('building.workshop')} onClose={onClose} wide>
@@ -376,8 +411,8 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
               <div className="market-quantity"><button disabled={amount <= 1} onClick={() => setCraftAmount(amount - 1)}>-</button><strong>{amount}</strong><button disabled={amount >= maxCraftAmount} onClick={() => setCraftAmount(amount + 1)}>+</button></div>
               <input className="market-quantity-slider" type="range" min="1" max={maxCraftAmount} value={amount} onChange={(event) => setCraftAmount(Number(event.target.value))} />
               <div className="workshop-actions"><button onClick={() => setCraftingRecipeId(null)}>{t('common.close')}</button><button disabled={queueFull || maxCraftAmount < 1} onClick={() => { store.craft(craftingRecipe.id, amount); setCraftingRecipeId(null); setShowRecipes(false) }}>{t('workshop.craft')}</button></div>
-            </section> : <div className="recipe-list">
-              {visibleRecipes.map((recipe) => {
+            </section> : <><div className="storage-filters recipe-filters"><label>{t('workshop.recipeFilter')}<select value={recipeFilter} onChange={(event) => setRecipeFilter(event.target.value as typeof recipeFilter)}><option value="all">{t('storage.all')}</option><option value="materials">{t('storage.materials')}</option><option value="weapons">{t('storage.weapons')}</option><option value="armors">{t('storage.armors')}</option><option value="accessories">{t('storage.accessories')}</option></select></label><label>{t('workshop.recipeSort')}<select value={recipeSort} onChange={(event) => setRecipeSort(event.target.value as typeof recipeSort)}><option value="type">{t('storage.sortType')}</option><option value="craftable">{t('workshop.sortCraftable')}</option><option value="alphabetical">{t('storage.sortAlphabetical')}</option></select></label><label className="recipe-hide"><input type="checkbox" checked={hideInsufficient} onChange={(event) => setHideInsufficient(event.target.checked)} />{t('workshop.hideInsufficient')}</label></div><div className="recipe-list">
+              {filteredRecipes.map((recipe) => {
                 const result = index.items.get(recipe.result.itemId)
                 const craftable = maxCraftable(state, recipe)
                 return (
@@ -396,7 +431,8 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
                   </article>
                 )
               })}
-            </div>}
+              {filteredRecipes.length === 0 && <EmptyState text={t('workshop.noRecipes')} />}
+            </div></>}
             {!craftingRecipe && <button className="recipes-close" onClick={() => setShowRecipes(false)}>{t('common.close')}</button>}
           </section>
         </div>
@@ -414,9 +450,36 @@ function TavernLockIcon({ locked }: { locked: boolean }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d={path} /></svg>
 }
 
+function recruitAssessment(definition: AdventurerDefinition, stats: ReturnType<typeof adventurerStats>, t: ReturnType<typeof useI18n>['t']) {
+  const { fields } = definition
+  const strengths: string[] = []
+  const weaknesses: string[] = []
+  const attributes = [
+    ['constitution', stats.constitution] as const,
+    ['intelligence', stats.intelligence] as const,
+    ['dexterity', stats.dexterity] as const,
+  ]
+  const highest = attributes.reduce((best, candidate) => candidate[1] > best[1] ? candidate : best)
+  const lowest = attributes.reduce((worst, candidate) => candidate[1] < worst[1] ? candidate : worst)
+
+  strengths.push(t(`tavern.assessment.${highest[0]}`))
+  if (fields.healer) strengths.push(t('tavern.assessment.healer'))
+  if (fields.cleanser) strengths.push(t('tavern.assessment.cleanser'))
+  if (fields.alwaysHits) strengths.push(t('tavern.assessment.accurate'))
+  if (fields.initiative) strengths.push(t('tavern.assessment.initiative'))
+  if ((fields.threat ?? 1) > 1 || stats.defense >= stats.magicDefense * 1.5) strengths.push(t('tavern.assessment.frontline'))
+
+  weaknesses.push(t(`tavern.assessment.low${lowest[0][0].toUpperCase()}${lowest[0].slice(1)}`))
+  if (stats.defense === 0) weaknesses.push(t('tavern.assessment.noDefense'))
+  if (stats.magicDefense === 0) weaknesses.push(t('tavern.assessment.noMagicDefense'))
+  if (!fields.activeSkill || fields.activeSkill === 'ACTIVE_NONE') weaknesses.push(t('tavern.assessment.noActive'))
+
+  return { strengths: [...new Set(strengths)].slice(0, 3), weaknesses: [...new Set(weaknesses)].slice(0, 3) }
+}
+
 function TavernDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
-  const { t, name, description } = useI18n()
+  const { language, t, name, description } = useI18n()
   const [showHelp, setShowHelp] = useState(false)
   const [showNoSpace, setShowNoSpace] = useState(false)
   const [selectedGuest, setSelectedGuest] = useState<number | null>(null)
@@ -431,6 +494,10 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
   const detailsGuest = selectedGuest === null ? undefined : state.tavernGuests.find((guest) => guest.uid === selectedGuest)
   const detailsDefinition = detailsGuest && index.adventurers.get(detailsGuest.classId)
   const detailsStats = detailsGuest ? adventurerStats(detailsGuest, index) : undefined
+  const detailsTraits = detailsGuest ? [detailsGuest.trait, detailsGuest.rareTrait].filter((trait): trait is string => Boolean(trait)).map((trait) => localizeRareTrait(language, trait)) : []
+  const detailsActiveSkill = detailsDefinition?.fields.activeSkill && detailsDefinition.fields.activeSkill !== 'ACTIVE_NONE' ? localizeActiveSkill(language, detailsDefinition.fields.activeSkill) : t('adventurer.noSkill')
+  const detailsPassiveSkill = detailsDefinition?.fields.passiveSkill && detailsDefinition.fields.passiveSkill !== 'PASSIVE_NONE' ? localizePassiveSkill(language, detailsDefinition.fields.passiveSkill) : t('adventurer.noSkill')
+  const detailsAssessment = detailsDefinition && detailsStats ? recruitAssessment(detailsDefinition, detailsStats, t) : undefined
   const close = () => {
     store.markTavernSeen()
     onClose()
@@ -473,7 +540,7 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
             {state.tavernGuests.map((guest) => {
               const definition = index.adventurers.get(guest.classId)
               if (!definition) return null
-              const traits = [guest.trait, guest.rareTrait].filter(Boolean).map((trait) => name(String(trait)).replaceAll('_', ' ')).join(' · ')
+              const traits = [guest.trait, guest.rareTrait].filter((trait): trait is string => Boolean(trait)).map((trait) => localizeRareTrait(language, trait)).join(' · ')
               return (
                 <article className="tavern-visitor" key={guest.uid} role="button" tabIndex={0} onClick={() => setSelectedGuest(guest.uid)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelectedGuest(guest.uid) }}>
                   <span className="tavern-visitor-image"><img src={assetUrl(definition.imageKey)} alt="" /></span>
@@ -493,17 +560,17 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
 
         {showHelp && <div className="confirm-layer"><div className="confirm-box tavern-info"><h3>{t('building.tavern')}</h3>{t('tavern.help').split('\n').map((line, index) => line ? <p key={`${line}-${index}`}>{line}</p> : <br key={index} />)}<div><button onClick={() => setShowHelp(false)}>{t('common.close')}</button></div></div></div>}
         {showNoSpace && <div className="confirm-layer"><div className="confirm-box tavern-info"><h3>{t('tavern.noSpaceTitle')}</h3><p>{t('tavern.noSpace')}</p><div><button onClick={() => setShowNoSpace(false)}>{t('common.close')}</button></div></div></div>}
-        {detailsGuest && detailsDefinition && detailsStats && <div className="confirm-layer"><div className="confirm-box tavern-guest-detail"><div className="entity-detail"><div className="portrait-frame large"><img src={assetUrl(detailsDefinition.imageKey)} alt="" /></div><div><h3>{name(detailsDefinition.name)}</h3><p>{description(detailsDefinition.id, detailsDefinition.description)}</p></div></div><div className="stat-grid"><span>CON <b>{detailsStats.constitution}</b></span><span>INT <b>{detailsStats.intelligence}</b></span><span>DEX <b>{detailsStats.dexterity}</b></span><span>HP <b>{detailsStats.maxHp}</b></span><span>DEF <b>{detailsStats.defense}</b></span><span>MDEF <b>{detailsStats.magicDefense}</b></span></div><div className="tavern-detail-actions"><button onClick={() => setSelectedGuest(null)}>{t('common.close')}</button></div></div></div>}
+        {detailsGuest && detailsDefinition && detailsStats && detailsAssessment && <div className="confirm-layer"><div className="confirm-box tavern-guest-detail"><div className="entity-detail"><div className="portrait-frame large"><img src={assetUrl(detailsDefinition.imageKey)} alt="" /></div><div><h3>{name(detailsDefinition.name)}</h3><p>{description(detailsDefinition.id, detailsDefinition.description)}</p></div></div><div className="stat-grid"><span>CON <b>{detailsStats.constitution}</b></span><span>INT <b>{detailsStats.intelligence}</b></span><span>DEX <b>{detailsStats.dexterity}</b></span><span>HP <b>{detailsStats.maxHp}</b></span><span>DEF <b>{detailsStats.defense}</b></span><span>MDEF <b>{detailsStats.magicDefense}</b></span></div>{detailsTraits.length > 0 && <p className="tavern-detail-traits"><strong>{t('battle.traits')}:</strong> {detailsTraits.join(' · ')}</p>}<section className="adventurer-skills tavern-detail-skills"><article><small>{t('battle.active')}</small><strong>{detailsActiveSkill}</strong></article><article><small>{t('battle.passive')}</small><strong>{detailsPassiveSkill}</strong></article></section><section className="tavern-assessment"><h3>{t('tavern.assessment.title')}</h3><article><strong>{t('tavern.assessment.strengths')}</strong><ul>{detailsAssessment.strengths.map((insight) => <li key={insight}>{insight}</li>)}</ul></article><article><strong>{t('tavern.assessment.weaknesses')}</strong><ul>{detailsAssessment.weaknesses.map((insight) => <li key={insight}>{insight}</li>)}</ul></article></section><div className="tavern-detail-actions"><button onClick={() => setSelectedGuest(null)}>{t('common.close')}</button></div></div></div>}
         {upgrade && <UpgradeConfirmation target={t(upgrade === 'capacity' ? 'tavern.upgradeCapacity' : 'tavern.upgradeTime')} cost={upgrade === 'capacity' ? capacityCost : timeCost} onCancel={() => setUpgrade(null)} onConfirm={() => { store.upgradeTavern(upgrade); setUpgrade(null) }} />}
       </section>
     </Modal>
   )
 }
 
-function MarketDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
+function MarketDialog({ store, index, onClose, initialSellingItemId }: { store: GameStore; index: ContentIndex; onClose: () => void; initialSellingItemId?: string }) {
   const state = useGame(store)
   const { t, name } = useI18n()
-  const [sellingItemId, setSellingItemId] = useState<string | null>(null)
+  const [sellingItemId, setSellingItemId] = useState<string | null>(initialSellingItemId ?? null)
   const [sellingAmount, setSellingAmount] = useState(1)
   const [upgrade, setUpgrade] = useState<'listings' | 'time' | null>(null)
   const [cancelSaleUid, setCancelSaleUid] = useState<number | null>(null)
@@ -575,22 +642,29 @@ function MerchantDialog({ store, index, onClose }: { store: GameStore; index: Co
   const state = useGame(store)
   const { t, name } = useI18n()
   const [selectedOfferUid, setSelectedOfferUid] = useState<number | null>(null)
+  const [now, setNow] = useState(Date.now())
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 30_000)
+    return () => window.clearInterval(timer)
+  }, [])
   useEffect(() => {
     if (state.nextMerchantOfferId === 1) store.refreshMerchant()
   }, [state.nextMerchantOfferId, store])
-  const section = (title: string, offers: typeof state.merchantRegularStock) => <section className="merchant-section"><h3>{title}</h3>{offers.length === 0 ? <EmptyState text={t('merchant.empty')} /> : <div className="item-grid">{offers.map((offer) => {
+  const nextDay = new Date(now); nextDay.setHours(24, 0, 0, 0)
+  const nextWeek = new Date(now); nextWeek.setDate(nextWeek.getDate() + ((7 - nextWeek.getDay()) % 7 || 7)); nextWeek.setHours(0, 0, 0, 0)
+  const section = (title: string, offers: typeof state.merchantRegularStock, countdown: number) => <section className="merchant-section"><h3>{title}</h3><small className="merchant-countdown">{t('merchant.refreshIn', { time: formatSeconds(Math.max(0, Math.ceil((countdown - now) / 1000))) })}</small>{offers.length === 0 ? <EmptyState text={t('merchant.empty')} /> : <div className="item-grid">{offers.map((offer) => {
     const item = index.items.get(offer.itemId)
     const affordable = offer.gems ? state.gems >= offer.price : state.money >= offer.price
     return <button className="item-slot merchant-offer" disabled={!affordable} key={offer.uid} onClick={() => setSelectedOfferUid(offer.uid)}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{offer.stack}</strong><span>{name(item?.name ?? offer.itemId)}</span><small><img src={assetUrl(offer.gems ? 'gem' : 'coin_copper')} alt="" />{offer.price}</small></button>
   })}</div>}</section>
   const selectedOffer = [...state.merchantRegularStock, ...state.merchantSpecialStock].find((offer) => offer.uid === selectedOfferUid)
   const selectedItem = selectedOffer && index.items.get(selectedOffer.itemId)
-  return <Modal title={t('tool.merchant')} onClose={onClose} wide>{section(t('merchant.regular'), state.merchantRegularStock)}{section(t('merchant.special'), state.merchantSpecialStock)}<div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>{selectedOffer && selectedItem && <div className="confirm-layer"><section className="confirm-box merchant-confirm"><img src={assetUrl(selectedItem.imageKey)} alt="" /><div><h3>{name(selectedItem.name)}</h3><p>{t('merchant.buyConfirm', { count: selectedOffer.stack, item: name(selectedItem.name), price: selectedOffer.price })}</p></div><div><button onClick={() => setSelectedOfferUid(null)}>{t('common.cancel')}</button><button onClick={() => { store.buyMerchant(selectedOffer.uid); setSelectedOfferUid(null) }}><img src={assetUrl(selectedOffer.gems ? 'gem' : 'coin_copper')} alt="" />{selectedOffer.price}</button></div></section></div>}</Modal>
+  return <Modal title={t('tool.merchant')} onClose={onClose} wide>{section(t('merchant.regular'), state.merchantRegularStock, nextDay.getTime())}{section(t('merchant.special'), state.merchantSpecialStock, nextWeek.getTime())}<div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>{selectedOffer && selectedItem && <div className="confirm-layer"><section className="confirm-box merchant-confirm"><img src={assetUrl(selectedItem.imageKey)} alt="" /><div><h3>{name(selectedItem.name)}</h3><p>{t('merchant.buyConfirm', { count: selectedOffer.stack, item: name(selectedItem.name), price: selectedOffer.price })}</p></div><div><button onClick={() => setSelectedOfferUid(null)}>{t('common.cancel')}</button><button onClick={() => { store.buyMerchant(selectedOffer.uid); setSelectedOfferUid(null) }}><img src={assetUrl(selectedOffer.gems ? 'gem' : 'coin_copper')} alt="" />{selectedOffer.price}</button></div></section></div>}</Modal>
 }
 
 function QuestsDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
-  const { t } = useI18n()
+  const { language, t } = useI18n()
   const categories = ['King', ...doctrineIds] as const
   const rarityReward = (rarity: number, king: boolean) => king
     ? rarity === 1 ? 10 : rarity === 2 ? 20 : rarity === 3 ? 40 : 100
@@ -610,7 +684,7 @@ function QuestsDialog({ store, index, onClose }: { store: GameStore; index: Cont
       return <section className="quest-section" key={category}><h3>{category === 'King' ? t('quests.king') : t(`doctrine.${category}`)}</h3>{quests.map((quest) => {
         const definition = index.quests.get(quest.id)
         const complete = quest.progress >= quest.target
-        return <article className={`quest-card rarity-${quest.rarity} ${complete ? 'complete' : ''}`} key={quest.id}><div><strong>{definition?.name ?? quest.id}</strong><p>{(definition?.description ?? '').replace(/%1?\$?d/, String(quest.target))}</p><ProgressBar value={quest.progress} max={quest.target} label={`${quest.progress}/${quest.target}`} /></div><button disabled={!complete} onClick={() => store.claimQuest(quest.id)}><span>{category === 'King' ? '♦' : '★'}</span><b>{rarityReward(quest.rarity, category === 'King')}</b></button></article>
+        return <article className={`quest-card rarity-${quest.rarity} ${complete ? 'complete' : ''}`} key={quest.id}><div><strong>{definition?.name ?? quest.id}</strong><p>{localizeQuestDescription(language, quest.id, definition?.description ?? '').replace(/%1?\$?d/, String(quest.target))}</p><ProgressBar value={quest.progress} max={quest.target} label={`${quest.progress}/${quest.target}`} /></div><button disabled={!complete} onClick={() => store.claimQuest(quest.id)}><span>{category === 'King' ? '♦' : '★'}</span><b>{rarityReward(quest.rarity, category === 'King')}</b></button></article>
       })}</section>
     })}
     <div className="workshop-actions"><button disabled={state.adventurers.length === 0 || state.questsRefreshed || state.gems < refreshPrice} onClick={() => setConfirmRefresh(true)}>{t('quests.refresh')} · ♦{refreshPrice}</button><button onClick={onClose}>{t('common.close')}</button></div>
@@ -618,9 +692,55 @@ function QuestsDialog({ store, index, onClose }: { store: GameStore; index: Cont
   </Modal>
 }
 
+function petAbilityDetail(language: 'en' | 'vi', ability: PetAbilityType, level: number, slot: number) {
+  const strength = ability === 'EMPTY' ? 0 : Math.max(0, level - slot * 20)
+  const name: Record<PetAbilityType, [string, string]> = {
+    EMPTY: ['Empty', 'Trống'], FIGHTER: ['Fighter', 'Chiến binh'], HEALER: ['Healer', 'Hồi máu'], DECOY: ['Decoy', 'Mồi nhử'], OPPORTUNIST: ['Opportunist', 'Cơ hội'], MAGIC: ['Magic', 'Ma thuật'], SAVAGE: ['Savage', 'Hoang dã'], BRIGHT: ['Bright', 'Ánh sáng'], EXPERIENCE: ['Teacher', 'Gia sư'], DROPS: ['Curious', 'Tò mò'], COUNTERATTACK: ['Vigilant', 'Cảnh giác'], LIFESTEAL: ['Bloodthirsty', 'Khát máu'], REGENERATION: ['Soothing', 'Xoa dịu'], BARRIER: ['Protective', 'Bảo hộ'],
+  }
+  const text: Record<PetAbilityType, [string, string]> = {
+    EMPTY: ['No ability.', 'Chưa có kỹ năng.'],
+    FIGHTER: [`On ally turns: ${Math.max(1, Math.round(strength * .9))}-${Math.max(1, Math.round(strength * 1.1))} damage.`, `Mỗi lượt đồng minh: ${Math.max(1, Math.round(strength * .9))}-${Math.max(1, Math.round(strength * 1.1))} sát thương.`],
+    HEALER: [`On ally turns: heal ${Math.max(1, Math.round(strength * .9))}-${Math.max(1, Math.round(strength * 1.1))} HP.`, `Mỗi lượt đồng minh: hồi ${Math.max(1, Math.round(strength * .9))}-${Math.max(1, Math.round(strength * 1.1))} HP.`],
+    DECOY: [`Threat ${strength}; cannot be hit.`, `Đe dọa ${strength}; không thể bị đánh trúng.`],
+    OPPORTUNIST: [`Executes enemies below ${(strength * .2).toFixed(1)}% HP.`, `Kết liễu địch dưới ${(strength * .2).toFixed(1)}% HP.`],
+    MAGIC: [`${(strength * .3).toFixed(1)}% chance each ally turn to apply a random status for ${Math.max(1, Math.round(strength * .028 + 1))} turns.`, `${(strength * .3).toFixed(1)}% mỗi lượt đồng minh gây trạng thái ngẫu nhiên trong ${Math.max(1, Math.round(strength * .028 + 1))} lượt.`],
+    SAVAGE: [`Critical hits have ${(strength * .3).toFixed(1)}% chance to apply the multiplier twice.`, `Đòn chí mạng có ${(strength * .3).toFixed(1)}% xác suất nhân hệ số hai lần.`],
+    BRIGHT: [`Reduces darkness by ${Math.round(strength * .5 + 1)}.`, `Giảm bóng tối ${Math.round(strength * .5 + 1)}.`],
+    EXPERIENCE: [`Experience gained +${(strength * .4).toFixed(1)}%.`, `Kinh nghiệm nhận được +${(strength * .4).toFixed(1)}%.`],
+    DROPS: [`${(strength * .3).toFixed(1)}% chance to roll drops twice.`, `${(strength * .3).toFixed(1)}% xác suất tung chiến lợi phẩm hai lần.`],
+    COUNTERATTACK: [`Counterattack chance +${(strength * .35).toFixed(1)}%.`, `Xác suất phản đòn +${(strength * .35).toFixed(1)}%.`],
+    LIFESTEAL: [`Grants ${Math.round(strength * .15)}% lifesteal.`, `Cho ${Math.round(strength * .15)}% hút máu.`],
+    REGENERATION: [`Allies regenerate ${Math.round(strength * .3 + 1)} HP/turn.`, `Đồng minh hồi ${Math.round(strength * .3 + 1)} HP/lượt.`],
+    BARRIER: [`Blocks ${strength} damage from any source.`, `Chặn ${strength} sát thương từ mọi nguồn.`],
+  }
+  return { name: name[ability][language === 'vi' ? 1 : 0], description: text[ability][language === 'vi' ? 1 : 0], strength }
+}
+
+function doctrineAbilityDetail(language: 'en' | 'vi', abilityId: string, value: number) {
+  const flat: Record<string, [string, string]> = {
+    IMPROVED_HEALTH: ['HP', 'HP'], IMPROVED_CONSTITUTION: ['Constitution', 'Thể chất'], IMPROVED_DEXTERITY: ['Dexterity', 'Nhanh nhẹn'], IMPROVED_INTELLIGENCE: ['Intelligence', 'Trí tuệ'],
+    EXALTED_CONSTITUTION: ['Constitution', 'Thể chất'], EXALTED_DEXTERITY: ['Dexterity', 'Nhanh nhẹn'], EXALTED_INTELLIGENCE: ['Intelligence', 'Trí tuệ'], EXALTED_HEALTH: ['HP', 'HP'], EXALTED_MANA: ['mana regeneration', 'hồi mana'],
+    SERVUS_SANGUINIS: ['lifesteal', 'hút máu'], TROLL_RESISTANCE: ['Defense', 'Phòng thủ'], WARLOCK_RESILIENCE: ['Magic Defense', 'Kháng phép'], MANIFEST_DANGER: ['Threat', 'Đe dọa'],
+  }
+  const percent = new Set(['SERVUS_UMBRAE', 'NECROSIS_PORPHYRICA', 'IMPENETRABLE_WILLPOWER', 'CHILLING_FLOW', 'MIND_BENDER', 'STAR_GAZE', 'CONDITIONED_REFLEXES', 'TACTICAL_KNOWLEDGE', 'EPHEMERAL_PRESENCE', 'FALSE_LIFE', 'EXPOSE_WEAKNESS', 'EXPLOIT_WEAKNESS', 'LIGHTNING_SPEED', 'EYE_FOR_AN_EYE', 'RAGEBOUND', 'DIVINE_INTERVENTION', 'SELFLESS_SPIRIT', 'OVERHEAL', 'HEALING_NOVA'])
+  if (flat[abilityId]) return language === 'vi' ? `${flat[abilityId][1]} +${value}.` : `${flat[abilityId][0]} +${value}.`
+  if (percent.has(abilityId)) return language === 'vi' ? `Hiệu lực hiện tại: ${value}%.` : `Current effect: ${value}%.`
+  const special: Record<string, [string, string]> = {
+    LORE_MASTER: ['Accessories grant double HP, Constitution, Dexterity and Intelligence.', 'Phụ kiện cho gấp đôi HP, Thể chất, Nhanh nhẹn và Trí tuệ.'],
+    GENUS_VAMPYRI: ['Lifesteal can overheal into a shield.', 'Hút máu có thể hồi vượt và tạo lá chắn.'],
+    ARCANE_SUPPRESSION: ['Deals magical damage for each negative status inflicted.', 'Gây sát thương phép theo mỗi trạng thái bất lợi đã gây ra.'],
+    RELENTLESS_ASSAULT: ['Forces the target to counterattack.', 'Buộc mục tiêu phản đòn.'],
+    WEAPON_MASTER: ['Can equip any weapon.', 'Có thể trang bị mọi loại vũ khí.'],
+    BEAT_THE_ODDS: ['Rolls damage three times and uses the best result.', 'Tung sát thương ba lần và dùng kết quả cao nhất.'],
+    MIRROR_OF_ANGUISH: ['Retaliates with Defense and Magic Defense.', 'Phản kích bằng Phòng thủ và Kháng phép.'],
+    TRUE_AGONY: ['False Life retaliates when removed by an enemy.', 'False Life phản kích khi bị địch phá bỏ.'],
+  }
+  return (special[abilityId] ?? [abilityId.replaceAll('_', ' '), abilityId.replaceAll('_', ' ')])[language === 'vi' ? 1 : 0]
+}
+
 function ShelterDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
-  const { t, name, description } = useI18n()
+  const { language, t, name, description } = useI18n()
   const [mergeSource, setMergeSource] = useState<number | null>(null)
   const [selectedPetUid, setSelectedPetUid] = useState<number | null>(null)
   const [feedAll, setFeedAll] = useState(false)
@@ -653,11 +773,11 @@ function ShelterDialog({ store, index, onClose }: { store: GameStore; index: Con
     {state.pets.length === 0 ? <EmptyState text={t('shelter.empty')} /> : <div className="pet-list">{pets.map((pet) => {
       const definition = index.pets.get(pet.petId)
       const required = petFoodToNextLevel(pet.level)
-      return <article className="pet-card" key={pet.uid}><img src={assetUrl(definition?.imageKey)} alt="" /><div><strong>{name(definition?.name ?? pet.petId)} · {t('common.level')} {pet.level}</strong><small>{pet.abilities.filter((ability) => ability !== 'EMPTY').join(' · ')}</small><ProgressBar value={pet.food} max={required} label={`${pet.food}/${required}`} /></div><div className="pet-actions">{state.buildings.shelterAutofeed > 0 && <button className={pet.favourite ? 'selected' : ''} title={t('shelter.favourite')} onClick={() => store.togglePetFavourite(pet.uid)}>{pet.favourite ? '★' : '☆'}</button>}{foods.map((stack) => <button key={stack.itemId} title={name(index.items.get(stack.itemId)?.name ?? stack.itemId)} onClick={() => store.feedPet(pet.uid, stack.itemId, 1)}><img src={assetUrl(index.items.get(stack.itemId)?.imageKey)} alt="" /></button>)}<button onClick={() => setMergeSource(mergeSource === pet.uid ? null : pet.uid)}>{mergeSource === pet.uid ? '✓' : '⇄'}</button>{mergeSource !== null && mergeSource !== pet.uid && <button onClick={() => { store.mergePet(mergeSource, pet.uid); setMergeSource(null) }}>{t('shelter.mergeHere')}</button>}</div></article>
+      return <article className="pet-card" key={pet.uid}><img src={assetUrl(definition?.imageKey)} alt="" /><div><strong>{name(definition?.name ?? pet.petId)} · {t('common.level')} {pet.level}</strong><small>{pet.abilities.filter((ability) => ability !== 'EMPTY').map((ability, slot) => petAbilityDetail(language, ability, pet.level, slot).name).join(' · ')}</small><ProgressBar value={pet.food} max={required} label={`${pet.food}/${required}`} /></div><div className="pet-actions">{state.buildings.shelterAutofeed > 0 && <button className={pet.favourite ? 'selected' : ''} title={t('shelter.favourite')} onClick={() => store.togglePetFavourite(pet.uid)}>{pet.favourite ? '★' : '☆'}</button>}{foods.map((stack) => <button key={stack.itemId} title={name(index.items.get(stack.itemId)?.name ?? stack.itemId)} onClick={() => store.feedPet(pet.uid, stack.itemId, 1)}><img src={assetUrl(index.items.get(stack.itemId)?.imageKey)} alt="" /></button>)}<button onClick={() => setMergeSource(mergeSource === pet.uid ? null : pet.uid)}>{mergeSource === pet.uid ? '✓' : '⇄'}</button>{mergeSource !== null && mergeSource !== pet.uid && <button onClick={() => { store.mergePet(mergeSource, pet.uid); setMergeSource(null) }}>{t('shelter.mergeHere')}</button>}</div></article>
     })}</div>}
     {state.pets.length > 0 && <div className="pet-detail-selector">{pets.map((pet) => <button className={selectedPetUid === pet.uid ? 'selected' : ''} key={pet.uid} onClick={() => setSelectedPetUid(pet.uid)}>{t('shelter.viewPet', { pet: name(index.pets.get(pet.petId)?.name ?? pet.petId) })}</button>)}</div>}
     {foods.length > 0 && <button className={`shelter-feed-mode ${feedAll ? 'selected' : ''}`} onClick={() => setFeedAll(!feedAll)}>{feedAll ? t('shelter.feedAll') : t('shelter.feedOne')}</button>}
-    {selectedPet && selectedDefinition && <div className="confirm-layer"><section className="confirm-box pet-detail"><img src={assetUrl(selectedDefinition.imageKey)} alt="" /><div><h3>{name(selectedDefinition.name)} · {t('common.level')} {selectedPet.level}</h3><p>{description(selectedDefinition.id, selectedDefinition.description)}</p><ProgressBar value={selectedPet.food} max={petFoodToNextLevel(selectedPet.level)} label={`${selectedPet.food}/${petFoodToNextLevel(selectedPet.level)}`} /><h4>{t('shelter.abilities')}</h4><ul>{selectedPet.abilities.map((ability, abilityIndex) => <li className={ability === 'EMPTY' ? 'locked' : ''} key={`${ability}-${abilityIndex}`}>{ability === 'EMPTY' ? t('shelter.unlockAbility', { level: [21, 41, 61][abilityIndex - 1] ?? 1 }) : name(ability)}</li>)}</ul></div><div className="pet-detail-actions">{state.buildings.shelterAutofeed > 0 && <button className={selectedPet.favourite ? 'selected' : ''} onClick={() => store.togglePetFavourite(selectedPet.uid)}>{selectedPet.favourite ? t('shelter.unfavourite') : t('shelter.favourite')}</button>}{foods.map((stack) => <button key={stack.itemId} onClick={() => store.feedPet(selectedPet.uid, stack.itemId, feedAll ? stack.stack : 1)}><img src={assetUrl(index.items.get(stack.itemId)?.imageKey)} alt="" />{feedAll ? stack.stack : 1}</button>)}{selectedPet.level <= 1 && selectedPet.food === 0 && <button onClick={releaseSelectedPet}>{t('shelter.setFree')}</button>}<button onClick={() => setSelectedPetUid(null)}>{t('common.close')}</button></div></section></div>}
+    {selectedPet && selectedDefinition && <div className="confirm-layer"><section className="confirm-box pet-detail"><img src={assetUrl(selectedDefinition.imageKey)} alt="" /><div><h3>{name(selectedDefinition.name)} · {t('common.level')} {selectedPet.level}</h3><p className="pet-family">{language === 'vi' ? 'Loại' : 'Type'}: {selectedDefinition.family}</p><p>{description(selectedDefinition.id, selectedDefinition.description)}</p><ProgressBar value={selectedPet.food} max={petFoodToNextLevel(selectedPet.level)} label={`${selectedPet.food}/${petFoodToNextLevel(selectedPet.level)}`} /><h4>{t('shelter.abilities')}</h4><ul className="pet-ability-list">{selectedPet.abilities.map((ability, abilityIndex) => { const detail = petAbilityDetail(language, ability, selectedPet.level, abilityIndex); const unlockedAt = abilityIndex * 20 + 1; const unlocked = selectedPet.level >= unlockedAt; return <li className={!unlocked || ability === 'EMPTY' ? 'locked' : ''} key={`${ability}-${abilityIndex}`}><strong>{detail.name} {unlocked ? `(${detail.strength})` : t('shelter.unlockAbility', { level: unlockedAt })}</strong><small>{detail.description}</small></li> })}</ul></div><div className="pet-detail-actions">{state.buildings.shelterAutofeed > 0 && <button className={selectedPet.favourite ? 'selected' : ''} onClick={() => store.togglePetFavourite(selectedPet.uid)}>{selectedPet.favourite ? t('shelter.unfavourite') : t('shelter.favourite')}</button>}{foods.map((stack) => <button key={stack.itemId} onClick={() => store.feedPet(selectedPet.uid, stack.itemId, feedAll ? stack.stack : 1)}><img src={assetUrl(index.items.get(stack.itemId)?.imageKey)} alt="" />{feedAll ? stack.stack : 1}</button>)}{selectedPet.level <= 1 && selectedPet.food === 0 && <button onClick={releaseSelectedPet}>{t('shelter.setFree')}</button>}<button onClick={() => setSelectedPetUid(null)}>{t('common.close')}</button></div></section></div>}
     {mergeSourcePet && <div className="confirm-layer"><section className="confirm-box merge-pet-dialog"><h3>{t('shelter.mergeTitle')}</h3><p>{t('shelter.mergeHint', { pet: name(index.pets.get(mergeSourcePet.petId)?.name ?? mergeSourcePet.petId) })}</p><div className="merge-pet-targets">{pets.filter((pet) => pet.uid !== mergeSourcePet.uid).map((pet) => <button key={pet.uid} onClick={() => { store.mergePet(mergeSourcePet.uid, pet.uid); setMergeSource(null) }}><img src={assetUrl(index.pets.get(pet.petId)?.imageKey)} alt="" />{name(index.pets.get(pet.petId)?.name ?? pet.petId)} / {t('common.level')} {pet.level}</button>)}</div><div><button onClick={() => setMergeSource(null)}>{t('common.cancel')}</button></div></section></div>}
     {upgrade && <UpgradeConfirmation target={t(upgrade === 'capacity' ? 'shelter.upgradeCapacity' : 'shelter.unlockAutofeed')} cost={upgrade === 'capacity' ? capacityCost : autofeedCost} onCancel={() => setUpgrade(null)} onConfirm={() => { store.upgradeShelter(upgrade); setUpgrade(null) }} />}
     <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
@@ -713,13 +833,18 @@ export function LegacyStorageDialog({ store, index, onClose, onConsume }: { stor
   </Modal>
 }
 
-function ItemFacts({ item }: { item: ItemDefinition }) {
-  const { t } = useI18n()
+function ItemFacts({ item, index }: { item: ItemDefinition; index: ContentIndex }) {
+  const { t, name } = useI18n()
+  const labels: Record<string, string> = { maxHp: 'HP', constitution: 'CON', intelligence: 'INT', dexterity: 'DEX', defense: 'DEF', magicDefense: 'MDEF', criticalChance: 'CRIT', criticalDamage: 'CRIT DMG.', bonusExperience: 'XP BONUS', lifesteal: 'LIFESTEAL', counterattack: 'COUNTER', regeneration: 'REGEN', healingModifier: 'HEAL MOD.', darknessReduction: 'DARKNESS RED.', darknessDamageAmplification: 'DARKNESS DMG.', immunityToStatus: 'STATUS IMM.', flatDodgeChance: 'DODGE', threat: 'THREAT', price: 'VALUE', feedPower: 'FEED POWER' }
+  const percent = new Set(['criticalChance', 'criticalDamage', 'bonusExperience', 'lifesteal', 'counterattack', 'healingModifier', 'darknessDamageAmplification', 'immunityToStatus', 'flatDodgeChance'])
   const facts = Object.entries(item.fields).filter(([, value]) => ['string', 'number', 'boolean'].includes(typeof value) && value !== 0 && value !== false)
-  return <dl className="item-facts"><div><dt>{t('item.type')}</dt><dd>{item.type}</dd></div>{facts.map(([key, value]) => <div key={key}><dt>{key.replace(/([A-Z])/g, ' $1').replace(/^./, (letter) => letter.toUpperCase())}</dt><dd>{typeof value === 'boolean' ? t('common.yes') : String(value)}</dd></div>)}</dl>
+  const sources = [...index.enemies.values()].filter((enemy) => enemy.drops.some((drop) => drop.item === item.id)).map((enemy) => name(enemy.name))
+  const buildsFrom = RECIPES.find((recipe) => recipe.result.itemId === item.id)
+  const buildsInto = RECIPES.filter((recipe) => recipe.ingredients.some((ingredient) => ingredient.itemId === item.id)).map((recipe) => name(index.items.get(recipe.result.itemId)?.name ?? recipe.result.itemId))
+  return <><dl className="item-facts"><div><dt>{t('item.type')}</dt><dd>{item.type}</dd></div>{facts.map(([key, value]) => <div key={key}><dt>{labels[key] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, (letter) => letter.toUpperCase())}</dt><dd>{typeof value === 'boolean' ? t('common.yes') : `${value}${percent.has(key) ? '%' : ''}`}</dd></div>)}</dl><section className="item-relations">{sources.length > 0 && <p><strong>{t('item.sources')}</strong>{sources.join(' · ')}</p>}{buildsFrom && <p><strong>{t('item.buildsFrom')}</strong>{buildsFrom.ingredients.map((ingredient) => `${name(index.items.get(ingredient.itemId)?.name ?? ingredient.itemId)} ×${ingredient.stack}`).join(' + ')}</p>}{buildsInto.length > 0 && <p><strong>{t('item.buildsInto')}</strong>{buildsInto.join(' · ')}</p>}</section></>
 }
 
-function StorageDialog({ store, index, onClose, onConsume }: { store: GameStore; index: ContentIndex; onClose: () => void; onConsume: (itemId: string) => void }) {
+function StorageDialog({ store, index, onClose, onConsume, onSell }: { store: GameStore; index: ContentIndex; onClose: () => void; onConsume: (itemId: string) => void; onSell: (itemId: string) => void }) {
   const state = useGame(store)
   const { t, name, description } = useI18n()
   const [filter, setFilter] = useState<'all' | 'materials' | 'weapons' | 'armors' | 'accessories' | 'consumables'>('all')
@@ -756,11 +881,11 @@ function StorageDialog({ store, index, onClose, onConsume }: { store: GameStore;
     {items.length === 0 && <EmptyState text={t('storage.empty')} />}
     <div className="item-grid">{items.map((stack) => { const item = index.items.get(stack.itemId); return <button className="item-slot" onClick={() => setSelectedItemId(stack.itemId)} key={stack.itemId}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{stack.stack}</strong><span>{name(item?.name ?? stack.itemId)}</span></button> })}</div>
     {confirmUpgrade && <UpgradeConfirmation target={t('storage.upgrade')} cost={price} onCancel={() => setConfirmUpgrade(false)} onConfirm={() => { store.upgradeFacility('storage'); setConfirmUpgrade(false) }} />}
-    {selected && selectedStack && <div className="confirm-layer"><section className="confirm-box item-detail"><img src={assetUrl(selected.imageKey)} alt="" /><div><h3>{name(selected.name)}</h3><p>{description(selected.id, selected.description)}</p><small>{t('storage.stack', { count: selectedStack.stack })} · {t('storage.value', { value: Number(selected.fields.price ?? 0) })}</small><ItemFacts item={selected} /></div><div>{selected.type === 'Egg' && <button onClick={() => { store.hatchPet(selected.id); setSelectedItemId(null) }}>{t('storage.hatch')}</button>}{canUse && <button onClick={() => { onConsume(selected.id); setSelectedItemId(null) }}>{t('storage.use')}</button>}<button onClick={() => setSelectedItemId(null)}>{t('common.close')}</button></div></section></div>}
+    {selected && selectedStack && <div className="confirm-layer"><section className="confirm-box item-detail"><img src={assetUrl(selected.imageKey)} alt="" /><div><h3>{name(selected.name)}</h3><p>{description(selected.id, selected.description)}</p><small>{t('storage.stack', { count: selectedStack.stack })} · {t('storage.value', { value: Number(selected.fields.price ?? 0) })}</small><ItemFacts item={selected} index={index} /></div><div>{selected.type === 'Egg' && <button onClick={() => { store.hatchPet(selected.id); setSelectedItemId(null) }}>{t('storage.hatch')}</button>}{canUse && <button onClick={() => { onConsume(selected.id); setSelectedItemId(null) }}>{t('storage.use')}</button>}{Number(selected.fields.price ?? 0) > 0 && !selected.fields.notSellable && <button onClick={() => onSell(selected.id)}>{t('market.confirmSale')}</button>}<button onClick={() => setSelectedItemId(null)}>{t('common.close')}</button></div></section></div>}
   </Modal>
 }
 
-function BuildingDialog({ id, store, index, onClose, onConsume }: { id: string; store: GameStore; index: ContentIndex; onClose: () => void; onConsume: (itemId: string) => void }) {
+function BuildingDialog({ id, store, index, onClose, onConsume, onOpenMarket }: { id: string; store: GameStore; index: ContentIndex; onClose: () => void; onConsume: (itemId: string) => void; onOpenMarket: (itemId: string) => void }) {
   const state = useGame(store)
   const { t } = useI18n()
   const [confirmQuarters, setConfirmQuarters] = useState(false)
@@ -769,7 +894,7 @@ function BuildingDialog({ id, store, index, onClose, onConsume }: { id: string; 
   if (id === 'tavern') return <TavernDialog store={store} index={index} onClose={onClose} />
   if (id === 'market') return <MarketDialog store={store} index={index} onClose={onClose} />
   if (id === 'shelter') return <ShelterDialog store={store} index={index} onClose={onClose} />
-  if (id === 'storage') return <StorageDialog store={store} index={index} onClose={onClose} onConsume={onConsume} />
+  if (id === 'storage') return <StorageDialog store={store} index={index} onClose={onClose} onConsume={onConsume} onSell={onOpenMarket} />
   if (id === 'quarters') {
     const capacity = buildingCapacity('quarters', state.buildings.quarters, state.permanentUpgrades.UpgradeQuarters ?? 0, state.purchasedPacks)
     const price = quartersPrice(state.buildings.quarters)
@@ -1029,7 +1154,7 @@ function areaDarknessValue(area: AreaDefinition, run: AreaRun) {
 }
 
 function BattleInspectPanel({ selection, index, onClose }: { selection: BattleInspectSelection; index: ContentIndex; onClose: () => void }) {
-  const { t, name, description, status } = useI18n()
+  const { language, t, name, description, status } = useI18n()
   let title = ''
   let subtitle = ''
   let image = ''
@@ -1053,8 +1178,8 @@ function BattleInspectPanel({ selection, index, onClose }: { selection: BattleIn
     rows.push(['INT', String(definition.fields.baseIntelligence)])
     rows.push(['DEX', String(definition.fields.baseDexterity)])
     rows.push(['XP', String(definition.fields.expGiven)])
-    if (definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE') skills.push([t('battle.active'), activeSkillLabel(definition.fields.activeSkill)])
-    if (definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE') skills.push([t('battle.passive'), definition.fields.passiveSkill.replace(/^PASSIVE_/, '').replaceAll('_', ' ')])
+    if (definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE') skills.push([t('battle.active'), localizeActiveSkill(language, definition.fields.activeSkill)])
+    if (definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE') skills.push([t('battle.passive'), localizePassiveSkill(language, definition.fields.passiveSkill)])
     drops = definition.drops
   } else if (selection.kind === 'adventurer') {
     const { state, definition } = selection
@@ -1072,8 +1197,8 @@ function BattleInspectPanel({ selection, index, onClose }: { selection: BattleIn
     rows.push([t('bestiary.defense'), String(stats.defense)])
     rows.push([t('bestiary.magicDefense'), String(stats.magicDefense)])
     rows.push([t('battle.experience'), String(state.xp)])
-    if (definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE') skills.push([t('battle.active'), activeSkillLabel(definition.fields.activeSkill)])
-    if (definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE') skills.push([t('battle.passive'), definition.fields.passiveSkill.replace(/^PASSIVE_/, '').replaceAll('_', ' ')])
+    if (definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE') skills.push([t('battle.active'), localizeActiveSkill(language, definition.fields.activeSkill)])
+    if (definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE') skills.push([t('battle.passive'), localizePassiveSkill(language, definition.fields.passiveSkill)])
     for (const slot of ['weapon', 'armor', 'accessory'] as EquipmentSlot[]) {
       const itemId = equipmentItemId(state, slot)
       equipment.push({ slot, item: itemId ? index.items.get(itemId) : undefined })
@@ -1247,8 +1372,9 @@ function AreaDialog({ areaId, store, index, onClose }: { areaId: string; store: 
 
 function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { uid: number; store: GameStore; index: ContentIndex; onClose: () => void; onSelectEquipment: (slot: EquipmentSlot) => void }) {
   const state = useGame(store)
-  const { t, name, description } = useI18n()
+  const { language, t, name, description } = useI18n()
   const [showDoctrine, setShowDoctrine] = useState(false)
+  const [selectedDoctrineAbility, setSelectedDoctrineAbility] = useState<string | null>(null)
   const [confirmDoctrineReset, setConfirmDoctrineReset] = useState(false)
   const member = state.adventurers.find((entry) => entry.uid === uid)
   const definition = member && index.adventurers.get(member.classId)
@@ -1257,21 +1383,29 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
   const promotions = promotionChoices(member, index)
   const canAscend = !member.ascended && member.level >= definition.fields.maxLevel && definition.fields.maxLevel >= 45
   const slots: EquipmentSlot[] = ['weapon', 'armor', 'accessory']
-  const activeSkill = definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE' ? activeSkillLabel(definition.fields.activeSkill) : t('adventurer.noSkill')
-  const passiveSkill = definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE' ? definition.fields.passiveSkill.replace(/^PASSIVE_/, '').replaceAll('_', ' ') : t('adventurer.noSkill')
+  const activeSkill = definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE' ? localizeActiveSkill(language, definition.fields.activeSkill) : t('adventurer.noSkill')
+  const passiveSkill = definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE' ? localizePassiveSkill(language, definition.fields.passiveSkill) : t('adventurer.noSkill')
   const xpRequired = member.level >= definition.fields.maxLevel ? 0 : experienceToNextLevel(member.level, member.ascended)
-  const traits = [member.trait, member.rareTrait].filter((trait): trait is string => Boolean(trait)).map((trait) => trait.replaceAll('_', ' '))
+  const traits = [member.trait, member.rareTrait].filter((trait): trait is string => Boolean(trait)).map((trait) => localizeRareTrait(language, trait))
   const equippedItems = [member.weaponId, member.armorId, member.accessoryId].flatMap((itemId) => itemId ? [index.items.get(itemId)].filter((item): item is ItemDefinition => Boolean(item)) : [])
   const bonus = (key: string) => equippedItems.reduce((total, item) => total + Number(item.fields[key] ?? 0), 0)
   const weapon = member.weaponId ? index.items.get(member.weaponId) : undefined
   const weaponType = weaponTypeKey(weapon, definition.fields.weaponType?.key ?? 'type_sword')
   const threat = Math.max(1, Number(definition.fields.threat ?? 1) + bonus('threat') + (member.rareTrait === 'INTIMIDATING' ? 1 : 0))
   const attack = adventurerAttackBounds(weaponType, stats.constitution, stats.intelligence, stats.dexterity, member.weaponId ?? undefined, threat)
+  const criticalDamage = (Number(definition.fields.criticalDamage ?? 1.5) + bonus('criticalDamage') + doctrineAbilityValue(member, 'EXPLOIT_WEAKNESS') * .01) * (member.rareTrait === 'RUTHLESS' ? 1.2 : 1)
+  const healingModifier = (1 + bonus('healingModifier') + doctrineAbilityValue(member, 'SELFLESS_SPIRIT') * .01) * (member.rareTrait === 'EMPATHETIC' ? 1.2 : 1)
+  const darknessReduction = Number(definition.fields.darknessReduction ?? 0) + bonus('darknessReduction') + (member.rareTrait === 'BLESSED' ? 8 : 0)
+  const retaliationPhysical = Number(definition.fields.retaliationPhysicalDamage ?? 0) + bonus('retaliationPhysicalDamage')
+  const retaliationMagical = Number(definition.fields.retaliationMagicalDamage ?? 0) + bonus('retaliationMagicalDamage')
+  const decay = Math.max(0, bonus('decay') + (member.rareTrait === 'CURSED' ? Math.ceil(stats.maxHp * .04) : 0))
   const advancedStats = [
     ['ATK', `${attack.min}-${attack.max}`], ['TYPE', weaponIsMagic(weapon, weaponType) ? 'MAGIC' : weaponIsRanged(weapon, weaponType) ? 'RANGED' : 'MELEE'], ['MANA', String(Math.trunc(stats.intelligence / 10) + 10)],
     ['THREAT', String(threat)], ['DODGE', `${Math.round((Number(definition.fields.flatDodgeChance ?? 0) + bonus('flatDodgeChance')) * 100)}%`], ['CRIT', `${Math.round(Math.min(.4, (weaponIsMagic(weapon, weaponType) ? stats.intelligence : stats.dexterity) * .004 + bonus('criticalChance')) * 100)}%`],
     ['LIFESTEAL', `${Number(definition.fields.baseLifesteal ?? 0) + bonus('lifesteal')}%`], ['COUNTER', `${Math.round((Number(definition.fields.counterattack ?? 0) + bonus('counterattack')) * 100)}%`], ['REGEN', String(Number(definition.fields.regeneration ?? 0) + bonus('regeneration'))],
-    ['STATUS IMM.', `${Math.round((Number(definition.fields.immunityToStatus ?? 0) + bonus('immunityToStatus')) * 100)}%`], ['DARKNESS RED.', `${Math.round((Number(definition.fields.darknessReduction ?? 0) + bonus('darknessReduction')) * 100)}%`], ['DARKNESS DMG.', `${Math.round((Number(definition.fields.darknessDamageAmplification ?? 0) + bonus('darknessDamageAmplification')) * 100)}%`],
+    ['STATUS IMM.', `${Math.round((Number(definition.fields.immunityToStatus ?? 0) + bonus('immunityToStatus')) * 100)}%`], ['DARKNESS DMG.', `${Math.round((Number(definition.fields.darknessDamageAmplification ?? 0) + bonus('darknessDamageAmplification')) * 100)}%`],
+    ['CRIT DMG.', `${Math.round(criticalDamage * 100)}%`], ['RETALIATION', `${retaliationPhysical}/${retaliationMagical}`], ['DARKNESS RED.', String(darknessReduction)],
+    ['XP BONUS', `${bonus('bonusExperience')}%`], ['HEAL MOD.', `${Math.round(healingModifier * 100)}%`], ['DECAY', String(decay)],
   ]
   return (
     <Modal title={member.name} onClose={onClose}>
@@ -1293,6 +1427,7 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
         <article><small>{t('battle.passive')}</small><strong>{passiveSkill}</strong></article>
       </section>
       <section className="adventurer-advanced"><h3>{t('adventurer.combatStats')}</h3><div className="stat-grid">{advancedStats.map(([label, value]) => <span key={label}>{label} <b>{value}</b></span>)}</div></section>
+      <section className="adventurer-potions"><h3>{t('adventurer.potions')}</h3><div>{['PotionOfConstitution', 'PotionOfDexterity', 'PotionOfIntelligence', 'PotionOfHealth', 'PotionOfDefense', 'PotionOfMagicDefense', 'PotionOfPrecision', 'PotionOfViciousness', 'PotionOfDarkness', 'PotionOfImmunity', 'PotionOfAgility'].map((itemId, potionType) => <span key={itemId}><img src={assetUrl(index.items.get(itemId)?.imageKey)} alt="" />{member.potionsDrank[potionType] ?? 0}/{potionLimit(member, index, potionType)}</span>)}</div></section>
       <div className="equipment-row">
         {slots.map((slot) => {
           const itemId = equipmentItemId(member, slot)
@@ -1318,11 +1453,14 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
           const doctrine = DOCTRINES[member.doctrineId]
           const loyalty = state.loyalty[member.doctrineId]?.level ?? 0
           const points = doctrinePointsAvailable(member, index, loyalty)
+          const selectedAbility = selectedDoctrineAbility ? DOCTRINE_ABILITIES[selectedDoctrineAbility] : undefined
+          const selectedSlot = selectedDoctrineAbility ? doctrine.abilities.indexOf(selectedDoctrineAbility) : -1
+          const selectedLevel = selectedSlot < 0 ? 0 : member.doctrineLevels[selectedSlot] ?? 0
           return <><div className="doctrine-points"><strong>{t('doctrine.points', { points })}</strong><small>{t('doctrine.loyalty', { level: loyalty })}</small></div><div className="doctrine-abilities">{doctrine.abilities.map((abilityId, slot) => {
             const ability = DOCTRINE_ABILITIES[abilityId]
             const level = member.doctrineLevels[slot] ?? 0
-            return <article key={abilityId}><img src={assetUrl(`doctrine_ability_${abilityId.toLowerCase()}`)} alt="" /><div><strong>{abilityId.replaceAll('_', ' ')}</strong><small>{t('doctrine.abilityValue', { value: level * ability.increase })}</small></div><button disabled={level <= 0} onClick={() => store.changeDoctrineAbility(uid, abilityId, -1)}>−</button><b>{level}/{ability.maxLevel}</b><button disabled={level >= ability.maxLevel || points < ability.cost} onClick={() => store.changeDoctrineAbility(uid, abilityId, 1)}>+</button></article>
-          })}</div><button className="doctrine-reset" onClick={() => setConfirmDoctrineReset(true)}>{t('doctrine.reset')}</button></>
+            return <article className={selectedDoctrineAbility === abilityId ? 'selected' : ''} key={abilityId} onClick={() => setSelectedDoctrineAbility(abilityId)}><img src={assetUrl(`doctrine_ability_${abilityId.toLowerCase()}`)} alt="" /><div><strong>{localizeDoctrineAbility(language, abilityId)}</strong><small>{t('doctrine.abilityValue', { value: level * ability.increase })} · {ability.cost} LP</small></div><button disabled={level <= 0} onClick={(event) => { event.stopPropagation(); store.changeDoctrineAbility(uid, abilityId, -1) }}>−</button><b>{level}/{ability.maxLevel}</b><button disabled={level >= ability.maxLevel || points < ability.cost} onClick={(event) => { event.stopPropagation(); store.changeDoctrineAbility(uid, abilityId, 1) }}>+</button></article>
+          })}</div>{selectedAbility && <section className="doctrine-description"><strong>{localizeDoctrineAbility(language, selectedAbility.id)} · {selectedLevel}/{selectedAbility.maxLevel}</strong><p>{doctrineAbilityDetail(language, selectedAbility.id, selectedLevel * selectedAbility.increase)}</p></section>}<button className="doctrine-reset" onClick={() => setConfirmDoctrineReset(true)}>{t('doctrine.reset')}</button></>
         })())}
       </section>}
       {confirmDoctrineReset && <ActionConfirmation title={t('doctrine.reset')} body={t('doctrine.resetConfirm')} onCancel={() => setConfirmDoctrineReset(false)} onConfirm={() => { store.resetDoctrine(uid); setConfirmDoctrineReset(false) }} />}
@@ -1400,7 +1538,7 @@ function SelectEquipmentDialog({ uid, slot, store, index, onDone }: { uid: numbe
 
 function ConsumePotionDialog({ itemId, store, index, onClose }: { itemId: string; store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
-  const { t, name } = useI18n()
+  const { language, t, name } = useI18n()
   const item = index.items.get(itemId)
   const potionType = potionTypeForItem(itemId)
   const special = ['Intercession', 'PotionOfRejuvenation', 'PotionOfClumsiness'].includes(itemId)
@@ -1430,13 +1568,13 @@ function ConsumePotionDialog({ itemId, store, index, onClose }: { itemId: string
   if (evo && rareTraitMember) {
     return (
       <Modal title={t('trait.changeTitle')} onClose={() => setRareTraitUid(null)}>
-        <div className="rare-trait-current"><strong>{rareTraitMember.name}</strong><small>{t('trait.current')}: {rareTraitMember.rareTrait?.replaceAll('_', ' ') ?? t('trait.none')}</small></div>
+        <div className="rare-trait-current"><strong>{rareTraitMember.name}</strong><small>{t('trait.current')}: {rareTraitMember.rareTrait ? localizeRareTrait(language, rareTraitMember.rareTrait) : t('trait.none')}</small></div>
         <div className="rare-trait-list">
           {RARE_TRAITS.filter((trait) => trait !== rareTraitMember.rareTrait).map((trait) => (
-            <button key={trait} onClick={() => setPendingRareTrait(trait)}>{trait.replaceAll('_', ' ')}</button>
+            <button key={trait} onClick={() => setPendingRareTrait(trait)}>{localizeRareTrait(language, trait)}</button>
           ))}
         </div>
-        {pendingRareTrait && <ActionConfirmation title={t('trait.changeTitle')} body={t('trait.confirm', { trait: pendingRareTrait.replaceAll('_', ' ') })} onCancel={() => setPendingRareTrait(null)} onConfirm={() => { store.changeRareTrait(rareTraitMember.uid, pendingRareTrait, itemId); setPendingRareTrait(null); setRareTraitUid(null) }} />}
+        {pendingRareTrait && <ActionConfirmation title={t('trait.changeTitle')} body={t('trait.confirm', { trait: localizeRareTrait(language, pendingRareTrait) })} onCancel={() => setPendingRareTrait(null)} onConfirm={() => { store.changeRareTrait(rareTraitMember.uid, pendingRareTrait, itemId); setPendingRareTrait(null); setRareTraitUid(null) }} />}
       </Modal>
     )
   }
@@ -1522,7 +1660,7 @@ function FaqDialog({ onClose }: { onClose: () => void }) {
 
 function MessagesDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
-  const { t } = useI18n()
+  const { language, t } = useI18n()
   const [selected, setSelected] = useState<number | null>(state.unreadMessages[0] ?? null)
   const messages = state.receivedMessages
     .map((id) => index.messages.get(id))
@@ -1534,13 +1672,14 @@ function MessagesDialog({ store, index, onClose }: { store: GameStore; index: Co
   }, [selected, state.unreadMessages, store])
 
   const active = selected === null ? null : index.messages.get(selected)
+  const localizedActive = active ? localizeKingMessage(language, active.id, active) : null
   return (
     <Modal title={t('messages.title')} onClose={onClose}>
       {active ? (
         <article className="king-letter">
           <button className="letter-back" onClick={() => setSelected(null)}>‹ {t('common.back')}</button>
-          <h3>{active.title}</h3>
-          {active.body.split('\n').map((paragraph, position) => paragraph
+          <h3>{localizedActive?.title}</h3>
+          {localizedActive?.body.split('\n').map((paragraph, position) => paragraph
             ? <p key={position}>{paragraph}</p>
             : <br key={position} />)}
         </article>
@@ -1549,7 +1688,7 @@ function MessagesDialog({ store, index, onClose }: { store: GameStore; index: Co
           {messages.map((message) => (
             <button className={state.unreadMessages.includes(message.id) ? 'unread' : ''} key={message.id} onClick={() => setSelected(message.id)}>
               <img src={assetUrl('king_message')} alt="" />
-              <span><strong>{message.title}</strong><small>{t('messages.from')}</small></span>
+              <span><strong>{localizeKingMessage(language, message.id, message).title}</strong><small>{t('messages.from')}</small></span>
               <b>›</b>
             </button>
           ))}
@@ -1561,7 +1700,7 @@ function MessagesDialog({ store, index, onClose }: { store: GameStore; index: Co
 
 function BestiaryDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
-  const { t, name } = useI18n()
+  const { language, t, name, description } = useI18n()
   const [raid, setRaid] = useState(false)
   const [selected, setSelected] = useState<string | null>(null)
   const enemy = selected ? index.enemies.get(selected) : undefined
@@ -1574,7 +1713,7 @@ function BestiaryDialog({ store, index, onClose }: { store: GameStore; index: Co
       <Modal title={name(enemy.name)} onClose={() => setSelected(null)}>
         <article className="bestiary-detail">
           <img src={assetUrl(enemy.imageKey)} alt="" />
-          <p>{name(enemy.description)}</p>
+          <p>{description(enemy.id, enemy.description)}</p>
           <dl>
             <div><dt>HP</dt><dd>{enemy.fields.baseMaxHp}</dd></div>
             <div><dt>{t('bestiary.damage')}</dt><dd>{enemy.minDamage}–{enemy.maxDamage}</dd></div>
@@ -1583,7 +1722,7 @@ function BestiaryDialog({ store, index, onClose }: { store: GameStore; index: Co
             <div><dt>DEX</dt><dd>{enemy.fields.baseDexterity}</dd></div>
             <div><dt>XP</dt><dd>{enemy.fields.expGiven}</dd></div>
           </dl>
-          <section className="adventurer-skills"><article><small>{t('battle.active')}</small><strong>{enemy.fields.activeSkill && enemy.fields.activeSkill !== 'ACTIVE_NONE' ? activeSkillLabel(enemy.fields.activeSkill) : t('adventurer.noSkill')}</strong></article><article><small>{t('battle.passive')}</small><strong>{enemy.fields.passiveSkill && enemy.fields.passiveSkill !== 'PASSIVE_NONE' ? enemy.fields.passiveSkill.replace(/^PASSIVE_/, '').replaceAll('_', ' ') : t('adventurer.noSkill')}</strong></article></section>
+          <section className="adventurer-skills"><article><small>{t('battle.active')}</small><strong>{enemy.fields.activeSkill && enemy.fields.activeSkill !== 'ACTIVE_NONE' ? localizeActiveSkill(language, enemy.fields.activeSkill) : t('adventurer.noSkill')}</strong></article><article><small>{t('battle.passive')}</small><strong>{enemy.fields.passiveSkill && enemy.fields.passiveSkill !== 'PASSIVE_NONE' ? localizePassiveSkill(language, enemy.fields.passiveSkill) : t('adventurer.noSkill')}</strong></article></section>
           {enemy.drops.length > 0 && <h3>{t('bestiary.drops')}</h3>}
           <div className="bestiary-drops">
             {enemy.drops.map((drop, position) => {
@@ -1632,6 +1771,8 @@ function AccountDialog({ store, onClose }: { store: GameStore; onClose: () => vo
   const { t } = useI18n()
   const [status, setStatus] = useState(store.getCloudSyncStatus())
   const [working, setWorking] = useState(false)
+  const [backupMessage, setBackupMessage] = useState<string | null>(null)
+  const importRef = useRef<HTMLInputElement>(null)
   const [pendingRestore, setPendingRestore] = useState<ReturnType<GameStore['pullCloudSave']> extends Promise<infer T> ? T : null>(null)
 
   useEffect(() => store.subscribeCloudSync(() => setStatus(store.getCloudSyncStatus())), [store])
@@ -1646,8 +1787,23 @@ function AccountDialog({ store, onClose }: { store: GameStore; onClose: () => vo
     if (remote) setPendingRestore(remote)
   }
 
-  if (status.kind === 'disabled') {
-    return <Modal title={t('account.title')} onClose={onClose}><p className="dialog-intro">{t('account.disabled')}</p></Modal>
+  const exportBackup = () => {
+    const blob = new Blob([store.exportSave()], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `guild-master-backup-${new Date().toISOString().slice(0, 10)}.json`
+    link.click()
+    URL.revokeObjectURL(url)
+    setBackupMessage(t('account.exported'))
+  }
+
+  const importBackup = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const result = store.importSave(await file.text())
+    setBackupMessage(result.ok ? t('account.imported') : result.message)
+    event.target.value = ''
   }
 
   const detail = status.kind === 'signed-out' ? t('account.signedOut')
@@ -1655,7 +1811,8 @@ function AccountDialog({ store, onClose }: { store: GameStore; onClose: () => vo
       : status.kind === 'offline' ? t('account.offline')
         : status.kind === 'conflict' ? t('account.conflict')
           : status.kind === 'error' ? `${t('account.error')}: ${status.message}`
-            : t('account.synced', { revision: status.revision })
+            : status.kind === 'disabled' ? t('account.disabled')
+              : t('account.synced', { revision: status.revision })
   const user = store.getCloudUser()
 
   return (
@@ -1666,13 +1823,19 @@ function AccountDialog({ store, onClose }: { store: GameStore; onClose: () => vo
         <p>{detail}</p>
       </section>
       <div className="account-actions">
+        <button className="secondary-button" onClick={exportBackup}>{t('account.export')}</button>
+        <button className="secondary-button" onClick={() => importRef.current?.click()}>{t('account.import')}</button>
+        <input ref={importRef} className="visually-hidden" type="file" accept="application/json,.json" onChange={(event) => void importBackup(event)} />
+      </div>
+      {backupMessage && <p className="account-backup-message" role="status">{backupMessage}</p>}
+      {status.kind !== 'disabled' && <div className="account-actions">
         {!user && <button className="primary-button" disabled={working} onClick={() => void store.signInWithGoogle()}>{t('account.signIn')}</button>}
         {user && <>
           <button className="primary-button" disabled={working || status.kind === 'syncing'} onClick={() => void sync()}>{t('account.sync')}</button>
           <button className="secondary-button" disabled={working || status.kind === 'syncing'} onClick={() => void restore()}>{t('account.restore')}</button>
           <button className="danger-button" disabled={working} onClick={() => void store.signOut()}>{t('account.signOut')}</button>
         </>}
-      </div>
+      </div>}
       {pendingRestore && <ActionConfirmation title={t('account.restore')} body={t('account.restoreConfirm')} onCancel={() => setPendingRestore(null)} onConfirm={() => { store.replaceWithCloudSave(pendingRestore); setPendingRestore(null) }} />}
     </Modal>
   )
@@ -1681,20 +1844,11 @@ function AccountDialog({ store, onClose }: { store: GameStore; onClose: () => vo
 function AchievementsDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
   const { t } = useI18n()
-  const completedRuns = Object.values(state.runs).filter((run) => run.finished && run.finishedReason === 'victory').length
-  const achievements = [
-    ['recruit', t('achievement.recruit'), t('achievement.recruitHint'), state.adventurers.length, 1],
-    ['explore', t('achievement.explore'), t('achievement.exploreHint'), state.unlockedAreas.length, Math.min(10, index.areas.size)],
-    ['victory', t('achievement.victory'), t('achievement.victoryHint'), completedRuns, 10],
-    ['collector', t('achievement.collector'), t('achievement.collectorHint'), state.seenItems.length, Math.min(50, index.items.size)],
-    ['pets', t('achievement.pets'), t('achievement.petsHint'), state.pets.length, 5],
-    ['wealth', t('achievement.wealth'), t('achievement.wealthHint'), state.money, 10_000],
-  ] as const
+  const achievements = achievementProgress(state, index)
   return <Modal title={t('drawer.achievements')} onClose={onClose}>
-    <p className="achievement-intro">{t('achievement.intro')}</p>
-    <section className="achievement-list">{achievements.map(([id, title, hint, value, target]) => {
-      const complete = value >= target
-      return <article className={complete ? 'complete' : ''} key={id}><span>{complete ? '★' : '☆'}</span><div><strong>{title}</strong><small>{hint}</small><ProgressBar value={Math.min(value, target)} max={target} label={`${Math.min(value, target).toLocaleString()}/${target.toLocaleString()}`} /></div></article>
+    <p className="achievement-intro">{t('achievement.intro')} {state.unlockedAchievements.length}/{achievements.length}</p>
+    <section className="achievement-list">{achievements.map((achievement) => {
+      return <article className={achievement.unlocked ? 'complete' : ''} key={achievement.id}><span>{achievement.unlocked ? '★' : '☆'}</span><div><strong>{achievement.title}</strong><small>{achievement.description} · {achievement.points.toLocaleString()} XP</small><ProgressBar value={achievement.value} max={achievement.target} label={`${achievement.value.toLocaleString()}/${achievement.target.toLocaleString()}`} /></div></article>
     })}</section>
     <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
   </Modal>
@@ -1707,6 +1861,8 @@ function AppShell({ content, index, store }: AppProps) {
   const [drawer, setDrawer] = useState(false)
   const [dialog, setDialog] = useState<DialogState>(null)
   const [idleProgress, setIdleProgress] = useState(() => store.getOfflineProgressSeconds())
+  const pendingAchievementId = state.pendingAchievementNotifications[0]
+  const pendingAchievement = ACHIEVEMENTS.find((achievement) => achievement.id === pendingAchievementId)
 
   useEffect(() => {
     store.start()
@@ -1721,6 +1877,12 @@ function AppShell({ content, index, store }: AppProps) {
     if (state.unreadMessages.length === 0 && idleProgress > 5) return
     if (state.unreadMessages.length > 0) setIdleProgress(0)
   }, [idleProgress, state.unreadMessages])
+
+  useEffect(() => {
+    if (!pendingAchievementId) return
+    const timer = window.setTimeout(() => store.acknowledgeAchievementNotifications(), 4_000)
+    return () => window.clearTimeout(timer)
+  }, [pendingAchievementId, store])
 
   const nav = [
     ['headquarters', 'bottom_nav_castle'],
@@ -1772,7 +1934,7 @@ function AppShell({ content, index, store }: AppProps) {
         </section>
       )}
       <div className="tools-strip">
-        <ToolButton icon="shop" label={t('tool.shop')} disabled />
+        <ToolButton icon="shop" label={t('tool.shop')} onClick={() => setDialog({ type: 'shop' })} />
         <div className="tool-with-badge">
           <ToolButton icon="king_message" label={t('tool.messages')} onClick={() => setDialog({ type: 'messages' })} />
           {state.unreadMessages.length > 0 && <b>{state.unreadMessages.length}</b>}
@@ -1789,17 +1951,20 @@ function AppShell({ content, index, store }: AppProps) {
         {screen === 'raids' && <AreasView store={store} index={index} content={content} raid onOpen={openArea} />}
       </main>
 
-      <nav className="bottom-nav">
+      <nav className="bottom-nav" aria-label="Primary navigation">
         {nav.map(([id, icon]) => (
-          <button key={id} className={screen === id ? 'active' : ''} onClick={() => setScreen(id)}>
+          <button key={id} className={screen === id ? 'active' : ''} aria-current={screen === id ? 'page' : undefined} onClick={() => setScreen(id)}>
             <img src={assetUrl(icon)} alt="" /><span>{t(`screen.${id}`)}</span>
           </button>
         ))}
       </nav>
 
-      {drawer && <div className="drawer-backdrop" onMouseDown={() => setDrawer(false)}><aside className="drawer" onMouseDown={(event) => event.stopPropagation()}><div className="drawer-title">Guild Master</div><button onClick={() => { setDrawer(false); setDialog({ type: 'settings' }) }}>⚙ {t('drawer.settings')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'roster' }) }}>⌁ {t('drawer.recall')}</button><button><img src={assetUrl('drawer_icon_king_message')} alt="" />{t('drawer.messages')}</button><button><img src={assetUrl('drawer_icon_faq')} alt="" />{t('drawer.faq')}</button><button><img src={assetUrl('drawer_icon_bestiary')} alt="" />{t('drawer.bestiary')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'account' }) }}><span className="drawer-cloud">☁</span>{t('drawer.account')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'achievements' }) }}><img src={assetUrl('drawer_icon_achievements')} alt="" />{t('drawer.achievements')}</button><a className="drawer-link" href="https://www.reddit.com/r/IdleGuildmaster/" target="_blank" rel="noreferrer">Reddit</a><a className="drawer-link" href="https://cafe.naver.com/idleguildmaster" target="_blank" rel="noreferrer">Cafe Naver</a><div className="drawer-language"><span>{t('drawer.language')}</span><div><button className={state.language === 'en' ? 'active' : ''} onClick={() => store.setLanguage('en')}>English</button><button className={state.language === 'vi' ? 'active' : ''} onClick={() => store.setLanguage('vi')}>Tiếng Việt</button></div></div><div className="drawer-spacer" /><button className="reset-button" onClick={() => { setDrawer(false); setDialog({ type: 'reset' }) }}>{t('drawer.newGuild')}</button></aside></div>}
+      {pendingAchievement && <aside className="achievement-toast" role="status" aria-live="polite"><span>★</span><div><strong>{t('drawer.achievements')}</strong><small>{pendingAchievement.title}</small></div></aside>}
 
-      {dialog?.type === 'building' && <BuildingDialog id={dialog.id} store={store} index={index} onClose={() => setDialog(null)} onConsume={(itemId) => setDialog({ type: 'potion', itemId })} />}
+      {drawer && <div className="drawer-backdrop" onMouseDown={() => setDrawer(false)}><aside className="drawer" onMouseDown={(event) => event.stopPropagation()}><div className="drawer-title">Guild Master</div><button onClick={() => { setDrawer(false); setDialog({ type: 'settings' }) }}>⚙ {t('drawer.settings')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'roster' }) }}>⌁ {t('drawer.recall')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'messages' }) }}><img src={assetUrl('drawer_icon_king_message')} alt="" />{t('drawer.messages')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'faq' }) }}><img src={assetUrl('drawer_icon_faq')} alt="" />{t('drawer.faq')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'bestiary' }) }}><img src={assetUrl('drawer_icon_bestiary')} alt="" />{t('drawer.bestiary')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'account' }) }}><span className="drawer-cloud">☁</span>{t('drawer.account')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'achievements' }) }}><img src={assetUrl('drawer_icon_achievements')} alt="" />{t('drawer.achievements')}</button><a className="drawer-link" href="https://www.reddit.com/r/IdleGuildmaster/" target="_blank" rel="noreferrer">Reddit</a><a className="drawer-link" href="https://cafe.naver.com/idleguildmaster" target="_blank" rel="noreferrer">Cafe Naver</a><div className="drawer-language"><span>{t('drawer.language')}</span><div><button className={state.language === 'en' ? 'active' : ''} onClick={() => store.setLanguage('en')}>English</button><button className={state.language === 'vi' ? 'active' : ''} onClick={() => store.setLanguage('vi')}>Tiếng Việt</button></div></div><div className="drawer-spacer" /><button className="reset-button" onClick={() => { setDrawer(false); setDialog({ type: 'reset' }) }}>{t('drawer.newGuild')}</button></aside></div>}
+
+      {dialog?.type === 'building' && <BuildingDialog id={dialog.id} store={store} index={index} onClose={() => setDialog(null)} onConsume={(itemId) => setDialog({ type: 'potion', itemId })} onOpenMarket={(itemId) => setDialog({ type: 'market', itemId })} />}
+      {dialog?.type === 'market' && <MarketDialog store={store} index={index} initialSellingItemId={dialog.itemId} onClose={() => setDialog(null)} />}
       {dialog?.type === 'send' && <SendTeamDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} onSent={() => state.settings.autoOpenDungeonDetail ? setDialog({ type: 'area', areaId: dialog.areaId }) : setDialog(null)} />}
       {dialog?.type === 'refillRaid' && <RefillRaidDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} onBought={() => setDialog({ type: 'send', areaId: dialog.areaId })} />}
       {dialog?.type === 'area' && <AreaDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} />}
@@ -1815,6 +1980,7 @@ function AppShell({ content, index, store }: AppProps) {
       {dialog?.type === 'account' && <AccountDialog store={store} onClose={() => setDialog(null)} />}
       {dialog?.type === 'settings' && <SettingsDialog store={store} onClose={() => setDialog(null)} />}
       {dialog?.type === 'achievements' && <AchievementsDialog store={store} index={index} onClose={() => setDialog(null)} />}
+      {dialog?.type === 'shop' && <ShopDialog onClose={() => setDialog(null)} />}
       {dialog?.type === 'reset' && <ActionConfirmation title={t('drawer.newGuild')} body={t('drawer.resetConfirm')} onCancel={() => setDialog(null)} onConfirm={() => { store.reset(); setDialog(null) }} />}
       {idleProgress > 5 && dialog === null && <IdleProgressDialog seconds={idleProgress} onClose={() => setIdleProgress(0)} />}
     </div>

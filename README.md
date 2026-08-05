@@ -42,6 +42,8 @@ complete.
 - Original five-entry FAQ.
 - Device-local saves and offline replay capped at 12 hours.
 - Original image assets copied into the web manifest.
+- All 50 original achievements with durable local/cloud progress and in-game unlock toasts.
+- Backup export/import, save migration through schema v24, PWA shell, offline cache and accessible modal focus handling.
 
 ## Architecture
 
@@ -66,5 +68,5 @@ players can sign in with Google from **Account & backup** and sync their local
 save through an optimistic-revision API. Backend migrations and deployment
 instructions live in [`supabase/README.md`](supabase/README.md).
 
-Achievement conditions, full localization, save-migration coverage and final
-visual/E2E parity remain. Real-money payment remains intentionally deferred.
+Final APK screenshot comparison, remaining prose localization and real-device
+cloud QA remain. Real-money payment remains intentionally deferred.

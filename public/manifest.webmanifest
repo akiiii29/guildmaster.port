@@ -1,0 +1,17 @@
+{
+  "name": "Guild Master: Idle Dungeons",
+  "short_name": "Guild Master",
+  "description": "A web port of Guild Master: Idle Dungeons.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#151617",
+  "theme_color": "#151617",
+  "icons": [
+    {
+      "src": "/assets/bottom_nav_castle.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

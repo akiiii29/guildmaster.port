@@ -292,7 +292,7 @@ export function createInitialState(index: ContentIndex): GameState {
   const firstGuest = makeAdventurer(guestClass, 1)
   firstGuest.trait = null
   return {
-    version: 22,
+    version: 24,
     language: 'en',
     settings: {
       sellMaxAmount: 1,
@@ -359,6 +359,9 @@ export function createInitialState(index: ContentIndex): GameState {
     unreadMessages: [1],
     raidTries: Object.fromEntries([...index.areas.values()].filter((area) => area.areaType !== 0).map((area) => [area.id, true])),
     runs: {},
+    achievementStats: { craftedItems: 0, soldItems: 0, claimedQuests: 0, defeatedEnemies: {} },
+    unlockedAchievements: [],
+    pendingAchievementNotifications: [],
     totalTicks: 0,
   }
 }
@@ -1997,6 +2000,7 @@ function trackCombatQuests(state: GameState, run: AreaRun, index: ContentIndex, 
     GiantTortoise: 'TheSouthernGrove', SmolderingTitan: 'LostLands', SlimeKing: 'TheSlimePond',
   }
   killed.forEach((target) => {
+    state.achievementStats.defeatedEnemies[target.definitionId] = (state.achievementStats.defeatedEnemies[target.definitionId] ?? 0) + 1
     const questId = killQuest[target.definitionId]
     if (questId && killQuestAreas[target.definitionId] === run.areaId) incrementQuest(state, questId, 1)
     if (run.areaId === 'TheDesert' && ['ShahuriWarrior', 'ShahuriMage', 'ShahuriArcher'].includes(target.definitionId)) {
@@ -2813,6 +2817,7 @@ export function collectMarketSale(state: GameState, index: ContentIndex, uid: nu
   if (!listing || !item) return false
   state.soldMarketItems.splice(state.soldMarketItems.indexOf(listing), 1)
   state.money += Number(item.fields.price ?? 0) * listing.stack
+  state.achievementStats.soldItems += listing.stack
   return true
 }
 
@@ -3152,6 +3157,7 @@ export function claimQuest(state: GameState, id: string) {
     }
   }
   state.activeQuests.splice(state.activeQuests.indexOf(quest), 1)
+  state.achievementStats.claimedQuests += 1
   return true
 }
 
@@ -3588,6 +3594,7 @@ export function collectWorkshopJob(state: GameState, uid: number, index?: Conten
   if (!job || !hasStorageSpaceFor(state, [{ itemId: job.itemId, stack: job.stack }])) return false
   state.completedWorkshopItems = state.completedWorkshopItems.filter((entry) => entry.uid !== uid)
   addStack(state.inventory, { itemId: job.itemId, stack: job.stack })
+  state.achievementStats.craftedItems += job.stack
   rememberItem(state, job.itemId)
   incrementQuest(state, 'MasterCrafter', Math.trunc(Number(index?.items.get(job.itemId)?.fields.price ?? 0) * 0.01), true)
   if (state.tutorialStep === 3 && job.itemId === 'Leather') {
