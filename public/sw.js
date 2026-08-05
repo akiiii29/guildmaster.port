@@ -1,4 +1,4 @@
-const CACHE = 'guild-master-web-v25'
+const CACHE = 'guild-master-web-v26'
 const APP_SHELL = ['/manifest.webmanifest']
 
 self.addEventListener('install', (event) => {
@@ -17,13 +17,19 @@ self.addEventListener('fetch', (event) => {
   // index.html may reference an asset hash deleted with the new deployment.
   if (request.mode === 'navigate') {
     event.respondWith(fetch(request).then((response) => {
-      if (response.ok) void caches.open(CACHE).then((cache) => cache.put('/index.html', response.clone()))
+      if (response.ok) {
+        const cachedResponse = response.clone()
+        void caches.open(CACHE).then((cache) => cache.put('/index.html', cachedResponse)).catch(() => undefined)
+      }
       return response
     }).catch(() => caches.match('/index.html').then((cached) => cached ?? Response.error())))
     return
   }
   event.respondWith(caches.match(request).then((cached) => cached ?? fetch(request).then((response) => {
-    if (response.ok) void caches.open(CACHE).then((cache) => cache.put(request, response.clone()))
+    if (response.ok) {
+      const cachedResponse = response.clone()
+      void caches.open(CACHE).then((cache) => cache.put(request, cachedResponse)).catch(() => undefined)
+    }
     return response
   }).catch(() => request.mode === 'navigate' ? caches.match('/index.html') : Response.error())))
 })
