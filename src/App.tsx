@@ -303,19 +303,70 @@ function IdleProgressDialog({ seconds, onClose }: { seconds: number; onClose: ()
   return <div className="confirm-layer"><section className="confirm-box idle-progress"><h3>{t('idle.title')}</h3><p>{t('idle.body', { time: formatSeconds(seconds) })}</p><ProgressBar value={seconds} max={Math.max(1, seconds)} label={formatSeconds(seconds)} /><div><button onClick={onClose}>{t('common.close')}</button></div></section></div>
 }
 
-function ShopDialog({ onClose }: { onClose: () => void }) {
+const VIETQR_ACCOUNT = 'VQRQAJQJY8278'
+const VIETQR_BANK = 'MBBank'
+const VIETQR_HOLDER = 'NGUYEN KHANH HOANG'
+const GEM_PRODUCT_ID = 'gems_100'
+
+function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void }) {
   const { t } = useI18n()
+  const [order, setOrder] = useState<{ orderId: string; priceMinor: number; paymentCode: string } | null>(null)
+  const [creating, setCreating] = useState(false)
+  const [message, setMessage] = useState<string | null>(null)
+  const [paid, setPaid] = useState(false)
+
+  const createOrder = async () => {
+    setCreating(true)
+    setMessage(null)
+    const result = await store.createPaymentOrder(GEM_PRODUCT_ID)
+    setCreating(false)
+    if (!result.ok || !result.order) {
+      setMessage(result.message)
+      return
+    }
+    setPaid(false)
+    setOrder(result.order)
+  }
+
+  useEffect(() => {
+    if (!order || paid) return
+    let cancelled = false
+    const checkPayment = async () => {
+      const status = await store.getPaymentOrderStatus(order.orderId)
+      if (cancelled) return
+      if (status === 'paid') {
+        await store.refreshProtectedGems()
+        if (!cancelled) setPaid(true)
+      } else if (status === 'failed' || status === 'expired' || status === 'refunded') {
+        setMessage(t('shop.paymentUnavailable'))
+      }
+    }
+    void checkPayment()
+    const timer = window.setInterval(() => void checkPayment(), 4_000)
+    return () => {
+      cancelled = true
+      window.clearInterval(timer)
+    }
+  }, [order, paid, store, t])
+
+  const qrUrl = order
+    ? `https://vietqr.app/img?bank=${VIETQR_BANK}&acc=${VIETQR_ACCOUNT}&amount=${order.priceMinor}&des=${order.paymentCode}&template=compact&showinfo=true&holder=${encodeURIComponent(VIETQR_HOLDER)}`
+    : ''
   return <Modal title={t('shop.title')} onClose={onClose}>
     <section className="iap-dialog">
       <img className="iap-gem-icon" src={assetUrl('gem')} alt="" />
       <p>{t('shop.intro')}</p>
-      <div className="iap-qr-placeholder" role="img" aria-label={t('shop.qrPending')}>
-        <span>QR</span>
-        <small>{t('shop.qrPending')}</small>
-      </div>
+      {!order ? <button className="iap-package" disabled={creating} onClick={() => void createOrder()}><img src={assetUrl('gem')} alt="" /><span><strong>{t('shop.gemPack')}</strong><small>{t('shop.gemPackAmount')}</small></span><b>{t('shop.gemPackPrice')}</b></button> : <>
+        <div className="iap-qr"><img src={qrUrl} alt={t('shop.qrAlt')} /></div>
+        <strong className="iap-payment-code">{order.paymentCode}</strong>
+        <p>{t('shop.transferExact', { price: order.priceMinor.toLocaleString() })}</p>
+        {!paid && <small className="iap-waiting">{t('shop.waiting')}</small>}
+        {paid && <strong className="iap-paid">{t('shop.paid')}</strong>}
+      </>}
+      {message && <p className="iap-error">{message}</p>}
       <p className="iap-note">{t('shop.note')}</p>
     </section>
-    <div className="workshop-actions"><span>{t('shop.comingSoon')}</span><button onClick={onClose}>{t('common.close')}</button></div>
+    <div className="workshop-actions">{order && !paid && <button disabled={creating} onClick={() => void createOrder()}>{t('shop.newOrder')}</button>}<button onClick={onClose}>{t('common.close')}</button></div>
   </Modal>
 }
 
@@ -1980,7 +2031,7 @@ function AppShell({ content, index, store }: AppProps) {
       {dialog?.type === 'account' && <AccountDialog store={store} onClose={() => setDialog(null)} />}
       {dialog?.type === 'settings' && <SettingsDialog store={store} onClose={() => setDialog(null)} />}
       {dialog?.type === 'achievements' && <AchievementsDialog store={store} index={index} onClose={() => setDialog(null)} />}
-      {dialog?.type === 'shop' && <ShopDialog onClose={() => setDialog(null)} />}
+      {dialog?.type === 'shop' && <ShopDialog store={store} onClose={() => setDialog(null)} />}
       {dialog?.type === 'reset' && <ActionConfirmation title={t('drawer.newGuild')} body={t('drawer.resetConfirm')} onCancel={() => setDialog(null)} onConfirm={() => { store.reset(); setDialog(null) }} />}
       {idleProgress > 5 && dialog === null && <IdleProgressDialog seconds={idleProgress} onClose={() => setIdleProgress(0)} />}
     </div>

@@ -18,8 +18,17 @@ export interface GameSync {
   pullLatest(): Promise<RemoteSave | null>
   adoptRemote(save: RemoteSave): Promise<void>
   redeemCode(code: string): Promise<{ ok: boolean; message: string; reward?: { itemId: string; stack: number } }>
+  createPaymentOrder(productId: string): Promise<{ ok: boolean; message: string; order?: PaymentOrder }>
+  getPaymentOrderStatus(orderId: string): Promise<'pending' | 'paid' | 'failed' | 'expired' | 'refunded' | null>
   isGemAuthorityEnabled(): boolean
   applyGemAuthorityAction(action: { id: string; type: string; payload?: Record<string, unknown> }, legacyState?: GameState): Promise<RemoteSave | null>
+}
+
+export interface PaymentOrder {
+  orderId: string
+  productId: string
+  priceMinor: number
+  paymentCode: string
 }
 
 const gemAuthorityEnabled = import.meta.env.VITE_GEM_AUTHORITY === 'true'
@@ -176,6 +185,42 @@ class SupabaseGameSync implements GameSync {
       ? { itemId: data.reward.itemId, stack: data.reward.stack }
       : undefined
     return { ok: data.ok, message: data.message, reward }
+  }
+
+  async createPaymentOrder(productId: string) {
+    if (!this.user) return { ok: false, message: 'Sign in before purchasing gems.' }
+    const { data, error } = await this.client.functions.invoke('payment-order', { body: { productId } })
+    const rawOrder = isRecord(data) && isRecord(data.order) ? data.order : null
+    if (error || !rawOrder
+      || typeof rawOrder.order_id !== 'string'
+      || typeof rawOrder.product_id !== 'string'
+      || typeof rawOrder.price_minor !== 'number'
+      || typeof rawOrder.payment_code !== 'string') {
+      return { ok: false, message: error ? await messageFrom(error) : 'Payment service returned an invalid order.' }
+    }
+    return {
+      ok: true,
+      message: 'Payment order created.',
+      order: {
+        orderId: rawOrder.order_id,
+        productId: rawOrder.product_id,
+        priceMinor: rawOrder.price_minor,
+        paymentCode: rawOrder.payment_code,
+      },
+    }
+  }
+
+  async getPaymentOrderStatus(orderId: string) {
+    if (!this.user || !/^[0-9a-f-]{36}$/i.test(orderId)) return null
+    const { data, error } = await this.client
+      .from('payment_orders')
+      .select('status')
+      .eq('order_id', orderId)
+      .maybeSingle()
+    if (error || !data || typeof data.status !== 'string') return null
+    return data.status === 'pending' || data.status === 'paid' || data.status === 'failed' || data.status === 'expired' || data.status === 'refunded'
+      ? data.status
+      : null
   }
 
   isGemAuthorityEnabled = () => gemAuthorityEnabled

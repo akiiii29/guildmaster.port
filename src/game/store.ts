@@ -351,6 +351,19 @@ export class GameStore {
     return result
   }
 
+  createPaymentOrder(productId: string) {
+    return this.cloudSync?.createPaymentOrder(productId) ?? Promise.resolve({ ok: false, message: 'Cloud payments are not configured for this deployment.' })
+  }
+
+  getPaymentOrderStatus(orderId: string) {
+    return this.cloudSync?.getPaymentOrderStatus(orderId) ?? Promise.resolve(null)
+  }
+
+  async refreshProtectedGems() {
+    if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) return false
+    return this.commitAuthoritative('tick', {}, () => {})
+  }
+
   replaceWithCloudSave(save: RemoteSave) {
     const migrated = this.migrateSerialized(JSON.stringify(save.state))
     if (!migrated) return false
