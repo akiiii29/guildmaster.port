@@ -1333,6 +1333,12 @@ function resolveCombatDeath(target: CombatantRef, refs: CombatantRef[], run: Are
       appendLog(run, `${target.name} was resurrected by the Amulet of Resurrection.`)
       return true
     }
+    if (index.areas.get(run.areaId)?.areaType === 0 && state.xp > 0) {
+      const lost = Math.ceil(state.xp * 0.2)
+      state.xp -= lost
+      run.report.xpLost += lost
+      appendLog(run, `${target.name} lost ${lost} experience.`)
+    }
     const ownerUid = Number(target.key.slice(2))
     const bound = run.summons.filter((summon) => summon.summonerUid === ownerUid)
     if (bound.length) {

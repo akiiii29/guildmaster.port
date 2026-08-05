@@ -283,6 +283,7 @@ const dictionaries: Record<Language, Record<string, string>> = {
     'redeem.code': 'Code',
     'redeem.submit': 'REDEEM',
     'redeem.working': 'REDEEMING...',
+    'redeem.comingSoon': 'Redeem codes coming soon',
     'quests.refreshConfirm': 'Spend {price} gems to refresh all quests?',
     'workshop.cancelConfirm': 'Cancel this crafting job and refund its ingredients?',
     'equipment.swapConfirm': 'Apply this equipment change?',

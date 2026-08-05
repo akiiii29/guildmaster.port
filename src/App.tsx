@@ -38,7 +38,6 @@ type DialogState =
   | { type: 'settings' }
   | { type: 'achievements' }
   | { type: 'reset' }
-  | { type: 'redeem' }
   | null
 
 function Currency({ amount, icon, label }: { amount: number; icon: string; label: string }) {
@@ -300,23 +299,6 @@ function SettingsDialog({ store, onClose }: { store: GameStore; onClose: () => v
 function IdleProgressDialog({ seconds, onClose }: { seconds: number; onClose: () => void }) {
   const { t } = useI18n()
   return <div className="confirm-layer"><section className="confirm-box idle-progress"><h3>{t('idle.title')}</h3><p>{t('idle.body', { time: formatSeconds(seconds) })}</p><ProgressBar value={seconds} max={Math.max(1, seconds)} label={formatSeconds(seconds)} /><div><button onClick={onClose}>{t('common.close')}</button></div></section></div>
-}
-
-function RedeemCodeDialog({ store, onClose }: { store: GameStore; onClose: () => void }) {
-  const { t } = useI18n()
-  const [code, setCode] = useState('')
-  const [message, setMessage] = useState<string | null>(null)
-  const [working, setWorking] = useState(false)
-  const redeem = async () => {
-    setWorking(true)
-    const result = await store.redeemCode(code)
-    setMessage(result.message)
-    setWorking(false)
-    if (result.ok) setCode('')
-  }
-  return <Modal title={t('redeem.title')} onClose={onClose}>
-    <section className="redeem-dialog"><p>{t('redeem.intro')}</p><label>{t('redeem.code')}<input value={code} maxLength={64} autoCapitalize="characters" onChange={(event) => setCode(event.target.value.toUpperCase())} /></label>{message && <p className="redeem-result">{message}</p>}<button disabled={working || code.trim().length < 4} onClick={() => void redeem()}>{working ? t('redeem.working') : t('redeem.submit')}</button></section>
-  </Modal>
 }
 
 function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
@@ -1798,7 +1780,7 @@ function AppShell({ content, index, store }: AppProps) {
         </div>
         <ToolButton icon="merchant" label={t('tool.merchant')} onClick={() => setDialog({ type: 'merchant' })} />
         <ToolButton icon="quest_marker" label={t('tool.quests')} disabled={state.adventurers.length === 0} onClick={() => setDialog({ type: 'quests' })} />
-        <ToolButton icon="gem" label={t('redeem.title')} onClick={() => setDialog({ type: 'redeem' })} />
+        <ToolButton icon="gem" label={t('redeem.comingSoon')} disabled />
       </div>
 
       <main className="game-content">
@@ -1835,7 +1817,6 @@ function AppShell({ content, index, store }: AppProps) {
       {dialog?.type === 'settings' && <SettingsDialog store={store} onClose={() => setDialog(null)} />}
       {dialog?.type === 'achievements' && <AchievementsDialog store={store} index={index} onClose={() => setDialog(null)} />}
       {dialog?.type === 'reset' && <ActionConfirmation title={t('drawer.newGuild')} body={t('drawer.resetConfirm')} onCancel={() => setDialog(null)} onConfirm={() => { store.reset(); setDialog(null) }} />}
-      {dialog?.type === 'redeem' && <RedeemCodeDialog store={store} onClose={() => setDialog(null)} />}
       {idleProgress > 5 && dialog === null && <IdleProgressDialog seconds={idleProgress} onClose={() => setIdleProgress(0)} />}
     </div>
   )
