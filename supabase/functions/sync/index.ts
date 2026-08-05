@@ -94,6 +94,15 @@ Deno.serve(async (request) => {
   }
 
   if (!validSnapshot(body.snapshot) || !validEvents(body.events)) return json({ error: 'Invalid snapshot or event batch.' }, 400)
+  const { data: authority, error: authorityError } = await admin
+    .from('game_saves')
+    .select('authority_mode')
+    .eq('account_id', userData.user.id)
+    .maybeSingle()
+  if (authorityError) return json({ error: 'Unable to validate cloud-save authority.' }, 500)
+  if (authority?.authority_mode === 'gem_authoritative') {
+    return json({ error: 'This account now uses server-authoritative gems. Update the game client before syncing.' }, 409)
+  }
   const snapshot = body.snapshot as JsonRecord
   const { data, error } = await admin.rpc('apply_sync_batch', {
     p_account_id: userData.user.id,

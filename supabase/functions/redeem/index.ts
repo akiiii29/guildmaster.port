@@ -11,6 +11,17 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+const attemptsPerTenMinutes = 12
+
+async function audit(admin: ReturnType<typeof createClient>, accountId: string, outcome: 'allowed' | 'denied' | 'failed', detail: string) {
+  await admin.from('security_audit_log').insert({
+    account_id: accountId,
+    event_type: 'redeem_code',
+    outcome,
+    metadata: { detail },
+  })
+}
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
@@ -30,12 +41,41 @@ Deno.serve(async (request) => {
   if (!/^[A-Z0-9-]{4,64}$/.test(code)) return json({ ok: false, message: 'Invalid code format.' }, 400)
 
   const admin = createClient(url, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } })
-  const { data: row, error } = await admin.from('redeem_codes').select('code,reward,active,max_claims,claims,expires_at').eq('code', code).maybeSingle()
-  if (error || !row || !row.active || (row.expires_at && Date.parse(row.expires_at) <= Date.now()) || (row.max_claims !== null && row.claims >= row.max_claims)) {
+  const since = new Date(Date.now() - 10 * 60_000).toISOString()
+  const { count, error: attemptsError } = await admin
+    .from('redeem_attempts')
+    .select('attempt_id', { count: 'exact', head: true })
+    .eq('account_id', userData.user.id)
+    .gte('attempted_at', since)
+  if (attemptsError) return json({ ok: false, message: 'Unable to validate this request.' }, 500)
+  if ((count ?? 0) >= attemptsPerTenMinutes) {
+    await audit(admin, userData.user.id, 'denied', 'rate_limited')
+    return json({ ok: false, message: 'Too many redeem attempts. Please try again later.' }, 429)
+  }
+  const { error: recordAttemptError } = await admin.from('redeem_attempts').insert({ account_id: userData.user.id })
+  if (recordAttemptError) return json({ ok: false, message: 'Unable to validate this request.' }, 500)
+
+  const { data, error } = await admin.rpc('claim_redeem_code', {
+    p_account_id: userData.user.id,
+    p_code: code,
+  })
+  const result = Array.isArray(data) ? data[0] : null
+  if (error || !result || typeof result.claim_status !== 'string') {
+    console.error('claim_redeem_code failed', error)
+    await audit(admin, userData.user.id, 'failed', 'backend_error')
+    return json({ ok: false, message: 'Unable to redeem this code.' }, 500)
+  }
+  if (result.claim_status === 'already_claimed') {
+    await audit(admin, userData.user.id, 'denied', 'already_claimed')
+    return json({ ok: false, message: 'This code has already been redeemed.' }, 400)
+  }
+  if (result.claim_status === 'invalid') {
+    await audit(admin, userData.user.id, 'denied', 'invalid_or_expired')
     return json({ ok: false, message: 'This code is invalid or expired.' }, 400)
   }
-  const { error: claimError } = await admin.from('redeem_claims').insert({ account_id: userData.user.id, code })
-  if (claimError) return json({ ok: false, message: claimError.code === '23505' ? 'This code has already been redeemed.' : 'Unable to redeem this code.' }, 400)
-  await admin.from('redeem_codes').update({ claims: row.claims + 1 }).eq('code', code)
-  return json({ ok: true, message: 'Code redeemed.', reward: row.reward })
+  await audit(admin, userData.user.id, 'allowed', result.claim_status)
+  if (result.claim_status === 'claimed_asset') {
+    return json({ ok: true, message: 'Protected reward credited to your account.', asset: { id: result.asset_id, balance: Number(result.asset_balance) } })
+  }
+  return json({ ok: true, message: 'Code redeemed.', reward: result.reward })
 })

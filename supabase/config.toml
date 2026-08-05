@@ -7,3 +7,19 @@ verify_jwt = false
 [functions.redeem]
 # The function validates the bearer token itself so it can return a consistent JSON error.
 verify_jwt = false
+
+[functions.payment-order]
+# The function validates the bearer token itself so it can return a consistent JSON error.
+verify_jwt = false
+
+[functions.payment-webhook]
+# Payment providers authenticate with an HMAC signature, not a Supabase JWT.
+verify_jwt = false
+
+[functions.wallet]
+# The function validates the bearer token itself so it can return a consistent JSON error.
+verify_jwt = false
+
+[functions.gem-action]
+# The function validates the bearer token itself so it can return a consistent JSON error.
+verify_jwt = false

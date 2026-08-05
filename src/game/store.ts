@@ -67,6 +67,7 @@ export class GameStore {
   private cloudSync: GameSync | null
   private lastCloudPersistAt = 0
   private offlineProgressSeconds = 0
+  private authoritativeTickPending = false
   private onStorage = (event: StorageEvent) => {
     if (event.key !== SAVE_KEY || !event.newValue) return
     const incoming = this.migrateSerialized(event.newValue)
@@ -79,7 +80,14 @@ export class GameStore {
     this.index = index
     this.state = this.load()
     this.cloudSync = createGameSync()
-    void this.cloudSync?.initialize()
+    void this.cloudSync?.initialize().then(async () => {
+      if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) return
+      const remote = await this.cloudSync.pullLatest()
+      if (remote) this.replaceWithCloudSave(remote)
+      // This performs the one-time strict-gem cutover (including legacy gems
+      // reset) after the latest cloud state has been loaded.
+      await this.commitAuthoritative('tick', {}, () => {})
+    })
     const elapsed = offlineSeconds(Date.now(), this.state.lastAccess)
     this.offlineProgressSeconds = elapsed
     tickGame(this.state, this.index, elapsed)
@@ -252,6 +260,30 @@ export class GameStore {
     this.listeners.forEach((listener) => listener())
   }
 
+  private actionId() {
+    return crypto.randomUUID()
+  }
+
+  private async commitAuthoritative(type: string, payload: Record<string, unknown>, fallback: (draft: GameState) => void) {
+    if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) {
+      this.commit(fallback)
+      return true
+    }
+    const remote = await this.cloudSync.applyGemAuthorityAction({ id: this.actionId(), type, payload }, this.state)
+    if (!remote) {
+      const status = this.cloudSync.getStatus()
+      if (status.kind === 'conflict') this.replaceWithCloudSave(status.remote)
+      return false
+    }
+    const migrated = this.migrateSerialized(JSON.stringify(remote.state))
+    if (!migrated) return false
+    this.state = migrated
+    this.persist(false)
+    void this.cloudSync.adoptRemote(remote)
+    this.listeners.forEach((listener) => listener())
+    return true
+  }
+
   subscribe = (listener: () => void) => {
     this.listeners.add(listener)
     return () => this.listeners.delete(listener)
@@ -334,33 +366,33 @@ export class GameStore {
   })
 
   consumePotion(uid: number, itemId: string) {
-    this.commit((draft) => { consumePotion(draft, this.index, uid, itemId) })
+    return this.commitAuthoritative('consumePotion', { uid, itemId }, (draft) => { consumePotion(draft, this.index, uid, itemId) })
   }
 
-  openGeodes() {
-    let gems = 0
-    this.commit((draft) => { gems = openGeodes(draft) })
-    return gems
+  async openGeodes() {
+    const before = this.state.gems
+    const ok = await this.commitAuthoritative('openGeodes', {}, (draft) => { openGeodes(draft) })
+    return ok ? Math.max(0, this.state.gems - before) : 0
   }
 
   consumeSpecial(uid: number, itemId: string) {
-    this.commit((draft) => { consumeSpecial(draft, this.index, uid, itemId) })
+    return this.commitAuthoritative('consumeSpecial', { uid, itemId }, (draft) => { consumeSpecial(draft, this.index, uid, itemId) })
   }
 
   changeRareTrait(uid: number, trait: string, itemId: 'Evo23Vial' | 'Evo23Vial2') {
-    this.commit((draft) => { changeRareTrait(draft, uid, trait, itemId) })
+    return this.commitAuthoritative('changeRareTrait', { uid, trait, itemId }, (draft) => { changeRareTrait(draft, uid, trait, itemId) })
   }
 
   moveAdventurer(uid: number, delta: -1 | 1) {
-    this.commit((draft) => { moveAdventurer(draft, uid, delta) })
+    return this.commitAuthoritative('moveAdventurer', { uid, delta }, (draft) => { moveAdventurer(draft, uid, delta) })
   }
 
   dismissAdventurer(uid: number) {
-    this.commit((draft) => { dismissAdventurer(draft, uid) })
+    return this.commitAuthoritative('dismiss', { uid }, (draft) => { dismissAdventurer(draft, uid) })
   }
 
   recallAdventurer(uid: number) {
-    this.commit((draft) => { recallAdventurer(draft, uid) })
+    return this.commitAuthoritative('recall', { uid }, (draft) => { recallAdventurer(draft, uid) })
   }
 
   start() {
@@ -368,6 +400,10 @@ export class GameStore {
     this.timer = window.setInterval(() => {
       const queueCloud = Date.now() - this.lastCloudPersistAt >= CLOUD_TICK_SYNC_INTERVAL_MS
       this.commit((draft) => tickGame(draft, this.index), queueCloud)
+      if (this.cloudSync?.isGemAuthorityEnabled() && this.cloudSync.getUser() && !this.authoritativeTickPending && this.state.totalTicks % 15 === 0) {
+        this.authoritativeTickPending = true
+        void this.commitAuthoritative('tick', {}, () => {}).finally(() => { this.authoritativeTickPending = false })
+      }
     }, 1_000)
   }
 
@@ -377,43 +413,39 @@ export class GameStore {
   }
 
   hire(uid: number) {
-    this.commit((draft) => { hireGuest(draft, uid, this.index) })
+    return this.commitAuthoritative('hire', { uid }, (draft) => { hireGuest(draft, uid, this.index) })
   }
 
   toggleTavernLock() {
-    this.commit((draft) => setTavernLocked(draft, !draft.tavernLocked))
+    return this.commitAuthoritative('setTavernLocked', { locked: !this.state.tavernLocked }, (draft) => setTavernLocked(draft, !draft.tavernLocked))
   }
 
   markTavernSeen() {
-    this.commit((draft) => markTavernGuestsSeen(draft))
+    return this.commitAuthoritative('markTavernSeen', {}, (draft) => markTavernGuestsSeen(draft))
   }
 
   upgradeTavern(kind: 'capacity' | 'time') {
-    this.commit((draft) => { upgradeTavern(draft, kind) })
+    return this.commitAuthoritative('upgradeTavern', { kind }, (draft) => { upgradeTavern(draft, kind) })
   }
 
   upgradeFacility(kind: 'quarters' | 'storage' | 'workshopQueue' | 'workshopTime') {
-    this.commit((draft) => { upgradeFacility(draft, kind) })
+    return this.commitAuthoritative('upgradeFacility', { kind }, (draft) => { upgradeFacility(draft, kind) })
   }
 
   send(areaId: string, party: number[], petUid: number | null = null) {
-    this.commit((draft) => { startRun(draft, areaId, party, this.index, petUid) })
+    return this.commitAuthoritative('startRun', { areaId, partyIds: party, petUid }, (draft) => { startRun(draft, areaId, party, this.index, petUid) })
   }
 
   refillRaid(areaId: string) {
-    let purchased = false
-    this.commit((draft) => { purchased = refillRaidTry(draft, areaId, this.index) })
-    return purchased
+    return this.commitAuthoritative('refillRaid', { areaId }, (draft) => { refillRaidTry(draft, areaId, this.index) })
   }
 
   retreat(areaId: string) {
-    this.commit((draft) => retreatRun(draft, areaId, this.index))
+    return this.commitAuthoritative('retreat', { areaId }, (draft) => retreatRun(draft, areaId, this.index))
   }
 
   collect(areaId: string) {
-    let collected = false
-    this.commit((draft) => { collected = collectChest(draft, areaId, this.index) })
-    return collected
+    return this.commitAuthoritative('collectChest', { areaId }, (draft) => { collectChest(draft, areaId, this.index) })
   }
 
   setLanguage(language: Language) {
@@ -425,98 +457,98 @@ export class GameStore {
   }
 
   craft(recipeId: string, amount = 1) {
-    this.commit((draft) => { queueWorkshopRecipe(draft, this.index, recipeId, amount) })
+    return this.commitAuthoritative('craft', { itemId: recipeId, amount }, (draft) => { queueWorkshopRecipe(draft, this.index, recipeId, amount) })
   }
 
   collectCraft(uid: number) {
-    this.commit((draft) => { collectWorkshopJob(draft, uid, this.index) })
+    return this.commitAuthoritative('collectCraft', { uid }, (draft) => { collectWorkshopJob(draft, uid, this.index) })
   }
 
   cancelCraft(uid: number) {
-    this.commit((draft) => { cancelWorkshopJob(draft, uid) })
+    return this.commitAuthoritative('cancelCraft', { uid }, (draft) => { cancelWorkshopJob(draft, uid) })
   }
 
   listForSale(itemId: string, amount: number) {
-    this.commit((draft) => { listMarketItem(draft, this.index, itemId, amount) })
+    return this.commitAuthoritative('listForSale', { itemId, amount }, (draft) => { listMarketItem(draft, this.index, itemId, amount) })
   }
 
   cancelSale(uid: number) {
-    this.commit((draft) => { cancelMarketListing(draft, uid) })
+    return this.commitAuthoritative('cancelSale', { uid }, (draft) => { cancelMarketListing(draft, uid) })
   }
 
   collectSale(uid: number) {
-    this.commit((draft) => { collectMarketSale(draft, this.index, uid) })
+    return this.commitAuthoritative('collectSale', { uid }, (draft) => { collectMarketSale(draft, this.index, uid) })
   }
 
   upgradeMarket(kind: 'listings' | 'time') {
-    this.commit((draft) => { upgradeMarket(draft, kind) })
+    return this.commitAuthoritative('upgradeMarket', { kind }, (draft) => { upgradeMarket(draft, kind) })
   }
 
   refreshMerchant() {
-    this.commit((draft) => {
+    return this.commitAuthoritative('refreshMerchant', {}, (draft) => {
       refreshMerchantRegular(draft, this.index)
       refreshMerchantSpecial(draft, this.index)
     })
   }
 
   buyMerchant(uid: number) {
-    this.commit((draft) => { buyMerchantOffer(draft, uid) })
+    return this.commitAuthoritative('buyMerchant', { uid }, (draft) => { buyMerchantOffer(draft, uid) })
   }
 
   promote(uid: number, classId: string) {
-    this.commit((draft) => { promoteAdventurer(draft, this.index, uid, classId) })
+    return this.commitAuthoritative('promote', { uid, classId }, (draft) => { promoteAdventurer(draft, this.index, uid, classId) })
   }
 
   ascend(uid: number) {
-    this.commit((draft) => { ascendAdventurer(draft, this.index, uid) })
+    return this.commitAuthoritative('ascend', { uid }, (draft) => { ascendAdventurer(draft, this.index, uid) })
   }
 
   selectDoctrine(uid: number, doctrineId: DoctrineId) {
-    this.commit((draft) => { selectDoctrine(draft, this.index, uid, doctrineId) })
+    return this.commitAuthoritative('selectDoctrine', { uid, doctrineId }, (draft) => { selectDoctrine(draft, this.index, uid, doctrineId) })
   }
 
   changeDoctrineAbility(uid: number, abilityId: string, delta: 1 | -1) {
-    this.commit((draft) => { changeDoctrineAbility(draft, this.index, uid, abilityId, delta) })
+    return this.commitAuthoritative('changeDoctrineAbility', { uid, abilityId, delta }, (draft) => { changeDoctrineAbility(draft, this.index, uid, abilityId, delta) })
   }
 
   resetDoctrine(uid: number) {
-    this.commit((draft) => { resetDoctrine(draft, this.index, uid) })
+    return this.commitAuthoritative('resetDoctrine', { uid }, (draft) => { resetDoctrine(draft, this.index, uid) })
   }
 
   refreshQuests() {
-    this.commit((draft) => { buyQuestRefresh(draft, this.index) })
+    return this.commitAuthoritative('refreshQuests', {}, (draft) => { buyQuestRefresh(draft, this.index) })
   }
 
   claimQuest(id: string) {
-    this.commit((draft) => { claimQuest(draft, id) })
+    return this.commitAuthoritative('claimQuest', { itemId: id }, (draft) => { claimQuest(draft, id) })
   }
 
   hatchPet(eggId: string) {
-    this.commit((draft) => { hatchPetEgg(draft, this.index, eggId) })
+    return this.commitAuthoritative('hatchPet', { itemId: eggId }, (draft) => { hatchPetEgg(draft, this.index, eggId) })
   }
 
   feedPet(uid: number, itemId: string, amount: number) {
-    this.commit((draft) => { feedPet(draft, this.index, uid, itemId, amount) })
+    return this.commitAuthoritative('feedPet', { uid, itemId, amount }, (draft) => { feedPet(draft, this.index, uid, itemId, amount) })
   }
 
   mergePet(sourceUid: number, targetUid: number) {
-    this.commit((draft) => { mergePet(draft, sourceUid, targetUid) })
+    return this.commitAuthoritative('mergePet', { uid: sourceUid, targetUid }, (draft) => { mergePet(draft, sourceUid, targetUid) })
   }
 
   releasePet(uid: number) {
-    this.commit((draft) => { releasePet(draft, uid, this.index) })
+    return this.commitAuthoritative('releasePet', { uid }, (draft) => { releasePet(draft, uid, this.index) })
   }
 
   togglePetFavourite(uid: number) {
-    this.commit((draft) => { togglePetFavourite(draft, uid) })
+    return this.commitAuthoritative('togglePetFavourite', { uid }, (draft) => { togglePetFavourite(draft, uid) })
   }
 
   upgradeShelter(kind: 'capacity' | 'autofeed') {
-    this.commit((draft) => { upgradeShelter(draft, kind) })
+    return this.commitAuthoritative('upgradeShelter', { kind }, (draft) => { upgradeShelter(draft, kind) })
   }
 
   equip(uid: number, slot: EquipmentSlot, itemId: string | null) {
-    this.commit((draft) => { equipItem(draft, this.index, uid, slot, itemId) })
+    return this.commitAuthoritative('equip', { uid, slot, itemId }, (draft) => { equipItem(draft, this.index, uid, slot, itemId) })
   }
 
   reset() {

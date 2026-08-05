@@ -754,8 +754,8 @@ function ShelterDialog({ store, index, onClose }: { store: GameStore; index: Con
   const selectedPet = state.pets.find((pet) => pet.uid === selectedPetUid)
   const selectedDefinition = selectedPet && index.pets.get(selectedPet.petId)
   const mergeSourcePet = state.pets.find((pet) => pet.uid === mergeSource)
-  const releaseSelectedPet = () => {
-    if (selectedPet && store.releasePet(selectedPet.uid)) {
+  const releaseSelectedPet = async () => {
+    if (selectedPet && await store.releasePet(selectedPet.uid)) {
       setSelectedPetUid(null)
       if (mergeSource === selectedPet.uid) setMergeSource(null)
     }
@@ -1022,8 +1022,8 @@ function RefillRaidDialog({ areaId, store, index, onClose, onBought }: { areaId:
   const [failed, setFailed] = useState(false)
   const area = index.areas.get(areaId)
   const cost = raidTryCost(areaId)
-  const buy = () => {
-    if (store.refillRaid(areaId)) onBought()
+  const buy = async () => {
+    if (await store.refillRaid(areaId)) onBought()
     else setFailed(true)
   }
   return (
@@ -1263,8 +1263,8 @@ function BattleResultPanel({ run, index, store, onClose }: { run: AreaRun; index
       : 'retreat'
   const result = run.finishedReason ?? inferredResult
   const [collectFailed, setCollectFailed] = useState(false)
-  const collect = () => {
-    if (run.chest.length === 0 || store.collect(run.areaId)) onClose()
+  const collect = async () => {
+    if (run.chest.length === 0 || await store.collect(run.areaId)) onClose()
     else setCollectFailed(true)
   }
   return (
@@ -1558,7 +1558,7 @@ function ConsumePotionDialog({ itemId, store, index, onClose }: { itemId: string
         <div className="consume-special">
           <img src={assetUrl(item?.imageKey)} alt="" />
           {gemsFound === null
-            ? <><p>{name(item?.description ?? '')}</p><button disabled={stack < 1} onClick={() => setGemsFound(store.openGeodes())}>{t('potion.openAll')} · {stack}</button></>
+            ? <><p>{name(item?.description ?? '')}</p><button disabled={stack < 1} onClick={async () => setGemsFound(await store.openGeodes())}>{t('potion.openAll')} · {stack}</button></>
             : <><h3>{t('potion.gemsFound', { count: gemsFound })}</h3><img className="consume-reward" src={assetUrl('gem')} alt="" /></>}
         </div>
       </Modal>

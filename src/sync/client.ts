@@ -18,7 +18,11 @@ export interface GameSync {
   pullLatest(): Promise<RemoteSave | null>
   adoptRemote(save: RemoteSave): Promise<void>
   redeemCode(code: string): Promise<{ ok: boolean; message: string; reward?: { itemId: string; stack: number } }>
+  isGemAuthorityEnabled(): boolean
+  applyGemAuthorityAction(action: { id: string; type: string; payload?: Record<string, unknown> }, legacyState?: GameState): Promise<RemoteSave | null>
 }
+
+const gemAuthorityEnabled = import.meta.env.VITE_GEM_AUTHORITY === 'true'
 
 export function isCloudSyncConfigured() {
   return Boolean(supabaseUrl && supabaseKey)
@@ -103,6 +107,7 @@ class SupabaseGameSync implements GameSync {
   }
 
   queueSnapshot(state: GameState) {
+    if (gemAuthorityEnabled) return
     if (!this.user) return
     void this.enqueueSnapshot(state).then(() => {
       if (!this.hasUnresolvedConflict) this.scheduleSync()
@@ -112,6 +117,10 @@ class SupabaseGameSync implements GameSync {
   }
 
   async syncNow(state?: GameState) {
+    if (gemAuthorityEnabled) {
+      await this.pullLatest()
+      return this.status
+    }
     if (this.hasUnresolvedConflict) return this.status
     if (state) await this.enqueueSnapshot(state)
     return this.flush()
@@ -169,11 +178,47 @@ class SupabaseGameSync implements GameSync {
     return { ok: data.ok, message: data.message, reward }
   }
 
+  isGemAuthorityEnabled = () => gemAuthorityEnabled
+
+  async applyGemAuthorityAction(action: { id: string; type: string; payload?: Record<string, unknown> }, legacyState?: GameState) {
+    if (!gemAuthorityEnabled || !this.user) return null
+    if (isOffline()) {
+      this.setStatus({ kind: 'offline' })
+      return null
+    }
+    const baseRevision = await this.queue.getServerRevision()
+    this.setStatus({ kind: 'syncing' })
+    const { data, error } = await this.client.functions.invoke('gem-action', {
+      body: { baseRevision, action, legacyState: legacyState ? structuredClone(legacyState) : undefined },
+    })
+    if (error) {
+      this.setStatus({ kind: 'error', message: await messageFrom(error) })
+      return null
+    }
+    const response = data as { status?: string; save?: unknown }
+    if (!isRemoteSave(response.save)) {
+      this.setStatus({ kind: 'error', message: 'The server returned an invalid authoritative save.' })
+      return null
+    }
+    const save = response.save
+    await this.queue.setServerRevision(save.revision)
+    if (response.status === 'conflict') {
+      this.hasUnresolvedConflict = true
+      this.setStatus({ kind: 'conflict', remote: save })
+      return null
+    }
+    this.hasUnresolvedConflict = false
+    this.setStatus({ kind: 'idle', revision: save.revision })
+    return save
+  }
+
   private async refreshAfterAuthChange() {
     if (this.user) await this.queue.ensureAccount(this.user.id)
     const revision = await this.queue.getServerRevision()
     this.setStatus(this.user ? { kind: 'idle', revision } : { kind: 'signed-out' })
-    if (this.user) void this.flush()
+    if (this.user) {
+      if (!gemAuthorityEnabled) void this.flush()
+    }
   }
 
   private async enqueueSnapshot(state: GameState) {
