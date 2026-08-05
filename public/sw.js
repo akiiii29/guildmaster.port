@@ -1,5 +1,5 @@
-const CACHE = 'guild-master-web-v24'
-const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest']
+const CACHE = 'guild-master-web-v25'
+const APP_SHELL = ['/manifest.webmanifest']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()))
@@ -12,6 +12,16 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return
+  // Vite fingerprinted files can be cached indefinitely, but the HTML entry
+  // point must be network-first. Otherwise a previous release's cached
+  // index.html may reference an asset hash deleted with the new deployment.
+  if (request.mode === 'navigate') {
+    event.respondWith(fetch(request).then((response) => {
+      if (response.ok) void caches.open(CACHE).then((cache) => cache.put('/index.html', response.clone()))
+      return response
+    }).catch(() => caches.match('/index.html').then((cached) => cached ?? Response.error())))
+    return
+  }
   event.respondWith(caches.match(request).then((cached) => cached ?? fetch(request).then((response) => {
     if (response.ok) void caches.open(CACHE).then((cache) => cache.put(request, response.clone()))
     return response
