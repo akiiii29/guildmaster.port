@@ -675,6 +675,7 @@ describe('original-compatible game loop', () => {
     state.unlockedAreas.push('TheDreadfulAscent')
     expect(startRun(state, 'TheDreadfulAscent', [1], index)).toBe(true)
     const run = state.runs.TheDreadfulAscent
+    state.adventurers[0].xp = 11
     state.adventurers[0].hp = 0
     run.enemies = [{ uid: 'soul', enemyId: 'EtherealSoul', hp: 100, mana: 0, shield: 0, positiveStatusEffects: [], negativeStatusEffects: [] }]
     run.action = 'FIGHT'
@@ -685,6 +686,25 @@ describe('original-compatible game loop', () => {
 
     expect(run).toMatchObject({ action: 'IDLE', finished: true, finishedReason: 'defeat', partyIds: [], enemies: [] })
     expect(state.adventurers[0]).toMatchObject({ hp: 0, areaId: null })
+    expect(state.adventurers[0].xp).toBe(11)
+    expect(run.report.xpLost).toBe(0)
+  })
+
+  it('removes and reports twenty percent of XP after a normal dungeon death', () => {
+    const index = indexContent(content)
+    const state = createInitialState(index)
+    expect(hireGuest(state, 1)).toBe(true)
+    expect(startRun(state, 'EnchantedForest', [1], index)).toBe(true)
+    const run = state.runs.EnchantedForest
+    state.adventurers[0].xp = 11
+    state.adventurers[0].hp = 1
+    run.enemies = [{ uid: 'dummy', enemyId: 'TestDummy', hp: 1000, mana: 0, shield: 0, positiveStatusEffects: [], negativeStatusEffects: [] }]
+    run.turnOrder = ['e:dummy']
+
+    combatTurn(state, run, index)
+
+    expect(state.adventurers[0].xp).toBe(8)
+    expect(run.report.xpLost).toBe(3)
   })
 
   it('records a raid retreat separately from a victory result', () => {

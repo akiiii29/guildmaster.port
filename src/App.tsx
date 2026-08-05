@@ -784,8 +784,7 @@ function BuildingDialog({ id, store, index, onClose, onConsume }: { id: string; 
     <Modal title={title} onClose={onClose}>
       <div className="building-detail">
         <img src={assetUrl(`sign_${id}`)} alt="" />
-        <h3>Level {id === 'quarters' ? state.buildings.quarters : 0}</h3>
-        <p>This facility is wired to the original game-state boundary. Its complete queue and upgrade controls are the next port slice.</p>
+        <p>{t('building.unavailable')}</p>
       </div>
     </Modal>
   )
