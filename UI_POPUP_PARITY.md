@@ -10,20 +10,20 @@ Payment/IAP surfaces (`DialogShop`, restore purchases, gem bundles, advertisemen
 | --- | --- | --- |
 | Drawer: Settings | Done | Persisted in local/cloud save; sell/craft defaults, confirmations, auto-open, verbose log and colorblind mode are applied. |
 | Drawer: Recall Adventurers | Done | Existing roster/recall flow is exposed from the drawer. |
-| Drawer: Messages / FAQ / Bestiary | Present | Direct click paths fixed; audit details below. |
+| Drawer: Messages / FAQ / Bestiary | Done | Direct click paths, detail dialogs and locked/empty states are available. |
 | Drawer: Achievements | Done | Internal, save-derived achievement progress replaces the APK Google Play Games intent. |
-| Drawer: Redeem code | Missing | Web-safe gameplay-code entry; exclude gem/IAP codes. |
+| Drawer: Redeem code | Done | Gameplay-only, signed-in code entry plus versioned Edge Function; gem/IAP/refund rewards are excluded. |
 | Drawer: Reddit / Cafe Naver | Done | External community links are available in the drawer. |
-| `DialogIdleProgress` | Missing | Offline processing indicator. |
-| `DialogReport` | Missing | Adventure recap with duration, clears, wipes, XP and killed enemies. |
-| `DialogEntityDetail` | Partial | Full primary/secondary/tertiary/potion pages for adventurer, visitor and enemy detail. |
-| `DialogItemDetail` | Partial | Full equipment/effect detail plus contextual craft, consume and sell actions. |
-| `DialogWorkshop` / `DialogCraft` | Partial | Job-item detail and cancel confirmation. |
-| `DialogMarket` / `DialogSell` | Partial | Item detail before sale and APK-equivalent confirmation. |
-| `DialogShelter` / `DialogPetDetail` / `DialogMergePet` | Partial | Separate merge-source flow and complete ability detail. |
-| `DialogQuests` / `DialogRefreshQuests` | Partial | Confirm quest refresh. |
-| `DialogSelectEquipment` | Partial | Equipment detail/preview before commit. |
-| `DialogDoctrineReset` / `DialogConsume*` | Partial | In-game confirmations and detailed effect copy instead of browser-native confirms. |
+| `DialogIdleProgress` | Done | Offline processing indicator appears after a meaningful elapsed session. |
+| `DialogReport` | Done | Per-run telemetry provides duration, clears, wipes, XP and killed enemies. |
+| `DialogEntityDetail` | Done | Adventurer and battle inspect now expose primary, secondary and tertiary combat data, skills and traits. |
+| `DialogItemDetail` | Done | Inventory detail shows all available item fields plus consume/hatch actions. |
+| `DialogWorkshop` / `DialogCraft` | Done | Queue cancel is confirmed before refunding ingredients. |
+| `DialogMarket` / `DialogSell` | Done | Sale preview, price/time and cancellation are confirmed. |
+| `DialogShelter` / `DialogPetDetail` / `DialogMergePet` | Done | Merge source and target are chosen in separate steps; ability detail remains available. |
+| `DialogQuests` / `DialogRefreshQuests` | Done | Quest refresh is confirmed before gems are spent. |
+| `DialogSelectEquipment` | Done | Item differences are previewed and a configured confirmation guards the equipment commit. |
+| `DialogDoctrineReset` / `DialogConsume*` | Done | Native confirmations were replaced by in-game dialogs. |
 
 Completion rule: each row needs visible information, enabled/disabled states, confirmation where APK has one, and a smoke test. No row is considered complete merely because its dialog can open.
 

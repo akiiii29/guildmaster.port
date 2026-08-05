@@ -17,6 +17,7 @@ export interface GameSync {
   syncNow(state?: GameState): Promise<CloudSyncStatus>
   pullLatest(): Promise<RemoteSave | null>
   adoptRemote(save: RemoteSave): Promise<void>
+  redeemCode(code: string): Promise<{ ok: boolean; message: string; reward?: { itemId: string; stack: number } }>
 }
 
 export function isCloudSyncConfigured() {
@@ -154,6 +155,18 @@ class SupabaseGameSync implements GameSync {
     ])
     this.hasUnresolvedConflict = false
     this.setStatus({ kind: 'idle', revision: save.revision })
+  }
+
+  async redeemCode(code: string) {
+    if (!this.user) return { ok: false, message: 'Sign in before redeeming a code.' }
+    const { data, error } = await this.client.functions.invoke('redeem', { body: { code } })
+    if (error || !isRecord(data) || typeof data.ok !== 'boolean' || typeof data.message !== 'string') {
+      return { ok: false, message: error ? await messageFrom(error) : 'Redeem service returned an invalid response.' }
+    }
+    const reward = isRecord(data.reward) && typeof data.reward.itemId === 'string' && typeof data.reward.stack === 'number'
+      ? { itemId: data.reward.itemId, stack: data.reward.stack }
+      : undefined
+    return { ok: data.ok, message: data.message, reward }
   }
 
   private async refreshAfterAuthChange() {

@@ -2191,6 +2191,7 @@ describe('original-compatible game loop', () => {
       areaId: 'EnchantedForest', action: 'IDLE', actionRemaining: 0, actionTotal: 1, progress: 0, maxProgress: 0,
       partyIds: [], petUid: null, enemies: [], summons: [], turnOrder: [], turnIndex: 0, event: null, chest: [{ itemId: 'SkeletonKey', stack: 1 }],
       logs: [], localDarkness: 0, finished: false,
+      report: { startedAt: Date.now(), areasCleared: 0, wipes: 0, xpEarned: 0, xpLost: 0, enemiesKilled: {} },
     }
     expect(collectChest(state, 'EnchantedForest', index)).toBe(true)
     expect(state.seenItems).toContain('SkeletonKey')

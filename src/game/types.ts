@@ -354,6 +354,15 @@ export interface AreaEventState {
   progress: number
 }
 
+export interface RunReport {
+  startedAt: number
+  areasCleared: number
+  wipes: number
+  xpEarned: number
+  xpLost: number
+  enemiesKilled: Record<string, number>
+}
+
 export interface AreaRun {
   areaId: string
   action: ActionType
@@ -373,6 +382,7 @@ export interface AreaRun {
   turnIndex: number
   chest: InventoryStack[]
   logs: string[]
+  report: RunReport
 }
 
 export interface BuildingLevels {

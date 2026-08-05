@@ -437,6 +437,19 @@ button { color: inherit; }
 .achievement-list small { color: var(--text-dim); font-size: 11px; }
 .drawer-link { display: block; padding: 10px 16px; color: var(--text); text-decoration: none; font-weight: 700; }
 .drawer-link:hover { color: var(--brass); background: rgba(255,255,255,.06); }
+.redeem-dialog { display: grid; gap: 12px; }
+.redeem-dialog > p { margin: 0; color: var(--text-dim); line-height: 1.45; }
+.redeem-dialog label { display: grid; gap: 6px; color: var(--text); font-weight: 700; }
+.redeem-dialog input { min-height: 40px; padding: 8px 10px; color: var(--text); border: 1px solid var(--line); border-radius: 8px; background: var(--surface-3); font: inherit; letter-spacing: .05em; text-transform: uppercase; }
+.redeem-dialog > button { min-height: 42px; color: var(--gold); }
+.redeem-result { padding: 9px; border: 1px solid var(--brass-border); border-radius: 8px; background: rgba(255,255,255,.07); }
+.item-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin: 10px 0 0; }
+.item-facts div { display: flex; justify-content: space-between; gap: 8px; padding: 5px 7px; background: rgba(0,0,0,.2); font-size: 10px; }
+.item-facts dt { color: var(--text-dim); }
+.item-facts dd { margin: 0; color: var(--gold); text-align: right; overflow-wrap: anywhere; }
+.merge-pet-targets { display: grid !important; grid-template-columns: 1fr; gap: 6px; margin: 12px 0; }
+.merge-pet-targets button { display: flex; align-items: center; gap: 8px; text-align: left; }
+.merge-pet-targets img { width: 34px; height: 34px; object-fit: contain; }
 .entity-detail { display: grid; grid-template-columns: auto 1fr; gap: 14px; }
 .entity-detail h3 { margin: 4px 0 8px; }
 .entity-detail p { color: var(--muted); font-size: 13px; margin: 0; }
@@ -451,6 +464,9 @@ button { color: inherit; }
 .adventurer-skills article { display: grid; gap: 4px; min-width: 0; padding: 9px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.08); text-align: center; }
 .adventurer-skills small { color: var(--muted); font-weight: 700; text-transform: uppercase; }
 .adventurer-skills strong { overflow: hidden; color: #e5bd65; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.adventurer-advanced { margin-top: 14px; }
+.adventurer-advanced h3 { margin: 0 0 7px; color: var(--gold); font-size: 13px; }
+.adventurer-advanced .stat-grid { margin-top: 0; }
 .equipment-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
 .equipment-row button { min-width: 0; min-height: 72px; padding: 7px; display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 7px; align-items: center; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.12); color: var(--faint); cursor: pointer; transition: filter .15s ease; }
 .equipment-row button:hover { filter: brightness(1.15); }

@@ -3,3 +3,7 @@ project_id = "guildmaster-port"
 [functions.sync]
 # The function validates the bearer token itself so it can return a consistent JSON error.
 verify_jwt = false
+
+[functions.redeem]
+# The function validates the bearer token itself so it can return a consistent JSON error.
+verify_jwt = false

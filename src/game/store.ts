@@ -60,6 +60,7 @@ export class GameStore {
   private index: ContentIndex
   private cloudSync: GameSync | null
   private lastCloudPersistAt = 0
+  private offlineProgressSeconds = 0
 
   constructor(index: ContentIndex) {
     this.index = index
@@ -67,6 +68,7 @@ export class GameStore {
     this.cloudSync = createGameSync()
     void this.cloudSync?.initialize()
     const elapsed = offlineSeconds(Date.now(), this.state.lastAccess)
+    this.offlineProgressSeconds = elapsed
     tickGame(this.state, this.index, elapsed)
     this.persist()
   }
@@ -76,7 +78,7 @@ export class GameStore {
       const raw = localStorage.getItem(SAVE_KEY)
       if (!raw) return createInitialState(this.index)
       const parsed = JSON.parse(raw) as GameState
-      if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21].includes(parsed.version) || !parsed.buildings || !parsed.runs) return createInitialState(this.index)
+      if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22].includes(parsed.version) || !parsed.buildings || !parsed.runs) return createInitialState(this.index)
       const normalizeAdventurer = (entry: AdventurerState): AdventurerState => {
         const definition = this.index.adventurers.get(entry.classId)
         return {
@@ -128,6 +130,7 @@ export class GameStore {
           positiveStatusEffects: enemy.positiveStatusEffects ?? [],
           negativeStatusEffects: enemy.negativeStatusEffects ?? [],
         })),
+        report: run.report ?? { startedAt: parsed.lastAccess ?? Date.now(), areasCleared: 0, wipes: 0, xpEarned: 0, xpLost: 0, enemiesKilled: {} },
       }]))
       const raidTries = Object.fromEntries([...this.index.areas.values()]
         .filter((area) => area.areaType !== 0)
@@ -139,7 +142,7 @@ export class GameStore {
 
       return {
         ...parsed,
-        version: 21,
+        version: 22,
         language: parsed.language ?? 'en',
         settings: {
           sellMaxAmount: parsed.settings?.sellMaxAmount ?? 1,
@@ -222,6 +225,8 @@ export class GameStore {
 
   getSnapshot = () => this.state
 
+  getOfflineProgressSeconds = () => this.offlineProgressSeconds
+
   getCloudSyncStatus = (): CloudSyncStatus => this.cloudSync?.getStatus() ?? { kind: 'disabled' }
 
   subscribeCloudSync = (listener: () => void) => this.cloudSync?.subscribe(listener) ?? (() => {})
@@ -242,6 +247,18 @@ export class GameStore {
 
   pullCloudSave() {
     return this.cloudSync?.pullLatest() ?? Promise.resolve(null)
+  }
+
+  async redeemCode(code: string) {
+    const result = await this.cloudSync?.redeemCode(code) ?? { ok: false, message: 'Cloud sync is not configured for this deployment.' }
+    if (result.ok && result.reward && this.index.items.has(result.reward.itemId) && result.reward.stack > 0) {
+      this.commit((draft) => {
+        const stack = draft.inventory.find((entry) => entry.itemId === result.reward!.itemId)
+        if (stack) stack.stack += result.reward!.stack
+        else draft.inventory.push({ itemId: result.reward!.itemId, stack: result.reward!.stack })
+      })
+    }
+    return result
   }
 
   replaceWithCloudSave(save: RemoteSave) {

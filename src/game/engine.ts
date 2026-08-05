@@ -292,7 +292,7 @@ export function createInitialState(index: ContentIndex): GameState {
   const firstGuest = makeAdventurer(guestClass, 1)
   firstGuest.trait = null
   return {
-    version: 21,
+    version: 22,
     language: 'en',
     settings: {
       sellMaxAmount: 1,
@@ -1352,6 +1352,7 @@ function resolveCombatDeath(target: CombatantRef, refs: CombatantRef[], run: Are
   }
   if (hadTether) return false
   if (target.side === 'enemy') {
+    run.report.enemiesKilled[target.definitionId] = (run.report.enemiesKilled[target.definitionId] ?? 0) + 1
     if (run.areaId === 'EnchantedForest') {
       const result = killEnchantedForestEnemy(run.event, target.definitionId)
       run.event = result.event
@@ -1890,6 +1891,7 @@ function awardExperience(state: GameState, run: AreaRun, index: ContentIndex) {
       const gained = Math.min(required - adventurer.xp, remainingXp)
       remainingXp -= gained
       adventurer.xp += gained
+      run.report.xpEarned += gained
       if (adventurer.xp >= required) {
         adventurer.level += 1
         adventurer.xp = 0
@@ -2369,6 +2371,7 @@ function finishAction(state: GameState, run: AreaRun, index: ContentIndex) {
       run.localDarkness = calculateRoomDarkness(state, run, index)
       if (!livingParty(state, run).length) {
         appendLog(run, 'The party was defeated.')
+        run.report.wipes += 1
         if (isRaid) finishRaidRun(state, run, 'defeat')
         else action(run, 'RESPAWN')
         break
@@ -2686,10 +2689,12 @@ function finishAction(state: GameState, run: AreaRun, index: ContentIndex) {
       }
       if (!livingParty(state, run).length) {
         appendLog(run, 'The party was defeated.')
+        run.report.wipes += 1
         action(run, 'RESPAWN')
         break
       }
       run.progress += 1
+      run.report.areasCleared += 1
       incrementQuest(state, 'LongMarch', 1)
       action(run, 'ENTER_ROOM')
       break
@@ -3491,6 +3496,7 @@ export function startRun(state: GameState, areaId: string, partyIds: number[], i
     turnIndex: 0,
     chest: previous?.chest ?? [],
     logs: ['The expedition is preparing to enter the dungeon.'],
+    report: { startedAt: Date.now(), areasCleared: 0, wipes: 0, xpEarned: 0, xpLost: 0, enemiesKilled: {} },
   }
   return true
 }

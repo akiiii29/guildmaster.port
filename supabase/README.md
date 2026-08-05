@@ -14,6 +14,7 @@ until the two public Vite variables are configured.
    supabase link --project-ref YOUR_PROJECT_REF
    supabase db push
    supabase functions deploy sync
+   supabase functions deploy redeem
    ```
 
 5. In Supabase, keep the automatically supplied `SUPABASE_URL`,
@@ -24,3 +25,9 @@ until the two public Vite variables are configured.
 based on an older revision receives `conflict` instead of overwriting another
 device. `progress_events` and `reward_ledger` are intentionally present before
 achievement rules are added, so future rewards can be made idempotent.
+
+Gameplay-only redeem codes live in `redeem_codes`. An administrator can insert
+a code such as `WELCOME-LEATHER` with a reward JSON payload like
+`{"itemId":"Leather","stack":5}`. The `redeem` function requires a signed-in
+account, normalizes codes, and records one claim per account. Do not use this
+table for gems, payments, refunds, or IAP entitlements.
