@@ -292,8 +292,18 @@ export function createInitialState(index: ContentIndex): GameState {
   const firstGuest = makeAdventurer(guestClass, 1)
   firstGuest.trait = null
   return {
-    version: 20,
+    version: 21,
     language: 'en',
+    settings: {
+      sellMaxAmount: 1,
+      craftMaxAmount: 1,
+      confirmUpgrade: true,
+      confirmRetreat: true,
+      confirmSwap: true,
+      autoOpenDungeonDetail: true,
+      verboseLogs: false,
+      colorblindMode: false,
+    },
     lastAccess: now,
     lastDailyReset: localDayStart(now),
     tutorialStep: 1,

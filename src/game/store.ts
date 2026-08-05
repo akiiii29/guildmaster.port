@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import type { ContentIndex } from './content'
-import type { AdventurerState, DoctrineId, EquipmentSlot, GameState, Language } from './types'
+import type { AdventurerState, DoctrineId, EquipmentSlot, GameSettings, GameState, Language } from './types'
 import {
   cancelWorkshopJob,
   cancelMarketListing,
@@ -76,7 +76,7 @@ export class GameStore {
       const raw = localStorage.getItem(SAVE_KEY)
       if (!raw) return createInitialState(this.index)
       const parsed = JSON.parse(raw) as GameState
-      if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].includes(parsed.version) || !parsed.buildings || !parsed.runs) return createInitialState(this.index)
+      if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21].includes(parsed.version) || !parsed.buildings || !parsed.runs) return createInitialState(this.index)
       const normalizeAdventurer = (entry: AdventurerState): AdventurerState => {
         const definition = this.index.adventurers.get(entry.classId)
         return {
@@ -139,8 +139,18 @@ export class GameStore {
 
       return {
         ...parsed,
-        version: 20,
+        version: 21,
         language: parsed.language ?? 'en',
+        settings: {
+          sellMaxAmount: parsed.settings?.sellMaxAmount ?? 1,
+          craftMaxAmount: parsed.settings?.craftMaxAmount ?? 1,
+          confirmUpgrade: parsed.settings?.confirmUpgrade ?? true,
+          confirmRetreat: parsed.settings?.confirmRetreat ?? true,
+          confirmSwap: parsed.settings?.confirmSwap ?? true,
+          autoOpenDungeonDetail: parsed.settings?.autoOpenDungeonDetail ?? true,
+          verboseLogs: parsed.settings?.verboseLogs ?? false,
+          colorblindMode: parsed.settings?.colorblindMode ?? false,
+        },
         purchasedPacks: { starter: true, merchant: true },
         lastDailyReset: parsed.lastDailyReset ?? (() => {
           const date = new Date(parsed.lastAccess || Date.now())
@@ -330,6 +340,10 @@ export class GameStore {
 
   setLanguage(language: Language) {
     this.commit((draft) => { draft.language = language })
+  }
+
+  updateSettings(settings: Partial<GameSettings>) {
+    this.commit((draft) => { draft.settings = { ...draft.settings, ...settings } })
   }
 
   craft(recipeId: string, amount = 1) {

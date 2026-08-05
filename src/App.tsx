@@ -35,6 +35,8 @@ type DialogState =
   | { type: 'roster' }
   | { type: 'faq' }
   | { type: 'account' }
+  | { type: 'settings' }
+  | { type: 'achievements' }
   | null
 
 function Currency({ amount, icon, label }: { amount: number; icon: string; label: string }) {
@@ -267,6 +269,32 @@ function UpgradeConfirmation({ target, cost, onCancel, onConfirm }: { target: st
   return <div className="confirm-layer"><section className="confirm-box upgrade-confirm"><h3>{t('common.confirmUpgradeTitle')}</h3><p>{t('common.confirmUpgrade', { target, cost: cost.toLocaleString() })}</p><div><button onClick={onCancel}>{t('common.cancel')}</button><button onClick={onConfirm}>{t('common.yes')}</button></div></section></div>
 }
 
+function ActionConfirmation({ title, body, onCancel, onConfirm }: { title: string; body: string; onCancel: () => void; onConfirm: () => void }) {
+  const { t } = useI18n()
+  return <div className="confirm-layer"><section className="confirm-box"><h3>{title}</h3><p>{body}</p><div><button onClick={onCancel}>{t('common.cancel')}</button><button onClick={onConfirm}>{t('common.yes')}</button></div></section></div>
+}
+
+function SettingsDialog({ store, onClose }: { store: GameStore; onClose: () => void }) {
+  const state = useGame(store)
+  const { t } = useI18n()
+  const amounts = [1, 5, 10, 25, 50, 100, 999]
+  const update = (key: keyof typeof state.settings, value: number | boolean) => store.updateSettings({ [key]: value })
+  const toggle = (key: keyof typeof state.settings, label: string, detail: string) => <label className="settings-toggle" key={key}><span><strong>{label}</strong><small>{detail}</small></span><input type="checkbox" checked={Boolean(state.settings[key])} onChange={(event) => update(key, event.target.checked)} /></label>
+  return <Modal title={t('drawer.settings')} onClose={onClose}>
+    <section className="settings-dialog">
+      <label>{t('settings.sellAmount')}<select value={state.settings.sellMaxAmount} onChange={(event) => update('sellMaxAmount', Number(event.target.value))}>{amounts.map((amount) => <option key={amount} value={amount}>{amount === 999 ? t('settings.all') : amount}</option>)}</select></label>
+      <label>{t('settings.craftAmount')}<select value={state.settings.craftMaxAmount} onChange={(event) => update('craftMaxAmount', Number(event.target.value))}>{amounts.map((amount) => <option key={amount} value={amount}>{amount === 999 ? t('settings.all') : amount}</option>)}</select></label>
+      {toggle('confirmUpgrade', t('settings.confirmUpgrade'), t('settings.confirmUpgradeHint'))}
+      {toggle('confirmRetreat', t('settings.confirmRetreat'), t('settings.confirmRetreatHint'))}
+      {toggle('confirmSwap', t('settings.confirmSwap'), t('settings.confirmSwapHint'))}
+      {toggle('autoOpenDungeonDetail', t('settings.autoOpen'), t('settings.autoOpenHint'))}
+      {toggle('verboseLogs', t('settings.verbose'), t('settings.verboseHint'))}
+      {toggle('colorblindMode', t('settings.colorblind'), t('settings.colorblindHint'))}
+    </section>
+    <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
+  </Modal>
+}
+
 function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
   const { t, name } = useI18n()
@@ -296,8 +324,8 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
       </div>
       {state.purchasedPacks.merchant && <div className="market-pack-bonuses"><span>{t('workshop.merchantPackBonus')}</span></div>}
       <div className="tavern-upgrades">
-        {state.buildings.workshopQueue < 10 && <button disabled={state.money < workshopQueuePrice(state.buildings.workshopQueue)} onClick={() => setUpgrade('queue')}><strong>{t('workshop.upgradeQueue')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{workshopQueuePrice(state.buildings.workshopQueue).toLocaleString()}</span></button>}
-        {state.buildings.workshopTime < 25 && <button disabled={state.money < workshopTimePrice(state.buildings.workshopTime)} onClick={() => setUpgrade('time')}><strong>{t('workshop.upgradeTime')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{workshopTimePrice(state.buildings.workshopTime).toLocaleString()}</span></button>}
+        {state.buildings.workshopQueue < 10 && <button disabled={state.money < workshopQueuePrice(state.buildings.workshopQueue)} onClick={() => state.settings.confirmUpgrade ? setUpgrade('queue') : store.upgradeFacility('workshopQueue')}><strong>{t('workshop.upgradeQueue')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{workshopQueuePrice(state.buildings.workshopQueue).toLocaleString()}</span></button>}
+        {state.buildings.workshopTime < 25 && <button disabled={state.money < workshopTimePrice(state.buildings.workshopTime)} onClick={() => state.settings.confirmUpgrade ? setUpgrade('time') : store.upgradeFacility('workshopTime')}><strong>{t('workshop.upgradeTime')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{workshopTimePrice(state.buildings.workshopTime).toLocaleString()}</span></button>}
       </div>
       {jobs.length === 0 && <EmptyState text={t('workshop.empty')} />}
       <div className="workshop-list">
@@ -349,7 +377,7 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
                       })}
                     </span>
                     <span className="recipe-meta">{t('workshop.available', { count: craftable })}</span>
-                    <button disabled={craftable < 1 || queueFull} onClick={() => { setCraftingRecipeId(recipe.id); setCraftAmount(1) }}>{t('workshop.craft')}</button>
+                  <button disabled={craftable < 1 || queueFull} onClick={() => { setCraftingRecipeId(recipe.id); setCraftAmount(Math.min(craftable, state.settings.craftMaxAmount)) }}>{t('workshop.craft')}</button>
                   </article>
                 )
               })}
@@ -410,13 +438,13 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
         {(state.buildings.tavernCapacity < 7 || state.buildings.tavernTime < 20) && (
           <div className="tavern-upgrades">
             {state.buildings.tavernCapacity < 7 && (
-              <button disabled={state.money < capacityCost} onClick={() => setUpgrade('capacity')}>
+              <button disabled={state.money < capacityCost} onClick={() => state.settings.confirmUpgrade ? setUpgrade('capacity') : store.upgradeTavern('capacity')}>
                 <strong>{t('tavern.upgradeCapacity')}</strong>
                 <span><img src={assetUrl('coin_copper')} alt="" />{capacityCost.toLocaleString()}</span>
               </button>
             )}
             {state.buildings.tavernTime < 20 && (
-              <button disabled={state.money < timeCost} onClick={() => setUpgrade('time')}>
+              <button disabled={state.money < timeCost} onClick={() => state.settings.confirmUpgrade ? setUpgrade('time') : store.upgradeTavern('time')}>
                 <strong>{t('tavern.upgradeTime')}</strong>
                 <span><img src={assetUrl('coin_copper')} alt="" />{timeCost.toLocaleString()}</span>
               </button>
@@ -461,6 +489,7 @@ function MarketDialog({ store, index, onClose }: { store: GameStore; index: Cont
   const { t, name } = useI18n()
   const [sellingItemId, setSellingItemId] = useState<string | null>(null)
   const [sellingAmount, setSellingAmount] = useState(1)
+  const [upgrade, setUpgrade] = useState<'listings' | 'time' | null>(null)
   const capacity = marketListingsCapacity(state.buildings.marketListings, state.permanentUpgrades.UpgradeMarketQueue ?? 0, state.purchasedPacks.starter, state.purchasedPacks.merchant)
   const listingCost = marketListingsPrice(state.buildings.marketListings)
   const timeCost = marketTimePrice(state.buildings.marketTime)
@@ -473,7 +502,8 @@ function MarketDialog({ store, index, onClose }: { store: GameStore; index: Cont
   const sellingTime = marketSaleSeconds(Number(sellingItem?.fields.price ?? 0), amount, state.buildings.marketTime, state.permanentUpgrades.UpgradeMarketTime ?? 0, state.purchasedPacks.merchant)
   const openSale = (itemId: string) => {
     setSellingItemId(itemId)
-    setSellingAmount(1)
+    const available = state.inventory.find((stack) => stack.itemId === itemId)?.stack ?? 1
+    setSellingAmount(Math.min(available, state.settings.sellMaxAmount))
   }
   const confirmSale = () => {
     if (!sellingItemId) return
@@ -485,8 +515,8 @@ function MarketDialog({ store, index, onClose }: { store: GameStore; index: Cont
       <div className="workshop-summary"><strong>{t('market.listings', { used: jobs.length, max: capacity })}</strong><span>{t('market.speed', { speed: (1 / (0.9 ** (state.buildings.marketTime + (state.permanentUpgrades.UpgradeMarketTime ?? 0)))).toFixed(2) })}</span></div>
       {(state.purchasedPacks.starter || state.purchasedPacks.merchant) && <div className="market-pack-bonuses">{state.purchasedPacks.starter && <span>{t('market.starterPackBonus')}</span>}{state.purchasedPacks.merchant && <span>{t('market.merchantPackBonus')}</span>}</div>}
       <div className="tavern-upgrades">
-        {state.buildings.marketListings < 10 && <button disabled={state.money < listingCost} onClick={() => store.upgradeMarket('listings')}><strong>{t('market.upgradeListings')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{listingCost.toLocaleString()}</span></button>}
-        {state.buildings.marketTime < 25 && <button disabled={state.money < timeCost} onClick={() => store.upgradeMarket('time')}><strong>{t('market.upgradeTime')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{timeCost.toLocaleString()}</span></button>}
+        {state.buildings.marketListings < 10 && <button disabled={state.money < listingCost} onClick={() => state.settings.confirmUpgrade ? setUpgrade('listings') : store.upgradeMarket('listings')}><strong>{t('market.upgradeListings')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{listingCost.toLocaleString()}</span></button>}
+        {state.buildings.marketTime < 25 && <button disabled={state.money < timeCost} onClick={() => state.settings.confirmUpgrade ? setUpgrade('time') : store.upgradeMarket('time')}><strong>{t('market.upgradeTime')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{timeCost.toLocaleString()}</span></button>}
       </div>
       {jobs.length === 0 && <EmptyState text={t('market.empty')} />}
       <div className="workshop-list">{jobs.map((job) => {
@@ -510,6 +540,7 @@ function MarketDialog({ store, index, onClose }: { store: GameStore; index: Cont
           <div className="workshop-actions"><button onClick={() => setSellingItemId(null)}>{t('common.close')}</button><button onClick={confirmSale}>{t('market.confirmSale')}</button></div>
         </section>
       </div>}
+      {upgrade && <UpgradeConfirmation target={t(upgrade === 'listings' ? 'market.upgradeListings' : 'market.upgradeTime')} cost={upgrade === 'listings' ? listingCost : timeCost} onCancel={() => setUpgrade(null)} onConfirm={() => { store.upgradeMarket(upgrade); setUpgrade(null) }} />}
     </Modal>
   )
 }
@@ -539,6 +570,7 @@ function QuestsDialog({ store, index, onClose }: { store: GameStore; index: Cont
     ? rarity === 1 ? 10 : rarity === 2 ? 20 : rarity === 3 ? 40 : 100
     : rarity === 4 ? 5 : rarity
   const refreshPrice = questRefreshPrice(state)
+  const [confirmRefresh, setConfirmRefresh] = useState(false)
   return <Modal title={t('tool.quests')} onClose={onClose} wide>
     <div className="quest-loyalty">{doctrineIds.map((id) => {
       const loyalty = state.loyalty[id]
@@ -555,7 +587,8 @@ function QuestsDialog({ store, index, onClose }: { store: GameStore; index: Cont
         return <article className={`quest-card rarity-${quest.rarity} ${complete ? 'complete' : ''}`} key={quest.id}><div><strong>{definition?.name ?? quest.id}</strong><p>{(definition?.description ?? '').replace(/%1?\$?d/, String(quest.target))}</p><ProgressBar value={quest.progress} max={quest.target} label={`${quest.progress}/${quest.target}`} /></div><button disabled={!complete} onClick={() => store.claimQuest(quest.id)}><span>{category === 'King' ? '♦' : '★'}</span><b>{rarityReward(quest.rarity, category === 'King')}</b></button></article>
       })}</section>
     })}
-    <div className="workshop-actions"><button disabled={state.adventurers.length === 0 || state.questsRefreshed || state.gems < refreshPrice} onClick={() => store.refreshQuests()}>{t('quests.refresh')} · ♦{refreshPrice}</button><button onClick={onClose}>{t('common.close')}</button></div>
+    <div className="workshop-actions"><button disabled={state.adventurers.length === 0 || state.questsRefreshed || state.gems < refreshPrice} onClick={() => setConfirmRefresh(true)}>{t('quests.refresh')} · ♦{refreshPrice}</button><button onClick={onClose}>{t('common.close')}</button></div>
+    {confirmRefresh && <ActionConfirmation title={t('quests.refresh')} body={t('quests.refreshConfirm', { price: refreshPrice })} onCancel={() => setConfirmRefresh(false)} onConfirm={() => { store.refreshQuests(); setConfirmRefresh(false) }} />}
   </Modal>
 }
 
@@ -565,6 +598,7 @@ function ShelterDialog({ store, index, onClose }: { store: GameStore; index: Con
   const [mergeSource, setMergeSource] = useState<number | null>(null)
   const [selectedPetUid, setSelectedPetUid] = useState<number | null>(null)
   const [feedAll, setFeedAll] = useState(false)
+  const [upgrade, setUpgrade] = useState<'capacity' | 'autofeed' | null>(null)
   const capacity = shelterCapacity(state.buildings.shelter, state.permanentUpgrades.UpgradeShelter ?? 0)
   const capacityCost = shelterPrice(state.buildings.shelter)
   const autofeedCost = shelterAutofeedPrice(state.buildings.shelterAutofeed)
@@ -582,8 +616,8 @@ function ShelterDialog({ store, index, onClose }: { store: GameStore; index: Con
   return <Modal title={t('building.shelter')} onClose={onClose} wide>
     <div className="workshop-summary"><strong>{t('shelter.capacity', { used: state.pets.length, max: capacity })}</strong></div>
     <div className="tavern-upgrades">
-      {state.buildings.shelter < 11 && <button disabled={state.money < capacityCost} onClick={() => store.upgradeShelter('capacity')}><strong>{t('shelter.upgradeCapacity')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{capacityCost.toLocaleString()}</span></button>}
-      {state.buildings.shelterAutofeed < 1 && <button disabled={state.money < autofeedCost} onClick={() => store.upgradeShelter('autofeed')}><strong>{t('shelter.unlockAutofeed')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{autofeedCost.toLocaleString()}</span></button>}
+      {state.buildings.shelter < 11 && <button disabled={state.money < capacityCost} onClick={() => state.settings.confirmUpgrade ? setUpgrade('capacity') : store.upgradeShelter('capacity')}><strong>{t('shelter.upgradeCapacity')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{capacityCost.toLocaleString()}</span></button>}
+      {state.buildings.shelterAutofeed < 1 && <button disabled={state.money < autofeedCost} onClick={() => state.settings.confirmUpgrade ? setUpgrade('autofeed') : store.upgradeShelter('autofeed')}><strong>{t('shelter.unlockAutofeed')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{autofeedCost.toLocaleString()}</span></button>}
     </div>
     {eggs.length > 0 && <section className="shelter-eggs"><h3>{t('shelter.eggs')}</h3><div className="item-grid">{eggs.map((stack) => {
       const item = index.items.get(stack.itemId)
@@ -597,6 +631,7 @@ function ShelterDialog({ store, index, onClose }: { store: GameStore; index: Con
     {state.pets.length > 0 && <div className="pet-detail-selector">{pets.map((pet) => <button className={selectedPetUid === pet.uid ? 'selected' : ''} key={pet.uid} onClick={() => setSelectedPetUid(pet.uid)}>{t('shelter.viewPet', { pet: name(index.pets.get(pet.petId)?.name ?? pet.petId) })}</button>)}</div>}
     {foods.length > 0 && <button className={`shelter-feed-mode ${feedAll ? 'selected' : ''}`} onClick={() => setFeedAll(!feedAll)}>{feedAll ? t('shelter.feedAll') : t('shelter.feedOne')}</button>}
     {selectedPet && selectedDefinition && <div className="confirm-layer"><section className="confirm-box pet-detail"><img src={assetUrl(selectedDefinition.imageKey)} alt="" /><div><h3>{name(selectedDefinition.name)} · {t('common.level')} {selectedPet.level}</h3><p>{description(selectedDefinition.id, selectedDefinition.description)}</p><ProgressBar value={selectedPet.food} max={petFoodToNextLevel(selectedPet.level)} label={`${selectedPet.food}/${petFoodToNextLevel(selectedPet.level)}`} /><h4>{t('shelter.abilities')}</h4><ul>{selectedPet.abilities.map((ability, abilityIndex) => <li className={ability === 'EMPTY' ? 'locked' : ''} key={`${ability}-${abilityIndex}`}>{ability === 'EMPTY' ? t('shelter.unlockAbility', { level: [21, 41, 61][abilityIndex - 1] ?? 1 }) : name(ability)}</li>)}</ul></div><div className="pet-detail-actions">{state.buildings.shelterAutofeed > 0 && <button className={selectedPet.favourite ? 'selected' : ''} onClick={() => store.togglePetFavourite(selectedPet.uid)}>{selectedPet.favourite ? t('shelter.unfavourite') : t('shelter.favourite')}</button>}{foods.map((stack) => <button key={stack.itemId} onClick={() => store.feedPet(selectedPet.uid, stack.itemId, feedAll ? stack.stack : 1)}><img src={assetUrl(index.items.get(stack.itemId)?.imageKey)} alt="" />{feedAll ? stack.stack : 1}</button>)}{selectedPet.level <= 1 && selectedPet.food === 0 && <button onClick={releaseSelectedPet}>{t('shelter.setFree')}</button>}<button onClick={() => setSelectedPetUid(null)}>{t('common.close')}</button></div></section></div>}
+    {upgrade && <UpgradeConfirmation target={t(upgrade === 'capacity' ? 'shelter.upgradeCapacity' : 'shelter.unlockAutofeed')} cost={upgrade === 'capacity' ? capacityCost : autofeedCost} onCancel={() => setUpgrade(null)} onConfirm={() => { store.upgradeShelter(upgrade); setUpgrade(null) }} />}
     <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
   </Modal>
 }
@@ -608,6 +643,7 @@ function StorageDialog({ store, index, onClose, onConsume }: { store: GameStore;
   const [sort, setSort] = useState<'type' | 'quantity' | 'alphabetical' | 'priceUnit' | 'priceTotal'>('type')
   const [showFilters, setShowFilters] = useState(false)
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
+  const [confirmUpgrade, setConfirmUpgrade] = useState(false)
   const capacity = buildingCapacity('storage', state.buildings.storage, state.permanentUpgrades.UpgradeStorage ?? 0, state.purchasedPacks)
   const price = storagePrice(state.buildings.storage)
   const equipmentTypes = new Set(['Bow', 'Dagger', 'Staff', 'Sword', 'HeavyArmor', 'MediumArmor', 'LightArmor', 'Accessory'])
@@ -638,12 +674,13 @@ function StorageDialog({ store, index, onClose, onConsume }: { store: GameStore;
     <div className="section-heading"><strong>{t('storage.items')}</strong><span>{state.inventory.length} / {capacity}</span></div>
     <button className="storage-filter-toggle" onClick={() => setShowFilters(!showFilters)}>{showFilters ? t('storage.hideFilters') : t('storage.showFilters')}</button>
     {showFilters && <div className="storage-filters"><label>{t('storage.filter')}<select value={filter} onChange={(event) => setFilter(event.target.value as typeof filter)}><option value="all">{t('storage.all')}</option><option value="materials">{t('storage.materials')}</option><option value="weapons">{t('storage.weapons')}</option><option value="armors">{t('storage.armors')}</option><option value="accessories">{t('storage.accessories')}</option><option value="consumables">{t('storage.consumables')}</option></select></label><label>{t('storage.sort')}<select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}><option value="type">{t('storage.sortType')}</option><option value="quantity">{t('storage.sortQuantity')}</option><option value="alphabetical">{t('storage.sortAlphabetical')}</option><option value="priceUnit">{t('storage.sortPriceUnit')}</option><option value="priceTotal">{t('storage.sortPriceTotal')}</option></select></label></div>}
-    {state.buildings.storage < 80 && <div className="tavern-upgrades storage-upgrades"><button disabled={state.money < price} onClick={() => store.upgradeFacility('storage')}><strong>{t('storage.upgrade')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{price.toLocaleString()}</span></button></div>}
+    {state.buildings.storage < 80 && <div className="tavern-upgrades storage-upgrades"><button disabled={state.money < price} onClick={() => state.settings.confirmUpgrade ? setConfirmUpgrade(true) : store.upgradeFacility('storage')}><strong>{t('storage.upgrade')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{price.toLocaleString()}</span></button></div>}
     {items.length === 0 && <EmptyState text={t('storage.empty')} />}
     <div className="item-grid">{items.map((stack) => {
       const item = index.items.get(stack.itemId)
       return <button className="item-slot" onClick={() => setSelectedItemId(stack.itemId)} key={stack.itemId}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{stack.stack}</strong><span>{name(item?.name ?? stack.itemId)}</span></button>
     })}</div>
+    {confirmUpgrade && <UpgradeConfirmation target={t('storage.upgrade')} cost={price} onCancel={() => setConfirmUpgrade(false)} onConfirm={() => { store.upgradeFacility('storage'); setConfirmUpgrade(false) }} />}
     {selectedStack && selected && <div className="confirm-layer"><section className="confirm-box item-detail"><img src={assetUrl(selected.imageKey)} alt="" /><div><h3>{name(selected.name)}</h3><p>{description(selected.id, selected.description)}</p><small>{t('storage.stack', { count: selectedStack.stack })} · {t('storage.value', { value: Number(selected.fields.price ?? 0) })}</small></div><div>{selected.type === 'Egg' && <button onClick={() => { store.hatchPet(selected.id); setSelectedItemId(null) }}>{t('storage.hatch')}</button>}{canUse && <button onClick={() => { onConsume(selected.id); setSelectedItemId(null) }}>{t('storage.use')}</button>}<button onClick={() => setSelectedItemId(null)}>{t('common.close')}</button></div></section></div>}
   </Modal>
 }
@@ -663,7 +700,7 @@ function BuildingDialog({ id, store, index, onClose, onConsume }: { id: string; 
     const price = quartersPrice(state.buildings.quarters)
     return <Modal title={t('building.quarters')} onClose={onClose}>
       <div className="building-detail"><img src={assetUrl('sign_quarters')} alt="" /><h3>{t('quarters.capacity', { used: state.adventurers.length, max: capacity })}</h3><p>{t('quarters.description')}</p></div>
-      {state.buildings.quarters < 23 && <div className="tavern-upgrades"><button disabled={state.money < price} onClick={() => setConfirmQuarters(true)}><strong>{t('quarters.upgrade')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{price.toLocaleString()}</span></button></div>}
+      {state.buildings.quarters < 23 && <div className="tavern-upgrades"><button disabled={state.money < price} onClick={() => state.settings.confirmUpgrade ? setConfirmQuarters(true) : store.upgradeFacility('quarters')}><strong>{t('quarters.upgrade')}</strong><span><img src={assetUrl('coin_copper')} alt="" />{price.toLocaleString()}</span></button></div>}
       {confirmQuarters && <UpgradeConfirmation target={t('quarters.upgrade')} cost={price} onCancel={() => setConfirmQuarters(false)} onConfirm={() => { store.upgradeFacility('quarters'); setConfirmQuarters(false) }} />}
       <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
     </Modal>
@@ -1096,9 +1133,9 @@ function AreaDialog({ areaId, store, index, onClose }: { areaId: string; store: 
           <i><span style={{ width: `${progress}%` }} /></i>
           <i><span style={{ width: `${progress}%` }} /></i>
         </div>
-        <div className="original-dungeon-log" aria-live="polite">{run.logs.map((line, logIndex) => <p className={`battle-log-line ${battleLogTone(line)} ${logIndex === 0 ? 'is-latest' : ''}`} key={`${line}-${logIndex}`}>{log(line)}</p>)}</div>
+        <div className="original-dungeon-log" aria-live="polite">{(state.settings.verboseLogs ? run.logs : run.logs.slice(0, 8)).map((line, logIndex) => <p className={`battle-log-line ${battleLogTone(line)} ${logIndex === 0 ? 'is-latest' : ''}`} key={`${line}-${logIndex}`}>{log(line)}</p>)}</div>
         <div className="battle-actions">
-          <button onClick={() => setConfirmRetreat(true)}>{t('battle.retreat')}</button>
+          <button onClick={() => state.settings.confirmRetreat ? setConfirmRetreat(true) : (store.retreat(areaId), onClose())}>{t('battle.retreat')}</button>
           <button onClick={onClose}>{t('common.close')}</button>
         </div>
         {confirmRetreat && <div className="confirm-layer"><div className="confirm-box"><h3>{t('battle.retreatTitle')}</h3><p>{t('battle.retreatConfirm')}</p><div><button onClick={() => setConfirmRetreat(false)}>{t('common.cancel')}</button><button onClick={() => { store.retreat(areaId); onClose() }}>{t('common.yes')}</button></div></div></div>}
@@ -1204,6 +1241,7 @@ function EquipmentChoiceRow({ item, stack, current, onChoose }: { item?: ItemDef
 function SelectEquipmentDialog({ uid, slot, store, index, onDone }: { uid: number; slot: EquipmentSlot; store: GameStore; index: ContentIndex; onDone: () => void }) {
   const state = useGame(store)
   const { t } = useI18n()
+  const [pendingItemId, setPendingItemId] = useState<string | null | undefined>(undefined)
   const member = state.adventurers.find((entry) => entry.uid === uid)
   const definition = member && index.adventurers.get(member.classId)
   if (!member || !definition) return null
@@ -1219,6 +1257,10 @@ function SelectEquipmentDialog({ uid, slot, store, index, onDone }: { uid: numbe
     return item && itemMatchesSlot(item, definition, slot, member) ? [{ item, stack: stack.stack }] : []
   })
   const canUnequip = Boolean(currentId && !(slot === 'weapon' && currentId === defaultWeaponId(definition)))
+  const choose = (itemId: string | null) => {
+    if (state.settings.confirmSwap) setPendingItemId(itemId)
+    else { store.equip(uid, slot, itemId); onDone() }
+  }
 
   return (
     <Modal title={t('equipment.selectTitle', { type: t(`equipment.type.${typeKey}`) })} onClose={onDone}>
@@ -1228,15 +1270,16 @@ function SelectEquipmentDialog({ uid, slot, store, index, onDone }: { uid: numbe
         {candidates.length > 0 ? (
           <div className="equipment-candidate-list">
             {candidates.map(({ item, stack }) => (
-              <EquipmentChoiceRow key={item.id} item={item} stack={stack} current={current} onChoose={() => { store.equip(uid, slot, item.id); onDone() }} />
+              <EquipmentChoiceRow key={item.id} item={item} stack={stack} current={current} onChoose={() => choose(item.id)} />
             ))}
           </div>
         ) : <p className="equipment-empty">{t('equipment.empty')}</p>}
         <footer className="equipment-select-actions">
-          <button disabled={!canUnequip} onClick={() => { store.equip(uid, slot, null); onDone() }}>{t('common.unequip')}</button>
+          <button disabled={!canUnequip} onClick={() => choose(null)}>{t('common.unequip')}</button>
           <button onClick={onDone}>{t('common.close')}</button>
         </footer>
       </section>
+      {pendingItemId !== undefined && <ActionConfirmation title={t('settings.confirmSwap')} body={t('equipment.swapConfirm')} onCancel={() => setPendingItemId(undefined)} onConfirm={() => { store.equip(uid, slot, pendingItemId); onDone() }} />}
     </Modal>
   )
 }
@@ -1521,6 +1564,28 @@ function AccountDialog({ store, onClose }: { store: GameStore; onClose: () => vo
   )
 }
 
+function AchievementsDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
+  const state = useGame(store)
+  const { t } = useI18n()
+  const completedRuns = Object.values(state.runs).filter((run) => run.finished && run.finishedReason === 'victory').length
+  const achievements = [
+    ['recruit', t('achievement.recruit'), t('achievement.recruitHint'), state.adventurers.length, 1],
+    ['explore', t('achievement.explore'), t('achievement.exploreHint'), state.unlockedAreas.length, Math.min(10, index.areas.size)],
+    ['victory', t('achievement.victory'), t('achievement.victoryHint'), completedRuns, 10],
+    ['collector', t('achievement.collector'), t('achievement.collectorHint'), state.seenItems.length, Math.min(50, index.items.size)],
+    ['pets', t('achievement.pets'), t('achievement.petsHint'), state.pets.length, 5],
+    ['wealth', t('achievement.wealth'), t('achievement.wealthHint'), state.money, 10_000],
+  ] as const
+  return <Modal title={t('drawer.achievements')} onClose={onClose}>
+    <p className="achievement-intro">{t('achievement.intro')}</p>
+    <section className="achievement-list">{achievements.map(([id, title, hint, value, target]) => {
+      const complete = value >= target
+      return <article className={complete ? 'complete' : ''} key={id}><span>{complete ? '★' : '☆'}</span><div><strong>{title}</strong><small>{hint}</small><ProgressBar value={Math.min(value, target)} max={target} label={`${Math.min(value, target).toLocaleString()}/${target.toLocaleString()}`} /></div></article>
+    })}</section>
+    <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
+  </Modal>
+}
+
 function AppShell({ content, index, store }: AppProps) {
   const state = useGame(store)
   const { t } = useI18n()
@@ -1573,7 +1638,7 @@ function AppShell({ content, index, store }: AppProps) {
   }
 
   return (
-    <div className="game-shell" onClick={handleShellClick}>
+    <div className={`game-shell ${state.settings.colorblindMode ? 'colorblind-mode' : ''}`} onClick={handleShellClick}>
       <header className="top-bar">
         <button className="icon-button menu-button" aria-label="Open menu" onClick={() => setDrawer(true)}>☰</button>
         <h1>{t(`screen.${screen}`)}</h1>
@@ -1611,10 +1676,10 @@ function AppShell({ content, index, store }: AppProps) {
         ))}
       </nav>
 
-      {drawer && <div className="drawer-backdrop" onMouseDown={() => setDrawer(false)}><aside className="drawer" onMouseDown={(event) => event.stopPropagation()}><div className="drawer-title">Guild Master</div><button><img src={assetUrl('drawer_icon_king_message')} alt="" />{t('drawer.messages')}</button><button><img src={assetUrl('drawer_icon_faq')} alt="" />{t('drawer.faq')}</button><button><img src={assetUrl('drawer_icon_bestiary')} alt="" />{t('drawer.bestiary')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'account' }) }}><span className="drawer-cloud">☁</span>{t('drawer.account')}</button><button><img src={assetUrl('drawer_icon_achievements')} alt="" />{t('drawer.achievements')}</button><div className="drawer-language"><span>{t('drawer.language')}</span><div><button className={state.language === 'en' ? 'active' : ''} onClick={() => store.setLanguage('en')}>English</button><button className={state.language === 'vi' ? 'active' : ''} onClick={() => store.setLanguage('vi')}>Tiếng Việt</button></div></div><div className="drawer-spacer" /><button className="reset-button" onClick={() => { if (window.confirm(t('drawer.resetConfirm'))) { store.reset(); setDrawer(false) } }}>{t('drawer.newGuild')}</button></aside></div>}
+      {drawer && <div className="drawer-backdrop" onMouseDown={() => setDrawer(false)}><aside className="drawer" onMouseDown={(event) => event.stopPropagation()}><div className="drawer-title">Guild Master</div><button onClick={() => { setDrawer(false); setDialog({ type: 'settings' }) }}>⚙ {t('drawer.settings')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'roster' }) }}>⌁ {t('drawer.recall')}</button><button><img src={assetUrl('drawer_icon_king_message')} alt="" />{t('drawer.messages')}</button><button><img src={assetUrl('drawer_icon_faq')} alt="" />{t('drawer.faq')}</button><button><img src={assetUrl('drawer_icon_bestiary')} alt="" />{t('drawer.bestiary')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'account' }) }}><span className="drawer-cloud">☁</span>{t('drawer.account')}</button><button onClick={() => { setDrawer(false); setDialog({ type: 'achievements' }) }}><img src={assetUrl('drawer_icon_achievements')} alt="" />{t('drawer.achievements')}</button><a className="drawer-link" href="https://www.reddit.com/r/IdleGuildmaster/" target="_blank" rel="noreferrer">Reddit</a><a className="drawer-link" href="https://cafe.naver.com/idleguildmaster" target="_blank" rel="noreferrer">Cafe Naver</a><div className="drawer-language"><span>{t('drawer.language')}</span><div><button className={state.language === 'en' ? 'active' : ''} onClick={() => store.setLanguage('en')}>English</button><button className={state.language === 'vi' ? 'active' : ''} onClick={() => store.setLanguage('vi')}>Tiếng Việt</button></div></div><div className="drawer-spacer" /><button className="reset-button" onClick={() => { if (window.confirm(t('drawer.resetConfirm'))) { store.reset(); setDrawer(false) } }}>{t('drawer.newGuild')}</button></aside></div>}
 
       {dialog?.type === 'building' && <BuildingDialog id={dialog.id} store={store} index={index} onClose={() => setDialog(null)} onConsume={(itemId) => setDialog({ type: 'potion', itemId })} />}
-      {dialog?.type === 'send' && <SendTeamDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} onSent={() => setDialog({ type: 'area', areaId: dialog.areaId })} />}
+      {dialog?.type === 'send' && <SendTeamDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} onSent={() => state.settings.autoOpenDungeonDetail ? setDialog({ type: 'area', areaId: dialog.areaId }) : setDialog(null)} />}
       {dialog?.type === 'refillRaid' && <RefillRaidDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} onBought={() => setDialog({ type: 'send', areaId: dialog.areaId })} />}
       {dialog?.type === 'area' && <AreaDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} />}
       {dialog?.type === 'adventurer' && <AdventurerDialog uid={dialog.uid} store={store} index={index} onClose={() => setDialog(null)} onSelectEquipment={(slot) => setDialog({ type: 'equipment', uid: dialog.uid, slot })} />}
@@ -1627,6 +1692,8 @@ function AppShell({ content, index, store }: AppProps) {
       {dialog?.type === 'roster' && <RosterDialog store={store} index={index} onClose={() => setDialog(null)} />}
       {dialog?.type === 'faq' && <FaqDialog onClose={() => setDialog(null)} />}
       {dialog?.type === 'account' && <AccountDialog store={store} onClose={() => setDialog(null)} />}
+      {dialog?.type === 'settings' && <SettingsDialog store={store} onClose={() => setDialog(null)} />}
+      {dialog?.type === 'achievements' && <AchievementsDialog store={store} index={index} onClose={() => setDialog(null)} />}
     </div>
   )
 }

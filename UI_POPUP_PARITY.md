@@ -2,6 +2,31 @@
 
 Second-pass status (2026-08-05): this checklist is not an acceptance sign-off. The APK menu has additional non-payment surfaces (Settings, Redeem code, achievement intent, and adventure Report). The web drawer also had text-click no-op paths for Messages/FAQ/Bestiary; those were fixed, but the remaining items below must be ported before UI parity can be claimed.
 
+## Acceptance backlog — confirmed before implementation
+
+Payment/IAP surfaces (`DialogShop`, restore purchases, gem bundles, advertisements) are explicitly excluded. `web_game.zip` is an untracked user artifact and is not part of this work.
+
+| APK surface | Web status | Required for parity |
+| --- | --- | --- |
+| Drawer: Settings | Done | Persisted in local/cloud save; sell/craft defaults, confirmations, auto-open, verbose log and colorblind mode are applied. |
+| Drawer: Recall Adventurers | Done | Existing roster/recall flow is exposed from the drawer. |
+| Drawer: Messages / FAQ / Bestiary | Present | Direct click paths fixed; audit details below. |
+| Drawer: Achievements | Done | Internal, save-derived achievement progress replaces the APK Google Play Games intent. |
+| Drawer: Redeem code | Missing | Web-safe gameplay-code entry; exclude gem/IAP codes. |
+| Drawer: Reddit / Cafe Naver | Done | External community links are available in the drawer. |
+| `DialogIdleProgress` | Missing | Offline processing indicator. |
+| `DialogReport` | Missing | Adventure recap with duration, clears, wipes, XP and killed enemies. |
+| `DialogEntityDetail` | Partial | Full primary/secondary/tertiary/potion pages for adventurer, visitor and enemy detail. |
+| `DialogItemDetail` | Partial | Full equipment/effect detail plus contextual craft, consume and sell actions. |
+| `DialogWorkshop` / `DialogCraft` | Partial | Job-item detail and cancel confirmation. |
+| `DialogMarket` / `DialogSell` | Partial | Item detail before sale and APK-equivalent confirmation. |
+| `DialogShelter` / `DialogPetDetail` / `DialogMergePet` | Partial | Separate merge-source flow and complete ability detail. |
+| `DialogQuests` / `DialogRefreshQuests` | Partial | Confirm quest refresh. |
+| `DialogSelectEquipment` | Partial | Equipment detail/preview before commit. |
+| `DialogDoctrineReset` / `DialogConsume*` | Partial | In-game confirmations and detailed effect copy instead of browser-native confirms. |
+
+Completion rule: each row needs visible information, enabled/disabled states, confirmation where APK has one, and a smoke test. No row is considered complete merely because its dialog can open.
+
 Nguồn đối chiếu: `../jadx_decompiled/sources/it/paranoidsquirrels/idleguildmaster/ui/dialogs`.
 
 ## Đã có luồng tương ứng, cần hoàn thiện chi tiết

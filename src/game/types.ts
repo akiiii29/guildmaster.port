@@ -388,9 +388,21 @@ export interface BuildingLevels {
   shelterAutofeed: number
 }
 
+export interface GameSettings {
+  sellMaxAmount: number
+  craftMaxAmount: number
+  confirmUpgrade: boolean
+  confirmRetreat: boolean
+  confirmSwap: boolean
+  autoOpenDungeonDetail: boolean
+  verboseLogs: boolean
+  colorblindMode: boolean
+}
+
 export interface GameState {
   version: number
   language: Language
+  settings: GameSettings
   lastAccess: number
   lastDailyReset: number
   tutorialStep: number
