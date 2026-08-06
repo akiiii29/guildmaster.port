@@ -55,6 +55,13 @@ async function handleRequest(request: Request) {
 
   const action: GameAction = { id: body.action.id, type: body.action.type, payload: isRecord(body.action.payload) ? body.action.payload : {} }
   const admin = createClient(url, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } })
+  // Creating the profile here lets the database grant the one-time new-player
+  // wallet before the first authoritative state is calculated.
+  const { error: profileError } = await admin.from('profiles').upsert(
+    { id: userData.user.id },
+    { onConflict: 'id', ignoreDuplicates: true },
+  )
+  if (profileError) return json({ error: 'Unable to initialize player account.' }, 500)
   const [{ data: saved, error: readError }, { data: wallet, error: walletError }] = await Promise.all([
     admin.from('game_saves')
       .select('state,revision,authority_mode')

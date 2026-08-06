@@ -45,6 +45,10 @@ const content: GameContent = {
 }
 
 describe('original-compatible game loop', () => {
+  it('starts a new guild with the 1,000-gem welcome balance', () => {
+    expect(createInitialState(indexContent(content)).gems).toBe(1_000)
+  })
+
   it('queues, processes, cancels, and collects market listings with original timing', () => {
     const index = indexContent(content)
     const state = createInitialState(index)
@@ -268,7 +272,7 @@ describe('original-compatible game loop', () => {
     expect(state.activeQuests[0]).toMatchObject({ id: 'Annihilator', category: 'King', rarity: 1, target: 30 })
     incrementQuest(state, 'Annihilator', 30)
     expect(claimQuest(state, 'Annihilator')).toBe(true)
-    expect(state.gems).toBe(10)
+    expect(state.gems).toBe(1_010)
 
     state.activeQuests = [{ id: 'Annihilator', category: 'Ruin', rarity: 4, progress: 30, target: 30 }]
     expect(claimQuest(state, 'Annihilator')).toBe(true)
@@ -385,7 +389,7 @@ describe('original-compatible game loop', () => {
     state.activeQuests.push({ id: 'Paleontologist', category: 'Knowledge', rarity: 1, progress: 0, target: 10 })
     let roll = 0
     expect(openGeodes(state, () => roll++ === 0 ? 0.009 : 0.5)).toBe(102)
-    expect(state.gems).toBe(102)
+    expect(state.gems).toBe(1_102)
     expect(state.inventory).not.toContainEqual(expect.objectContaining({ itemId: 'Geode' }))
     expect(state.activeQuests[0].progress).toBe(3)
   })

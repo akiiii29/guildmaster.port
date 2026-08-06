@@ -308,7 +308,7 @@ export function createInitialState(index: ContentIndex): GameState {
     lastDailyReset: localDayStart(now),
     tutorialStep: 1,
     money: 0,
-    gems: 0,
+    gems: 1_000,
     purchasedPacks: { starter: true, merchant: true },
     loyalty: {
       Affliction: { level: 0, stars: 0 }, Control: { level: 0, stars: 0 },
