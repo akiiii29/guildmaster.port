@@ -43,7 +43,11 @@ button { color: inherit; }
 .iap-dialog { display: grid; justify-items: center; gap: 12px; padding: 8px 0; text-align: center; }
 .iap-dialog p { max-width: 390px; margin: 0; color: var(--muted); line-height: 1.45; }
 .iap-gem-icon { width: 46px; height: 46px; object-fit: contain; image-rendering: pixelated; }
+.iap-package-list { width: min(100%, 370px); display: grid; gap: 9px; }
 .iap-package { width: min(100%, 370px); display: grid; grid-template-columns: 46px 1fr auto; align-items: center; gap: 12px; padding: 12px; text-align: left; border: 1px solid var(--brass-border); border-radius: 10px; background: linear-gradient(135deg, #3b3324, #1e1d1a); }
+.iap-package { cursor: pointer; font: inherit; }
+.iap-package:hover:not(:disabled) { filter: brightness(1.14); }
+.iap-package:disabled { cursor: wait; opacity: .68; }
 .iap-package > img { width: 42px; height: 42px; object-fit: contain; image-rendering: pixelated; }
 .iap-package span { display: grid; gap: 3px; }
 .iap-package small { color: var(--text-dim); }

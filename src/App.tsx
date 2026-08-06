@@ -306,19 +306,23 @@ function IdleProgressDialog({ seconds, onClose }: { seconds: number; onClose: ()
 const VIETQR_ACCOUNT = 'VQRQAJQJY8278'
 const VIETQR_BANK = 'MBBank'
 const VIETQR_HOLDER = 'NGUYEN KHANH HOANG'
-const GEM_PRODUCT_ID = 'gems_100'
+const GEM_PACKAGES = [
+  { productId: 'gems_10000', gems: 10_000, price: 10_000 },
+  { productId: 'gems_20000', gems: 20_000, price: 20_000 },
+  { productId: 'gems_50000', gems: 50_000, price: 50_000 },
+] as const
 
 function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void }) {
   const { t } = useI18n()
-  const [order, setOrder] = useState<{ orderId: string; priceMinor: number; paymentCode: string } | null>(null)
+  const [order, setOrder] = useState<{ orderId: string; productId: string; priceMinor: number; paymentCode: string } | null>(null)
   const [creating, setCreating] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [paid, setPaid] = useState(false)
 
-  const createOrder = async () => {
+  const createOrder = async (productId: string) => {
     setCreating(true)
     setMessage(null)
-    const result = await store.createPaymentOrder(GEM_PRODUCT_ID)
+    const result = await store.createPaymentOrder(productId)
     setCreating(false)
     if (!result.ok || !result.order) {
       setMessage(result.message)
@@ -356,7 +360,7 @@ function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void 
     <section className="iap-dialog">
       <img className="iap-gem-icon" src={assetUrl('gem')} alt="" />
       <p>{t('shop.intro')}</p>
-      {!order ? <button className="iap-package" disabled={creating} onClick={() => void createOrder()}><img src={assetUrl('gem')} alt="" /><span><strong>{t('shop.gemPack')}</strong><small>{t('shop.gemPackAmount')}</small></span><b>{t('shop.gemPackPrice')}</b></button> : <>
+      {!order ? <div className="iap-package-list">{GEM_PACKAGES.map((pack) => <button className="iap-package" disabled={creating} key={pack.productId} onClick={() => void createOrder(pack.productId)}><img src={assetUrl('gem')} alt="" /><span><strong>{pack.gems.toLocaleString()} {t('currency.gems')}</strong><small>{t('shop.gemPackAmount')}</small></span><b>{pack.price.toLocaleString()} VND</b></button>)}</div> : <>
         <div className="iap-qr"><img src={qrUrl} alt={t('shop.qrAlt')} /></div>
         <strong className="iap-payment-code">{order.paymentCode}</strong>
         <p>{t('shop.transferExact', { price: order.priceMinor.toLocaleString() })}</p>
@@ -366,7 +370,7 @@ function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void 
       {message && <p className="iap-error">{message}</p>}
       <p className="iap-note">{t('shop.note')}</p>
     </section>
-    <div className="workshop-actions">{order && !paid && <button disabled={creating} onClick={() => void createOrder()}>{t('shop.newOrder')}</button>}<button onClick={onClose}>{t('common.close')}</button></div>
+    <div className="workshop-actions">{order && !paid && <button disabled={creating} onClick={() => void createOrder(order.productId)}>{t('shop.newOrder')}</button>}<button onClick={onClose}>{t('common.close')}</button></div>
   </Modal>
 }
 
