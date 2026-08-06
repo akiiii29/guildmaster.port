@@ -1467,6 +1467,13 @@ function battleLogTone(line: string) {
   return ''
 }
 
+function battleLogFaction(line: string, partyNames: Set<string>, enemyNames: Set<string>) {
+  const startsWithName = (names: Set<string>) => [...names].some((entry) => line.startsWith(`${entry} `) || line.startsWith(`${entry}'s `))
+  if (startsWithName(partyNames) || [...partyNames].some((entry) => line.includes(` from ${entry}.`) || line.includes(` to ${entry}.`))) return 'party'
+  if (startsWithName(enemyNames) || [...enemyNames].some((entry) => line.includes(` from ${entry}.`) || line.includes(` to ${entry}.`))) return 'enemy'
+  return 'system'
+}
+
 function darknessAsset(darkness: number) {
   if (darkness < 17) return 'darkness_0'
   if (darkness < 34) return 'darkness_1'
@@ -1656,6 +1663,8 @@ function AreaDialog({ areaId, store, index, onClose }: { areaId: string; store: 
   }))
   const pet = run.petUid == null ? undefined : state.pets.find((entry) => entry.uid === run.petUid)
   const petDefinition = pet && index.pets.get(pet.petId)
+  const partyLogNames = new Set([...party.map(({ member }) => member.name), pet?.petId].filter((entry): entry is string => Boolean(entry)))
+  const enemyLogNames = new Set(run.enemies.map((enemy) => index.enemies.get(enemy.enemyId)?.name).filter((entry): entry is string => Boolean(entry)))
   const hasDarkness = areaDarknessValue(area, run) !== 0
   const progress = run.actionTotal > 0 ? Math.max(0, Math.min(100, (run.actionTotal - run.actionRemaining) / run.actionTotal * 100)) : 0
   const epicTarget = area.areaType === 2 ? epicRaidProgressTarget(area.id) : undefined
@@ -1687,7 +1696,7 @@ function AreaDialog({ areaId, store, index, onClose }: { areaId: string; store: 
           <i><span style={{ width: `${progress}%` }} /></i>
           <i><span style={{ width: `${progress}%` }} /></i>
         </div>
-        <div className="original-dungeon-log" aria-live="polite">{(state.settings.verboseLogs ? run.logs : run.logs.slice(0, 8)).map((line, logIndex) => <p className={`battle-log-line ${battleLogTone(line)} ${logIndex === 0 ? 'is-latest' : ''}`} key={`${line}-${logIndex}`}>{log(line)}</p>)}</div>
+        <div className="original-dungeon-log" aria-live="polite">{(state.settings.verboseLogs ? run.logs : run.logs.slice(0, 8)).map((line, logIndex) => { const faction = battleLogFaction(line, partyLogNames, enemyLogNames); return <p className={`battle-log-line ${battleLogTone(line)} ${faction} ${logIndex === 0 ? 'is-latest' : ''}`} key={`${line}-${logIndex}`}><i className="battle-log-faction" aria-label={faction === 'party' ? 'Party action' : faction === 'enemy' ? 'Enemy action' : 'System event'} aria-hidden="true" />{log(line)}</p> })}</div>
         <div className="battle-actions">
           <button onClick={() => setShowReport(true)}>{t('report.title')}</button>
           <button onClick={() => state.settings.confirmRetreat ? setConfirmRetreat(true) : (store.retreat(areaId), onClose())}>{t('battle.retreat')}</button>
