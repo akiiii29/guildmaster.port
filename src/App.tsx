@@ -972,24 +972,38 @@ function ItemOriginTooltip({ itemId, index }: { itemId: string; index: ContentIn
   const copy = language === 'vi'
     ? { drop: 'Rơi từ', craft: 'Có thể chế tạo tại Workshop', none: 'Chưa có nguồn rơi hoặc công thức.' }
     : { drop: 'Drops from', craft: 'Can be crafted in the Workshop', none: 'No drop source or recipe is known.' }
-  return <span className="item-origin-tooltip" role="tooltip"><strong>{name(item?.name ?? itemId)}</strong>{enemies.length > 0 && <><small>{copy.drop}</small><span className="origin-enemy-list">{enemies.map((enemy) => { const maps = areaNamesForEnemy(enemy.id, index, name); return <span className="origin-enemy" title={maps.join(' · ')} key={enemy.id}><img src={assetUrl(enemy.imageKey)} alt="" /><span><b>{name(enemy.name)}</b><small>{maps.join(' · ') || '—'}</small></span></span> })}</span></>}{crafted && <small className="origin-crafted">{copy.craft}</small>}{enemies.length === 0 && !crafted && <small>{copy.none}</small>}</span>
+  return <span className="item-origin-tooltip" role="tooltip"><strong>{name(item?.name ?? itemId)}</strong>{enemies.length > 0 && <><small>{copy.drop}</small><span className="origin-enemy-list">{enemies.map((enemy) => { const maps = areaNamesForEnemy(enemy.id, index, name); return <span className="origin-enemy" title={maps.join(' · ')} key={enemy.id}><img src={assetUrl(enemy.imageKey)} alt="" /><span><span className="origin-enemy-name">{name(enemy.name)}</span><small>{maps.join(' · ') || '—'}</small></span></span> })}</span></>}{crafted && <small className="origin-crafted">{copy.craft}</small>}{enemies.length === 0 && !crafted && <small>{copy.none}</small>}</span>
+}
+
+function useClosableTooltip() {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLSpanElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
+    }
+    document.addEventListener('pointerdown', closeOnOutsidePointer)
+    return () => document.removeEventListener('pointerdown', closeOnOutsidePointer)
+  }, [open])
+  return { open, rootRef, setOpen }
 }
 
 function ItemRelationIcon({ itemId, index, amount }: { itemId: string; index: ContentIndex; amount?: number }) {
   const { name } = useI18n()
-  const [open, setOpen] = useState(false)
+  const { open, rootRef, setOpen } = useClosableTooltip()
   const item = index.items.get(itemId)
-  return <span className={`relation-icon ${open ? 'is-open' : ''}`}><button type="button" title={name(item?.name ?? itemId)} aria-expanded={open} onClick={() => setOpen((value) => !value)}><img src={assetUrl(item?.imageKey)} alt="" />{amount !== undefined && <b>×{amount}</b>}</button><ItemOriginTooltip itemId={itemId} index={index} /></span>
+  return <span className={`relation-icon ${open ? 'is-open' : ''}`} ref={rootRef}><button type="button" title={name(item?.name ?? itemId)} aria-expanded={open} onClick={() => setOpen((value) => !value)}><img src={assetUrl(item?.imageKey)} alt="" />{amount !== undefined && <b>×{amount}</b>}</button><ItemOriginTooltip itemId={itemId} index={index} /></span>
 }
 
 function EnemyRelationIcon({ enemyId, index }: { enemyId: string; index: ContentIndex }) {
   const { language, name } = useI18n()
-  const [open, setOpen] = useState(false)
+  const { open, rootRef, setOpen } = useClosableTooltip()
   const enemy = index.enemies.get(enemyId)
   if (!enemy) return null
   const maps = areaNamesForEnemy(enemyId, index, name)
   const mapLabel = language === 'vi' ? 'Xuất hiện ở' : 'Appears in'
-  return <span className={`relation-icon ${open ? 'is-open' : ''}`}><button type="button" title={name(enemy.name)} aria-expanded={open} onClick={() => setOpen((value) => !value)}><img src={assetUrl(enemy.imageKey)} alt="" /></button><span className="enemy-origin-tooltip" role="tooltip"><strong>{name(enemy.name)}</strong><small>{mapLabel}: {maps.join(' · ') || '—'}</small></span></span>
+  return <span className={`relation-icon ${open ? 'is-open' : ''}`} ref={rootRef}><button type="button" title={name(enemy.name)} aria-expanded={open} onClick={() => setOpen((value) => !value)}><img src={assetUrl(enemy.imageKey)} alt="" /></button><span className="enemy-origin-tooltip" role="tooltip"><strong>{name(enemy.name)}</strong><small>{mapLabel}: {maps.join(' · ') || '—'}</small></span></span>
 }
 
 function ItemFacts({ item, index }: { item: ItemDefinition; index: ContentIndex }) {
