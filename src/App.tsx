@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import './App.css'
 import type { ContentIndex } from './game/content'
 import { assetUrl } from './game/content'
@@ -41,6 +41,56 @@ type DialogState =
   | { type: 'shop' }
   | { type: 'reset' }
   | null
+
+const TRAIT_DETAILS: Record<string, [string, string]> = {
+  BOOKWORM: ['Intelligence +10%; Constitution and Dexterity −5%.', 'Trí tuệ +10%; Thể chất và Nhanh nhẹn −5%.'],
+  BOOKWORM_PLUS: ['Intelligence +15%; Constitution and Dexterity −5%.', 'Trí tuệ +15%; Thể chất và Nhanh nhẹn −5%.'],
+  BRUTE: ['Constitution +10%; Intelligence −5%.', 'Thể chất +10%; Trí tuệ −5%.'],
+  BRUTE_PLUS: ['Constitution +15%; Intelligence −5%.', 'Thể chất +15%; Trí tuệ −5%.'],
+  FERAL: ['Dexterity +10%; Constitution and Intelligence −5%.', 'Nhanh nhẹn +10%; Thể chất và Trí tuệ −5%.'],
+  FERAL_PLUS: ['Dexterity +15%; Constitution and Intelligence −5%.', 'Nhanh nhẹn +15%; Thể chất và Trí tuệ −5%.'],
+  EMPATHETIC: ['Healing done and received is 20% stronger.', 'Hiệu quả hồi máu gây ra và nhận vào tăng 20%.'],
+  GIFTED: ['Mana regeneration +2 each turn.', 'Hồi năng lượng mỗi lượt +2.'],
+  INTIMIDATING: ['Threat +1, making enemies more likely to target this adventurer.', 'Uy hiếp +1, khiến kẻ địch ưu tiên mục tiêu này hơn.'],
+  FOCUSED: ['Accuracy +15%.', 'Độ chính xác +15%.'],
+  DRAGON_BLOOD: ['Reduces each incoming hit by a flat amount based on class level cap; stronger after Ascension.', 'Giảm phẳng sát thương mỗi đòn dựa trên cấp tối đa của class; mạnh hơn sau Thăng hoa.'],
+  CURSED: ['Lifesteal +15%, but loses 4% max HP to decay each turn.', 'Hút máu +15%, nhưng mất 4% HP tối đa mỗi lượt vì suy kiệt.'],
+  REACTIVE: ['Counterattack chance +10%.', 'Tỷ lệ phản đòn +10%.'],
+  NOCTURNAL: ['Darkness damage amplification +0.5%.', 'Khuếch đại sát thương trong Bóng tối +0,5%.'],
+  MINDFUL: ['Status-effect immunity +10%.', 'Miễn nhiễm hiệu ứng trạng thái +10%.'],
+  TROLL_BLOOD: ['Regenerates HP each turn based on class level cap; stronger after Ascension.', 'Hồi HP mỗi lượt dựa trên cấp tối đa của class; mạnh hơn sau Thăng hoa.'],
+  NIMBLE: ['Dodge chance +8%.', 'Tỷ lệ né tránh +8%.'],
+  RUTHLESS: ['Critical damage is multiplied by 1.2.', 'Sát thương chí mạng được nhân 1,2.'],
+  BLESSED: ['Darkness reduction +8 for the party.', 'Giảm Bóng tối của đội +8.'],
+  ALERT: ['Acts first at the start of combat.', 'Hành động đầu tiên khi bắt đầu giao chiến.'],
+}
+
+const STAT_DETAILS: Record<string, [string, string]> = {
+  HP: ['Maximum health. It gains +1 per level and can be raised by equipment, Health potions, doctrines and Ascension. Damage lowers current HP only; removing bonuses can lower the maximum.', 'Máu tối đa. Tăng +1 mỗi cấp và có thể tăng bằng trang bị, Potion of Health, Doctrine và Thăng hoa. Sát thương chỉ giảm HP hiện tại; tháo bonus có thể hạ HP tối đa.'],
+  CON: ['Reduces every incoming hit by floor(CON ÷ 8). It also powers Sword damage and part of Dagger damage. Increase it with equipment, potions and doctrines; traits can raise or lower it by percentage.', 'Giảm mỗi đòn nhận vào theo floor(CON ÷ 8). Đồng thời tăng sát thương Kiếm và một phần sát thương Dao găm. Tăng bằng trang bị, potion và Doctrine; trait có thể tăng/giảm theo phần trăm.'],
+  INT: ['Powers Staff magic damage and increases mana regeneration (floor(INT ÷ 10) + 10). Increase it with equipment, potions and doctrines; traits can modify it.', 'Tăng sát thương phép từ Trượng và hồi năng lượng (floor(INT ÷ 10) + 10). Tăng bằng trang bị, potion và Doctrine; trait có thể điều chỉnh chỉ số này.'],
+  DEX: ['Powers Bow damage and part of Dagger damage. It also raises critical chance by 0.4% per relevant attack stat, capped at 40%. Increase it with equipment, potions and doctrines; traits can modify it.', 'Tăng sát thương Cung và một phần sát thương Dao găm. Nó cũng tăng tỷ lệ chí mạng 0,4% theo chỉ số tấn công liên quan, tối đa 40%. Tăng bằng trang bị, potion và Doctrine; trait có thể điều chỉnh chỉ số này.'],
+  DEF: ['Reduces physical damage by 1% per point, capped at 100%, before Constitution and other flat reductions. Increase it with equipment, Defense potions and doctrines; it drops if those bonuses are removed.', 'Giảm sát thương vật lý 1% mỗi điểm, tối đa 100%, trước khi tính Thể chất và các giảm trừ phẳng khác. Tăng bằng trang bị, Potion of Defense và Doctrine; tháo bonus thì giảm.'],
+  MDEF: ['Reduces magic damage by 1% per point, capped at 100%, before Constitution and other flat reductions. Increase it with equipment, Magic Defense potions and doctrines; it drops if those bonuses are removed.', 'Giảm sát thương phép 1% mỗi điểm, tối đa 100%, trước khi tính Thể chất và các giảm trừ phẳng khác. Tăng bằng trang bị, Potion of Magic Defense và Doctrine; tháo bonus thì giảm.'],
+}
+
+function DetailHint({ label, value, detail }: { label: string; value?: ReactNode; detail: string }) {
+  const [open, setOpen] = useState(false)
+  return <span className={`detail-hint ${value === undefined ? 'trait-hint' : ''} ${open ? 'is-open' : ''}`}>
+    <button type="button" aria-expanded={open} onClick={() => setOpen((current) => !current)}>{label}<i aria-hidden="true">?</i></button>
+    {value !== undefined && <b>{value}</b>}
+    <span className="detail-hint-popup" role="tooltip">{detail}</span>
+  </span>
+}
+
+function TraitHint({ language, trait }: { language: string; trait: string }) {
+  const detail = TRAIT_DETAILS[trait]?.[language === 'vi' ? 1 : 0] ?? (language === 'vi' ? 'Đặc tính này không có mô tả bổ sung.' : 'This trait has no additional description.')
+  return <DetailHint label={localizeRareTrait(language as 'en' | 'vi', trait)} detail={detail} />
+}
+
+function StatHint({ language, label, value }: { language: string; label: keyof typeof STAT_DETAILS; value: ReactNode }) {
+  return <DetailHint label={label} value={value} detail={STAT_DETAILS[label][language === 'vi' ? 1 : 0]} />
+}
 
 function Currency({ amount, icon, label }: { amount: number; icon: string; label: string }) {
   return (
@@ -549,7 +599,7 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
   const detailsGuest = selectedGuest === null ? undefined : state.tavernGuests.find((guest) => guest.uid === selectedGuest)
   const detailsDefinition = detailsGuest && index.adventurers.get(detailsGuest.classId)
   const detailsStats = detailsGuest ? adventurerStats(detailsGuest, index) : undefined
-  const detailsTraits = detailsGuest ? [detailsGuest.trait, detailsGuest.rareTrait].filter((trait): trait is string => Boolean(trait)).map((trait) => localizeRareTrait(language, trait)) : []
+  const detailsTraits = detailsGuest ? [detailsGuest.trait, detailsGuest.rareTrait].filter((trait): trait is string => Boolean(trait)) : []
   const detailsActiveSkill = detailsDefinition?.fields.activeSkill && detailsDefinition.fields.activeSkill !== 'ACTIVE_NONE' ? localizeActiveSkill(language, detailsDefinition.fields.activeSkill) : t('adventurer.noSkill')
   const detailsPassiveSkill = detailsDefinition?.fields.passiveSkill && detailsDefinition.fields.passiveSkill !== 'PASSIVE_NONE' ? localizePassiveSkill(language, detailsDefinition.fields.passiveSkill) : t('adventurer.noSkill')
   const detailsAssessment = detailsDefinition && detailsStats ? recruitAssessment(detailsDefinition, detailsStats, t) : undefined
@@ -615,7 +665,7 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
 
         {showHelp && <div className="confirm-layer"><div className="confirm-box tavern-info"><h3>{t('building.tavern')}</h3>{t('tavern.help').split('\n').map((line, index) => line ? <p key={`${line}-${index}`}>{line}</p> : <br key={index} />)}<div><button onClick={() => setShowHelp(false)}>{t('common.close')}</button></div></div></div>}
         {showNoSpace && <div className="confirm-layer"><div className="confirm-box tavern-info"><h3>{t('tavern.noSpaceTitle')}</h3><p>{t('tavern.noSpace')}</p><div><button onClick={() => setShowNoSpace(false)}>{t('common.close')}</button></div></div></div>}
-        {detailsGuest && detailsDefinition && detailsStats && detailsAssessment && <div className="confirm-layer"><div className="confirm-box tavern-guest-detail"><div className="entity-detail"><div className="portrait-frame large"><img src={assetUrl(detailsDefinition.imageKey)} alt="" /></div><div><h3>{name(detailsDefinition.name)}</h3><p>{description(detailsDefinition.id, detailsDefinition.description)}</p></div></div><div className="stat-grid"><span>CON <b>{detailsStats.constitution}</b></span><span>INT <b>{detailsStats.intelligence}</b></span><span>DEX <b>{detailsStats.dexterity}</b></span><span>HP <b>{detailsStats.maxHp}</b></span><span>DEF <b>{detailsStats.defense}</b></span><span>MDEF <b>{detailsStats.magicDefense}</b></span></div>{detailsTraits.length > 0 && <p className="tavern-detail-traits"><strong>{t('battle.traits')}:</strong> {detailsTraits.join(' · ')}</p>}<section className="adventurer-skills tavern-detail-skills"><article><small>{t('battle.active')}</small><strong>{detailsActiveSkill}</strong></article><article><small>{t('battle.passive')}</small><strong>{detailsPassiveSkill}</strong></article></section><section className="tavern-assessment"><h3>{t('tavern.assessment.title')}</h3><article><strong>{t('tavern.assessment.strengths')}</strong><ul>{detailsAssessment.strengths.map((insight) => <li key={insight}>{insight}</li>)}</ul></article><article><strong>{t('tavern.assessment.weaknesses')}</strong><ul>{detailsAssessment.weaknesses.map((insight) => <li key={insight}>{insight}</li>)}</ul></article></section><div className="tavern-detail-actions"><button onClick={() => setSelectedGuest(null)}>{t('common.close')}</button></div></div></div>}
+        {detailsGuest && detailsDefinition && detailsStats && detailsAssessment && <div className="confirm-layer"><div className="confirm-box tavern-guest-detail"><div className="entity-detail"><div className="portrait-frame large"><img src={assetUrl(detailsDefinition.imageKey)} alt="" /></div><div><h3>{name(detailsDefinition.name)}</h3><p>{description(detailsDefinition.id, detailsDefinition.description)}</p></div></div><div className="stat-grid"><StatHint language={language} label="CON" value={detailsStats.constitution} /><StatHint language={language} label="INT" value={detailsStats.intelligence} /><StatHint language={language} label="DEX" value={detailsStats.dexterity} /><StatHint language={language} label="HP" value={detailsStats.maxHp} /><StatHint language={language} label="DEF" value={detailsStats.defense} /><StatHint language={language} label="MDEF" value={detailsStats.magicDefense} /></div>{detailsTraits.length > 0 && <p className="tavern-detail-traits"><strong>{t('battle.traits')}:</strong> {detailsTraits.map((trait, position) => <span key={trait}>{position > 0 && ' · '}<TraitHint language={language} trait={trait} /></span>)}</p>}<section className="adventurer-skills tavern-detail-skills"><article><small>{t('battle.active')}</small><strong>{detailsActiveSkill}</strong></article><article><small>{t('battle.passive')}</small><strong>{detailsPassiveSkill}</strong></article></section><section className="tavern-assessment"><h3>{t('tavern.assessment.title')}</h3><article><strong>{t('tavern.assessment.strengths')}</strong><ul>{detailsAssessment.strengths.map((insight) => <li key={insight}>{insight}</li>)}</ul></article><article><strong>{t('tavern.assessment.weaknesses')}</strong><ul>{detailsAssessment.weaknesses.map((insight) => <li key={insight}>{insight}</li>)}</ul></article></section><div className="tavern-detail-actions"><button onClick={() => setSelectedGuest(null)}>{t('common.close')}</button></div></div></div>}
         {upgrade && <UpgradeConfirmation target={t(upgrade === 'capacity' ? 'tavern.upgradeCapacity' : 'tavern.upgradeTime')} cost={upgrade === 'capacity' ? capacityCost : timeCost} onCancel={() => setUpgrade(null)} onConfirm={() => { store.upgradeTavern(upgrade); setUpgrade(null) }} />}
       </section>
     </Modal>
@@ -1441,7 +1491,7 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
   const activeSkill = definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE' ? localizeActiveSkill(language, definition.fields.activeSkill) : t('adventurer.noSkill')
   const passiveSkill = definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE' ? localizePassiveSkill(language, definition.fields.passiveSkill) : t('adventurer.noSkill')
   const xpRequired = member.level >= definition.fields.maxLevel ? 0 : experienceToNextLevel(member.level, member.ascended)
-  const traits = [member.trait, member.rareTrait].filter((trait): trait is string => Boolean(trait)).map((trait) => localizeRareTrait(language, trait))
+  const traits = [member.trait, member.rareTrait].filter((trait): trait is string => Boolean(trait))
   const equippedItems = [member.weaponId, member.armorId, member.accessoryId].flatMap((itemId) => itemId ? [index.items.get(itemId)].filter((item): item is ItemDefinition => Boolean(item)) : [])
   const bonus = (key: string) => equippedItems.reduce((total, item) => total + Number(item.fields[key] ?? 0), 0)
   const weapon = member.weaponId ? index.items.get(member.weaponId) : undefined
@@ -1469,13 +1519,13 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
         <div><h3>{name(definition.name)} · {t('common.level')} {member.level}</h3><p>{description(definition.id, definition.description)}</p></div>
       </div>
       <div className="stat-grid">
-        <span>CON <b>{stats.constitution}</b></span><span>INT <b>{stats.intelligence}</b></span><span>DEX <b>{stats.dexterity}</b></span>
-        <span>HP <b>{member.hp}/{stats.maxHp}</b></span><span>DEF <b>{stats.defense}</b></span><span>MDEF <b>{stats.magicDefense}</b></span>
+        <StatHint language={language} label="CON" value={stats.constitution} /><StatHint language={language} label="INT" value={stats.intelligence} /><StatHint language={language} label="DEX" value={stats.dexterity} />
+        <StatHint language={language} label="HP" value={`${member.hp}/${stats.maxHp}`} /><StatHint language={language} label="DEF" value={stats.defense} /><StatHint language={language} label="MDEF" value={stats.magicDefense} />
       </div>
       <section className="adventurer-progress">
         <div><strong>{t('battle.experience')}</strong><span>{xpRequired === 0 ? t('common.max') : `${member.xp.toLocaleString()}/${xpRequired.toLocaleString()}`}</span></div>
         {xpRequired > 0 && <ProgressBar value={member.xp} max={xpRequired} />}
-        {traits.length > 0 && <p><strong>{t('battle.traits')}:</strong> {traits.join(' · ')}</p>}
+        {traits.length > 0 && <p><strong>{t('battle.traits')}:</strong> {traits.map((trait, position) => <span key={trait}>{position > 0 && ' · '}<TraitHint language={language} trait={trait} /></span>)}</p>}
       </section>
       <section className="adventurer-skills">
         <article><small>{t('battle.active')}</small><strong>{activeSkill}</strong></article>
