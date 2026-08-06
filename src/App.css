@@ -187,15 +187,16 @@ button { color: inherit; }
 .storage-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
 .storage-filters label { display: grid; gap: 5px; color: var(--muted); font-size: 12px; font-weight: 700; }
 .storage-filters select { min-width: 0; padding: 7px; border: 1px solid var(--line); border-radius: 7px; background: #303030; color: var(--text); font: inherit; }
-.item-detail { width: min(100%, 460px); display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; align-items: center; }
-.item-detail > img { width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated; }
-.item-detail h3, .item-detail p { margin: 0; }
-.item-detail p { margin-top: 5px; color: var(--muted); font-size: 13px; }
+.item-detail { width: min(100%, 580px); max-height: calc(100dvh - 48px); display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 14px; align-items: start; overflow-y: auto; }
+.item-detail > img { width: 76px; height: 76px; object-fit: contain; image-rendering: pixelated; }
+.confirm-box > .item-detail-copy { display: block; min-width: 0; }
+.item-detail h3, .item-detail p { margin: 0; overflow-wrap: anywhere; }
+.item-detail p { margin-top: 5px; color: var(--muted); font-size: 13px; line-height: 1.45; }
 .item-detail small { display: block; margin-top: 7px; color: var(--brass); }
 .item-relations { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 7px; }
 .item-relations p { margin: 5px 0; color: var(--muted); font-size: 11px; }
 .item-relations strong { margin-right: 4px; color: var(--brass); }
-.item-detail > div:last-child { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+.item-detail-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
 .item-detail button { padding: 7px; border: 0; background: transparent; color: var(--brass); font-weight: 700; cursor: pointer; }
 .tavern-upgrades > button { min-height: 61px; padding: 8px; display: grid; place-items: center; align-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.12); cursor: pointer; }
 .tavern-upgrades > button:hover:not(:disabled) { border-color: var(--brass-border); background: rgba(250,160,62,.08); }
@@ -220,7 +221,12 @@ button { color: inherit; }
 .tavern-actions button, .tavern-detail-actions button { padding: 8px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 800; cursor: pointer; }
 .tavern-actions button:hover, .tavern-detail-actions button:hover { color: var(--brass); background: rgba(255,255,255,.04); }
 .tavern-info p { margin: 8px 0 0; white-space: pre-line; }
-.tavern-guest-detail { max-height: calc(100% - 34px); overflow-y: auto; }
+.tavern-guest-detail { width: min(100%, 680px); max-height: calc(100dvh - 48px); overflow-y: auto; }
+.tavern-guest-detail .entity-detail { grid-template-columns: 108px minmax(0, 1fr); align-items: center; }
+.tavern-guest-detail .portrait-frame.large { width: 108px; height: 108px; }
+.tavern-guest-detail .portrait-frame.large img { width: 88px; height: 88px; }
+.tavern-guest-detail .stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tavern-guest-detail .tavern-detail-actions { display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
 .tavern-detail-traits { margin: 12px 0 0; color: var(--brass); font-size: 12px; }
 .tavern-detail-skills { margin-top: 10px; }
 .tavern-assessment { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(229,189,101,.35); }
@@ -582,6 +588,14 @@ button { color: inherit; }
   .team-dialog-backdrop { padding: 0; }
   .team-dialog { width: 100%; max-height: 90dvh; border-left: 3px solid #000; border-right: 3px solid #000; }
   .team-slot-equipment { gap: 5px; padding-right: 5px; }
+  .confirm-layer { padding: 12px; }
+  .item-detail { grid-template-columns: 66px minmax(0, 1fr); gap: 10px; padding: 14px; }
+  .item-detail > img { width: 60px; height: 60px; }
+  .tavern-guest-detail { padding: 14px; }
+  .tavern-guest-detail .entity-detail { grid-template-columns: 82px minmax(0, 1fr); gap: 10px; }
+  .tavern-guest-detail .portrait-frame.large { width: 82px; height: 82px; }
+  .tavern-guest-detail .portrait-frame.large img { width: 66px; height: 66px; }
+  .tavern-guest-detail .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
