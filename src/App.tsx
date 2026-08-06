@@ -1469,8 +1469,10 @@ function battleLogTone(line: string) {
 
 function battleLogFaction(line: string, partyNames: Set<string>, enemyNames: Set<string>) {
   const startsWithName = (names: Set<string>) => [...names].some((entry) => line.startsWith(`${entry} `) || line.startsWith(`${entry}'s `))
-  if (startsWithName(partyNames) || [...partyNames].some((entry) => line.includes(` from ${entry}.`) || line.includes(` to ${entry}.`))) return 'party'
-  if (startsWithName(enemyNames) || [...enemyNames].some((entry) => line.includes(` from ${entry}.`) || line.includes(` to ${entry}.`))) return 'enemy'
+  if (startsWithName(partyNames)) return 'party'
+  if (startsWithName(enemyNames)) return 'enemy'
+  if ([...partyNames].some((entry) => line.includes(` from ${entry}.`) || line.includes(` to ${entry}.`))) return 'party'
+  if ([...enemyNames].some((entry) => line.includes(` from ${entry}.`) || line.includes(` to ${entry}.`))) return 'enemy'
   return 'system'
 }
 
