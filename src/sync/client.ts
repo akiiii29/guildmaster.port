@@ -20,6 +20,7 @@ export interface GameSync {
   redeemCode(code: string): Promise<{ ok: boolean; message: string; reward?: { itemId: string; stack: number } }>
   createPaymentOrder(productId: string): Promise<{ ok: boolean; message: string; order?: PaymentOrder }>
   getPaymentOrderStatus(orderId: string): Promise<'pending' | 'paid' | 'failed' | 'expired' | 'refunded' | null>
+  getProtectedGemBalance(): Promise<number | null>
   isGemAuthorityEnabled(): boolean
   applyGemAuthorityAction(action: { id: string; type: string; payload?: Record<string, unknown> }, legacyState?: GameState): Promise<RemoteSave | null>
 }
@@ -216,6 +217,14 @@ class SupabaseGameSync implements GameSync {
     const status = isRecord(data) && typeof data.status === 'string' ? data.status : null
     if (error || !status) return null
     return status === 'pending' || status === 'paid' || status === 'failed' || status === 'expired' || status === 'refunded' ? status : null
+  }
+
+  async getProtectedGemBalance() {
+    if (!this.user || isOffline()) return null
+    const { data, error } = await this.client.functions.invoke('wallet', { body: {} })
+    if (error || !isRecord(data) || !Array.isArray(data.assets)) return null
+    const gems = data.assets.find((asset): asset is Record<string, unknown> => isRecord(asset) && asset.asset_id === 'gems')
+    return gems && typeof gems.balance === 'number' && Number.isFinite(gems.balance) ? Math.max(0, gems.balance) : null
   }
 
   isGemAuthorityEnabled = () => gemAuthorityEnabled

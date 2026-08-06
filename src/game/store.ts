@@ -69,7 +69,6 @@ export class GameStore {
   private cloudSync: GameSync | null
   private lastCloudPersistAt = 0
   private offlineProgressSeconds = 0
-  private authoritativeTickPending = false
   private onStorage = (event: StorageEvent) => {
     if (event.key !== SAVE_KEY || !event.newValue) return
     const incoming = this.migrateSerialized(event.newValue)
@@ -373,7 +372,10 @@ export class GameStore {
 
   async refreshProtectedGems() {
     if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) return false
-    return this.commitAuthoritative('tick', {}, () => {})
+    const gems = await this.cloudSync.getProtectedGemBalance()
+    if (gems === null) return false
+    this.commit((draft) => { draft.gems = gems }, false)
+    return true
   }
 
   replaceWithCloudSave(save: RemoteSave) {
@@ -425,10 +427,6 @@ export class GameStore {
     this.timer = window.setInterval(() => {
       const queueCloud = Date.now() - this.lastCloudPersistAt >= CLOUD_TICK_SYNC_INTERVAL_MS
       this.commit((draft) => tickGame(draft, this.index), queueCloud)
-      if (this.cloudSync?.isGemAuthorityEnabled() && this.cloudSync.getUser() && !this.authoritativeTickPending && this.state.totalTicks % 15 === 0) {
-        this.authoritativeTickPending = true
-        void this.commitAuthoritative('tick', {}, () => {}).finally(() => { this.authoritativeTickPending = false })
-      }
     }, 1_000)
   }
 
