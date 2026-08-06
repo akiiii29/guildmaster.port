@@ -339,8 +339,8 @@ function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void 
       const status = await store.getPaymentOrderStatus(order.orderId)
       if (cancelled) return
       if (status === 'paid') {
-        await store.refreshProtectedGems()
-        if (!cancelled) setPaid(true)
+        setPaid(true)
+        void store.refreshProtectedGems()
       } else if (status === 'failed' || status === 'expired' || status === 'refunded') {
         setMessage(t('shop.paymentUnavailable'))
       }
