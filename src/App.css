@@ -527,7 +527,7 @@ button { color: inherit; }
 .detail-hint-popup { position: absolute; z-index: 20; left: 0; bottom: calc(100% + 8px); width: min(290px, calc(100vw - 52px)); padding: 9px 10px; display: block; border: 1px solid var(--brass-border); border-radius: 8px; background: #242424; box-shadow: 0 8px 22px #000; color: var(--text); font-size: 11px; font-weight: 500; line-height: 1.4; text-align: left; pointer-events: none; opacity: 0; transform: translateY(3px); transition: opacity .14s ease, transform .14s ease; }
 .detail-hint:hover > .detail-hint-popup, .detail-hint:focus-within > .detail-hint-popup, .detail-hint.is-open > .detail-hint-popup { opacity: 1; transform: translateY(0); pointer-events: auto; }
 .stat-grid > span:nth-child(3n) .detail-hint-popup { right: 0; left: auto; }
-.tavern-guest-detail .detail-hint-popup { top: calc(100% + 8px); bottom: auto; }
+.tavern-guest-detail .stat-grid .detail-hint-popup { top: calc(100% + 8px); bottom: auto; }
 .trait-hint { display: inline-flex; padding: 0; background: transparent; vertical-align: baseline; }
 .trait-hint > button { color: var(--brass); cursor: pointer; }
 .trait-hint > button i { width: 11px; height: 11px; font-size: 8px; }
@@ -540,6 +540,10 @@ button { color: inherit; }
 .adventurer-skills article { display: grid; gap: 4px; min-width: 0; padding: 9px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.08); text-align: center; }
 .adventurer-skills small { color: var(--muted); font-weight: 700; text-transform: uppercase; }
 .adventurer-skills strong { overflow: hidden; color: #e5bd65; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.skill-hint { display: block; min-width: 0; }
+.skill-hint > button { width: 100%; justify-content: center; overflow: hidden; color: #e5bd65; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.skill-hint .detail-hint-popup { width: min(300px, calc(100vw - 44px)); white-space: normal; z-index: 35; }
+.adventurer-skills article:nth-child(even) .detail-hint-popup { right: 0; left: auto; }
 .adventurer-advanced { margin-top: 14px; }
 .adventurer-advanced h3 { margin: 0 0 7px; color: var(--gold); font-size: 13px; }
 .adventurer-advanced .stat-grid { margin-top: 0; }

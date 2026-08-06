@@ -5,7 +5,7 @@ import { assetUrl } from './game/content'
 import type { AdventurerDefinition, AdventurerState, AreaDefinition, AreaRun, EnemyDefinition, EnemyState, EquipmentSlot, GameContent, ItemDefinition, PetAbilityType, PetDefinition, PetState, ScreenId, StatusEffectState } from './game/types'
 import { adventurerAttackBounds, buildingCapacity, experienceToNextLevel, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, petFoodToNextLevel, quartersPrice, shelterAutofeedPrice, shelterCapacity, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, tavernVisitorIntervalSeconds, workshopCraftSeconds, workshopQueueCapacity, workshopQueuePrice, workshopTimePrice } from './game/formulas'
 import { GameStore, useGame } from './game/store'
-import { I18nProvider, localizeActiveSkill, localizeDoctrineAbility, localizeKingMessage, localizePassiveSkill, localizeQuestDescription, localizeRareTrait, useI18n } from './game/i18n'
+import { I18nProvider, localizeActiveSkill, localizeDoctrineAbility, localizeKingMessage, localizePassiveSkill, localizeQuestDescription, localizeRareTrait, localizeStatus, useI18n } from './game/i18n'
 import { inventoryCount, maxCraftable, RECIPES } from './game/recipes'
 import { adventurerStats, defaultWeaponId, equipmentDifference, equipmentItemId, itemMatchesSlot, weaponIsMagic, weaponIsRanged, weaponTypeKey } from './game/stats'
 import { Modal } from './components/Modal'
@@ -13,6 +13,7 @@ import { ProgressBar } from './components/ProgressBar'
 import { areaTeamSize, canConsumeSpecial, completedEpicRaid, epicRaidProgressTarget, potionLimit, potionTypeForItem, promotionChoices, questRefreshPrice, raidTryAvailable, raidTryCost, RARE_TRAITS, statusIconKey } from './game/engine'
 import { DOCTRINE_ABILITIES, DOCTRINES, doctrineAbilityValue, doctrineIds, doctrinePointsAvailable } from './game/doctrines'
 import { ACHIEVEMENTS, achievementProgress } from './game/achievements'
+import { ACTIVE_SKILLS, type CombatSkillStep, type TargetMode } from './game/combatSkills'
 
 interface AppProps {
   content: GameContent
@@ -74,9 +75,9 @@ const STAT_DETAILS: Record<string, [string, string]> = {
   MDEF: ['Reduces magic damage by 1% per point, capped at 100%, before Constitution and other flat reductions. Increase it with equipment, Magic Defense potions and doctrines; it drops if those bonuses are removed.', 'Giảm sát thương phép 1% mỗi điểm, tối đa 100%, trước khi tính Thể chất và các giảm trừ phẳng khác. Tăng bằng trang bị, Potion of Magic Defense và Doctrine; tháo bonus thì giảm.'],
 }
 
-function DetailHint({ label, value, detail }: { label: string; value?: ReactNode; detail: string }) {
+function DetailHint({ label, value, detail, className = '' }: { label: string; value?: ReactNode; detail: string; className?: string }) {
   const [open, setOpen] = useState(false)
-  return <span className={`detail-hint ${value === undefined ? 'trait-hint' : ''} ${open ? 'is-open' : ''}`}>
+  return <span className={`detail-hint ${value === undefined ? 'trait-hint' : ''} ${className} ${open ? 'is-open' : ''}`}>
     <button type="button" aria-expanded={open} onClick={() => setOpen((current) => !current)}>{label}<i aria-hidden="true">?</i></button>
     {value !== undefined && <b>{value}</b>}
     <span className="detail-hint-popup" role="tooltip">{detail}</span>
@@ -90,6 +91,93 @@ function TraitHint({ language, trait }: { language: string; trait: string }) {
 
 function StatHint({ language, label, value }: { language: string; label: keyof typeof STAT_DETAILS; value: ReactNode }) {
   return <DetailHint label={label} value={value} detail={STAT_DETAILS[label][language === 'vi' ? 1 : 0]} />
+}
+
+const skillTargetText: Record<TargetMode, [string, string]> = {
+  randomEnemy: ['a random enemy', 'một kẻ địch ngẫu nhiên'], allEnemies: ['all enemies', 'toàn bộ kẻ địch'], lowestAbsoluteEnemy: ['the enemy with the lowest HP', 'kẻ địch có HP thấp nhất'], lowestRelativeEnemy: ['the enemy with the lowest HP percentage', 'kẻ địch có phần trăm HP thấp nhất'], randomExceptSelf: ['a random target other than the caster', 'một mục tiêu ngẫu nhiên, trừ người dùng'], allExceptSelf: ['all other targets', 'mọi mục tiêu khác'], all: ['all targets', 'mọi mục tiêu'], randomAlly: ['a random ally', 'một đồng minh ngẫu nhiên'], randomAllyExceptSelf: ['a random ally other than the caster', 'một đồng minh ngẫu nhiên khác'], lowestAbsoluteAlly: ['the ally with the lowest HP', 'đồng minh có HP thấp nhất'], lowestRelativeAlly: ['the ally with the lowest HP percentage', 'đồng minh có phần trăm HP thấp nhất'], lowestShieldAlly: ['the ally with the lowest shield', 'đồng minh có khiên thấp nhất'], mostConditionsOrLowestRelativeAlly: ['the ally with the most conditions, otherwise the lowest HP percentage', 'đồng minh có nhiều hiệu ứng nhất, nếu không thì HP% thấp nhất'], allAllies: ['all allies', 'toàn bộ đồng minh'],
+}
+
+function describeActiveStep(language: string, step: CombatSkillStep) {
+  const vi = language === 'vi'
+  const target = skillTargetText[step.target ?? 'randomEnemy'][vi ? 1 : 0]
+  const action = step.healing
+    ? (vi ? `Hồi phục cho ${target}` : `Heals ${target}`)
+    : (vi ? `Tấn công ${target}` : `Attacks ${target}`)
+  const details: string[] = []
+  if (step.targetCount && step.targetCount > 1) details.push(vi ? `${step.targetCount} đòn` : `${step.targetCount} hits`)
+  if (step.damageAmplification !== undefined) details.push(vi ? `${step.damageAmplification}× sức mạnh` : `${step.damageAmplification}× power`)
+  if (step.criticalAmplification !== undefined) details.push(vi ? `${step.criticalAmplification}× sát thương chí mạng` : `${step.criticalAmplification}× critical damage`)
+  if (step.status) {
+    const chance = Math.round((step.status.probability ?? 1) * 100)
+    const duration = step.status.turnsFromDamageDivisor ? (vi ? `theo sát thương (${step.status.turnsFromDamageDivisor})` : `from damage (${step.status.turnsFromDamageDivisor})`) : (step.status.turnsLeft >= 999 ? (vi ? 'đến hết trận' : 'for the battle') : (vi ? `${step.status.turnsLeft} lượt` : `${step.status.turnsLeft} turns`))
+    details.push(vi ? `${chance}% gây ${localizeStatus('vi', step.status.type)} (${duration})` : `${chance}% ${localizeStatus('en', step.status.type)} (${duration})`)
+  }
+  if (step.executionThreshold) details.push(vi ? `kết liễu dưới ${step.executionThreshold * 100}% HP` : `executes below ${step.executionThreshold * 100}% HP`)
+  if (step.recastOnKill) details.push(vi ? 'niệm lại khi hạ mục tiêu' : 'recasts on kill')
+  if (step.reviveProbability) details.push(vi ? `${step.reviveProbability * 100}% hồi sinh đồng minh` : `${step.reviveProbability * 100}% ally revive`)
+  return `${action}${details.length ? ` — ${details.join(', ')}.` : '.'}`
+}
+
+function describeActiveSkill(language: string, skillId: string) {
+  const profile = ACTIVE_SKILLS[skillId]
+  const vi = language === 'vi'
+  if (!profile) return vi ? 'Tự động niệm khi Mana đạt 100.' : 'Casts automatically when Mana reaches 100.'
+  const special: Record<string, [string, string]> = {
+    escape: ['Escapes from combat instead of dealing damage.', 'Thoát khỏi giao chiến thay vì gây sát thương.'],
+    enGarde: ['Attacks, then adopts a defensive stance.', 'Tấn công rồi chuyển sang thế phòng thủ.'],
+    fireDance: ['Starts the Fire Ritual and sets the caster Ablaze.', 'Khởi động Fire Ritual và khiến người dùng bị Ablaze.'],
+    dreamForge: ['Restores 10,000 HP to the caster before striking.', 'Hồi 10.000 HP cho người dùng trước khi tấn công.'],
+    fragmentation: ['Splits into several ranged hits.', 'Tách thành nhiều đòn đánh tầm xa.'],
+    overdrive: ['A powered-up area attack.', 'Đòn diện rộng cường hóa.'],
+    botchedSacrifice: ['Uses its special combat behavior.', 'Dùng cơ chế chiến đấu đặc biệt của skill này.'],
+  }
+  const lines = [vi ? 'Tự động niệm khi Mana đạt 100.' : 'Casts automatically when Mana reaches 100.']
+  if (profile.special) lines.push(special[profile.special]?.[vi ? 1 : 0] ?? '')
+  lines.push(...profile.steps.map((step) => describeActiveStep(language, step)))
+  return lines.filter(Boolean).join(' ')
+}
+
+function describePassiveSkill(language: string, skillId: string, fields: AdventurerDefinition['fields']) {
+  const vi = language === 'vi'
+  const details: string[] = [vi ? 'Luôn có hiệu lực trong chiến đấu.' : 'Always active in combat.']
+  const add = (en: string, vn: string) => details.push(vi ? vn : en)
+  const onHit = (fields.onTargetHit as { statusEffect?: { type?: StatusEffectState['type']; turns?: number; probability?: number } } | undefined)?.statusEffect
+  const onDeathEnemies = fields.onDeathEffectsOnEnemies as Array<{ statusEffect?: { type?: StatusEffectState['type'] } }> | undefined
+  const onDeathAllies = fields.onDeathEffectsOnAllies as Array<{ statusEffect?: { type?: StatusEffectState['type'] } }> | undefined
+  if (skillId.startsWith('PASSIVE_THREATENING') || Number(fields.threat ?? 1) > 1) add(`Threat ${fields.threat ?? 1}: enemies favor this unit.`, `Threat ${fields.threat ?? 1}: kẻ địch ưu tiên nhắm vào nhân vật này.`)
+  if (fields.alwaysHits) add('Basic attacks cannot miss.', 'Đòn đánh thường không thể trượt.')
+  if (fields.healer) add('After acting, heals the ally with the lowest HP percentage.', 'Sau lượt, hồi máu cho đồng minh có HP% thấp nhất.')
+  if (fields.cleanser) add('The heal also removes one negative status.', 'Lần hồi máu cũng xóa một hiệu ứng xấu.')
+  if (Number(fields.flatDodgeChance ?? 0) > 0) add(`+${Math.round(Number(fields.flatDodgeChance) * 100)}% dodge.`, `+${Math.round(Number(fields.flatDodgeChance) * 100)}% né tránh.`)
+  if (Number(fields.baseLifesteal ?? 0) > 0) add(`${fields.baseLifesteal}% lifesteal.`, `${fields.baseLifesteal}% hút máu.`)
+  if (Number(fields.counterattack ?? 0) > 0) add(`${Math.round(Number(fields.counterattack) * 100)}% counterattack chance.`, `${Math.round(Number(fields.counterattack) * 100)}% phản đòn.`)
+  if (Number(fields.darknessReduction ?? 0) > 0) add(`Reduces party darkness by ${fields.darknessReduction}.`, `Giảm Bóng tối của đội ${fields.darknessReduction}.`)
+  if (Number(fields.darknessDamageAmplification ?? 0) > 0) add(`+${Math.round(Number(fields.darknessDamageAmplification) * 100)}% damage per Darkness.`, `+${Math.round(Number(fields.darknessDamageAmplification) * 100)}% sát thương mỗi điểm Bóng tối.`)
+  if (Number(fields.immunityToStatus ?? 0) > 0) add(`${Math.round(Number(fields.immunityToStatus) * 100)}% status immunity.`, `${Math.round(Number(fields.immunityToStatus) * 100)}% kháng hiệu ứng.`)
+  if (fields.nightVision) add('Ignores the Darkness accuracy penalty.', 'Bỏ qua phạt chính xác từ Bóng tối.')
+  if (onHit?.type) {
+    const chance = Math.round((onHit.probability ?? 1) * 100)
+    add(`${chance}% chance for basic attacks to apply ${localizeStatus('en', onHit.type)} for ${onHit.turns ?? 1} turns.`, `${chance}% gây ${localizeStatus('vi', onHit.type)} trong ${onHit.turns ?? 1} lượt bằng đòn thường.`)
+  }
+  if (onDeathEnemies?.length) add('On death, inflicts its configured effects on all enemies.', 'Khi chết, gây các hiệu ứng đã cấu hình lên toàn bộ kẻ địch.')
+  if (onDeathAllies?.length) add('On death, grants its configured effects to allies.', 'Khi chết, ban các hiệu ứng đã cấu hình cho đồng minh.')
+  if (Number(fields.stunChanceOnLowerHp ?? 0) > 0) add(`${Math.round(Number(fields.stunChanceOnLowerHp) * 100)}% chance to Stun targets below the caster's HP.`, `${Math.round(Number(fields.stunChanceOnLowerHp) * 100)}% Stun mục tiêu có HP thấp hơn người dùng.`)
+  if (typeof fields.endOfTurnAction === 'string') {
+    if (fields.endOfTurnAction.startsWith('RIDER')) add('Performs its mount follow-up attack after acting.', 'Thực hiện đòn đánh nối tiếp của thú cưỡi sau lượt.')
+    else if (fields.endOfTurnAction.startsWith('SHIELD')) add('Provides its shield support after acting.', 'Hỗ trợ khiên cho đồng minh sau lượt.')
+    else if (fields.endOfTurnAction.startsWith('EXTRA_ATTACK')) add('Performs an extra follow-up attack after acting.', 'Thực hiện thêm một đòn đánh nối tiếp sau lượt.')
+  }
+  if (skillId === 'PASSIVE_SABOTEUR' || fields.saboteur) add('Targets enemy back rows when possible.', 'Ưu tiên nhắm hàng sau của kẻ địch khi có thể.')
+  if (skillId === 'PASSIVE_CHAOTIC') add('Basic attacks choose any other combatant at random.', 'Đòn thường chọn ngẫu nhiên bất kỳ mục tiêu nào khác.')
+  if (skillId === 'PASSIVE_DESPISE_WEAKNESS') add('Basic attacks favor enemies with the lowest HP percentage.', 'Đòn thường ưu tiên kẻ địch có HP% thấp nhất.')
+  if (skillId === 'PASSIVE_PYROMANCY_II') add('Performs two extra weak attacks after acting.', 'Thực hiện thêm hai đòn yếu sau lượt.')
+  return details.join(' ')
+}
+
+function SkillHint({ language, kind, skillId, fields }: { language: string; kind: 'active' | 'passive'; skillId: string; fields: AdventurerDefinition['fields'] }) {
+  const label = kind === 'active' ? localizeActiveSkill(language as 'en' | 'vi', skillId) : localizePassiveSkill(language as 'en' | 'vi', skillId)
+  const detail = kind === 'active' ? describeActiveSkill(language, skillId) : describePassiveSkill(language, skillId, fields)
+  return <DetailHint label={label} detail={detail} className="skill-hint" />
 }
 
 function Currency({ amount, icon, label }: { amount: number; icon: string; label: string }) {
@@ -620,8 +708,8 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
   const detailsDefinition = detailsGuest && index.adventurers.get(detailsGuest.classId)
   const detailsStats = detailsGuest ? adventurerStats(detailsGuest, index) : undefined
   const detailsTraits = detailsGuest ? [detailsGuest.trait, detailsGuest.rareTrait].filter((trait): trait is string => Boolean(trait)) : []
-  const detailsActiveSkill = detailsDefinition?.fields.activeSkill && detailsDefinition.fields.activeSkill !== 'ACTIVE_NONE' ? localizeActiveSkill(language, detailsDefinition.fields.activeSkill) : t('adventurer.noSkill')
-  const detailsPassiveSkill = detailsDefinition?.fields.passiveSkill && detailsDefinition.fields.passiveSkill !== 'PASSIVE_NONE' ? localizePassiveSkill(language, detailsDefinition.fields.passiveSkill) : t('adventurer.noSkill')
+  const detailsActiveSkill = detailsDefinition?.fields.activeSkill && detailsDefinition.fields.activeSkill !== 'ACTIVE_NONE' ? <SkillHint language={language} kind="active" skillId={detailsDefinition.fields.activeSkill} fields={detailsDefinition.fields} /> : t('adventurer.noSkill')
+  const detailsPassiveSkill = detailsDefinition?.fields.passiveSkill && detailsDefinition.fields.passiveSkill !== 'PASSIVE_NONE' ? <SkillHint language={language} kind="passive" skillId={detailsDefinition.fields.passiveSkill} fields={detailsDefinition.fields} /> : t('adventurer.noSkill')
   const detailsAssessment = detailsDefinition && detailsStats ? recruitAssessment(detailsDefinition, detailsStats, t) : undefined
   const close = () => {
     store.markTavernSeen()
@@ -1596,8 +1684,8 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
         {traits.length > 0 && <p><strong>{t('battle.traits')}:</strong> {traits.map((trait, position) => <span key={trait}>{position > 0 && ' · '}<TraitHint language={language} trait={trait} /></span>)}</p>}
       </section>
       <section className="adventurer-skills">
-        <article><small>{t('battle.active')}</small><strong>{activeSkill}</strong></article>
-        <article><small>{t('battle.passive')}</small><strong>{passiveSkill}</strong></article>
+        <article><small>{t('battle.active')}</small>{definition.fields.activeSkill && definition.fields.activeSkill !== 'ACTIVE_NONE' ? <SkillHint language={language} kind="active" skillId={definition.fields.activeSkill} fields={definition.fields} /> : <strong>{activeSkill}</strong>}</article>
+        <article><small>{t('battle.passive')}</small>{definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE' ? <SkillHint language={language} kind="passive" skillId={definition.fields.passiveSkill} fields={definition.fields} /> : <strong>{passiveSkill}</strong>}</article>
       </section>
       <section className="adventurer-advanced"><h3>{t('adventurer.combatStats')}</h3><div className="stat-grid">{advancedStats.map(([label, value]) => <span key={label}>{label} <b>{value}</b></span>)}</div></section>
       <section className="adventurer-potions"><h3>{t('adventurer.potions')}</h3><div>{['PotionOfConstitution', 'PotionOfDexterity', 'PotionOfIntelligence', 'PotionOfHealth', 'PotionOfDefense', 'PotionOfMagicDefense', 'PotionOfPrecision', 'PotionOfViciousness', 'PotionOfDarkness', 'PotionOfImmunity', 'PotionOfAgility'].map((itemId, potionType) => <span key={itemId}><img src={assetUrl(index.items.get(itemId)?.imageKey)} alt="" />{member.potionsDrank[potionType] ?? 0}/{potionLimit(member, index, potionType)}</span>)}</div></section>
