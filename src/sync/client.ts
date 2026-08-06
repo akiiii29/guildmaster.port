@@ -212,15 +212,10 @@ class SupabaseGameSync implements GameSync {
 
   async getPaymentOrderStatus(orderId: string) {
     if (!this.user || !/^[0-9a-f-]{36}$/i.test(orderId)) return null
-    const { data, error } = await this.client
-      .from('payment_orders')
-      .select('status')
-      .eq('order_id', orderId)
-      .maybeSingle()
-    if (error || !data || typeof data.status !== 'string') return null
-    return data.status === 'pending' || data.status === 'paid' || data.status === 'failed' || data.status === 'expired' || data.status === 'refunded'
-      ? data.status
-      : null
+    const { data, error } = await this.client.functions.invoke('payment-status', { body: { orderId } })
+    const status = isRecord(data) && typeof data.status === 'string' ? data.status : null
+    if (error || !status) return null
+    return status === 'pending' || status === 'paid' || status === 'failed' || status === 'expired' || status === 'refunded' ? status : null
   }
 
   isGemAuthorityEnabled = () => gemAuthorityEnabled

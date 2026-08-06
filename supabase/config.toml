@@ -12,6 +12,10 @@ verify_jwt = false
 # The function validates the bearer token itself so it can return a consistent JSON error.
 verify_jwt = false
 
+[functions.payment-status]
+# The function validates the bearer token itself so it can return a consistent JSON error.
+verify_jwt = false
+
 [functions.payment-webhook]
 # Payment providers authenticate with an HMAC signature, not a Supabase JWT.
 verify_jwt = false
