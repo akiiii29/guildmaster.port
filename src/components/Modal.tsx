@@ -11,12 +11,18 @@ interface ModalProps {
 export function Modal({ title, onClose, children, wide }: ModalProps) {
   const { t } = useI18n()
   const panelRef = useRef<HTMLElement>(null)
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
   useEffect(() => {
     const panel = panelRef.current
     const focusable = () => [...(panel?.querySelectorAll<HTMLElement>('button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])') ?? [])]
     focusable()[0]?.focus()
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') onCloseRef.current()
       if (event.key !== 'Tab') return
       const elements = focusable()
       if (elements.length === 0) return
@@ -32,7 +38,7 @@ export function Modal({ title, onClose, children, wide }: ModalProps) {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose])
+  }, [])
 
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
