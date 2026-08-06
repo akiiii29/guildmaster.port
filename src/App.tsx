@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 're
 import './App.css'
 import type { ContentIndex } from './game/content'
 import { assetUrl } from './game/content'
-import type { AdventurerDefinition, AdventurerState, AreaDefinition, AreaRun, EnemyDefinition, EnemyState, EquipmentSlot, GameContent, ItemDefinition, PetAbilityType, PetDefinition, PetState, ScreenId, StatusEffectState } from './game/types'
+import type { AdventurerDefinition, AdventurerState, AreaDefinition, AreaRun, EnemyDefinition, EnemyState, EquipmentSlot, GameContent, ItemDefinition, PetAbilityType, PetDefinition, PetState, ScreenId, StatusEffectState, StatusEffectType } from './game/types'
 import { adventurerAttackBounds, buildingCapacity, experienceToNextLevel, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, petFoodToNextLevel, quartersPrice, shelterAutofeedPrice, shelterCapacity, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, tavernVisitorIntervalSeconds, workshopCraftSeconds, workshopQueueCapacity, workshopQueuePrice, workshopTimePrice } from './game/formulas'
 import { GameStore, useGame } from './game/store'
 import { I18nProvider, localizeActiveSkill, localizeDoctrineAbility, localizeKingMessage, localizePassiveSkill, localizeQuestDescription, localizeRareTrait, localizeStatus, useI18n } from './game/i18n'
@@ -415,9 +415,79 @@ function ActionConfirmation({ title, body, onCancel, onConfirm }: { title: strin
   return <div className="confirm-layer"><section className="confirm-box"><h3>{title}</h3><p>{body}</p><div><button onClick={onCancel}>{t('common.cancel')}</button><button onClick={onConfirm}>{t('common.yes')}</button></div></section></div>
 }
 
+type SettingsInfoTab = 'upgrades' | 'statuses' | 'experience'
+
+const STATUS_REFERENCE: Array<{ type: StatusEffectType; description: [string, string] }> = [
+  { type: 'ABLAZE', description: ['Takes damage equal to 5% of max HP each turn.', 'Mất 5% HP tối đa mỗi lượt.'] },
+  { type: 'POISON', description: ['Deals 20% less damage.', 'Gây ít hơn 20% sát thương.'] },
+  { type: 'ANOINTED', description: ['Deals 25% more damage.', 'Gây thêm 25% sát thương.'] },
+  { type: 'INSPIRE', description: ['Deals 25% more damage.', 'Gây thêm 25% sát thương.'] },
+  { type: 'EXALT', description: ['Deals 25% more damage and takes 5 less damage.', 'Gây thêm 25% sát thương và nhận ít hơn 5 sát thương.'] },
+  { type: 'FRENZY', description: ['Deals 30% more damage.', 'Gây thêm 30% sát thương.'] },
+  { type: 'DELIRIUM', description: ['Deals double damage.', 'Gây gấp đôi sát thương.'] },
+  { type: 'FROZEN', description: ['Cannot dodge and takes 10 physical damage each turn.', 'Không thể né và nhận 10 sát thương vật lý mỗi lượt.'] },
+  { type: 'BLEED', description: ['Takes damage equal to its Bleed stacks, then loses one stack.', 'Nhận sát thương bằng số cộng dồn Bleed, sau đó mất 1 cộng dồn.'] },
+  { type: 'DEFENSIVE_STANCE', description: ['Blocks the next incoming hit.', 'Chặn đòn đánh kế tiếp nhận vào.'] },
+  { type: 'REGENERATION', description: ['Restores 6% of max HP each turn.', 'Hồi 6% HP tối đa mỗi lượt.'] },
+  { type: 'STUN', description: ['Skips its turn.', 'Bỏ lượt.'] },
+  { type: 'STUN_NOT_CLEANSABLE', description: ['Skips its turn and cannot be cleansed.', 'Bỏ lượt và không thể được thanh tẩy.'] },
+  { type: 'SILENCE', description: ['Cannot use skills or gain Mana.', 'Không thể dùng skill hoặc nhận Mana.'] },
+  { type: 'TAUNT', description: ['Forces attacks toward the taunting unit; skill targeting is focused on it.', 'Ép đòn đánh nhắm vào đơn vị gây Taunt; skill cũng ưu tiên mục tiêu đó.'] },
+  { type: 'PETRIFY', description: ['Cannot dodge, takes 15% more damage and skips its turn.', 'Không thể né, nhận thêm 15% sát thương và bỏ lượt.'] },
+  { type: 'TERRIFY', description: ['Skips its turn and takes 20% max HP as magic damage.', 'Bỏ lượt và nhận sát thương phép bằng 20% HP tối đa.'] },
+  { type: 'LESSER_CURSE', description: ['On death, raises a Zombie for the caster’s side; the summon decays by 25% max HP each turn.', 'Khi chết, triệu hồi Zombie cho phe người dùng; lính triệu hồi mất 25% HP tối đa mỗi lượt.'] },
+  { type: 'CURSE', description: ['On death, raises a Bone Horror; the summon decays by 25% max HP each turn and has triple target priority.', 'Khi chết, triệu hồi Bone Horror; lính triệu hồi mất 25% HP tối đa mỗi lượt và có ưu tiên bị nhắm gấp 3.'] },
+  { type: 'GREATER_CURSE', description: ['A stronger curse that raises a Bone Nightmare on death.', 'Lời nguyền mạnh hơn, triệu hồi Bone Nightmare khi chết.'] },
+  { type: 'OMINOUS_CURSE', description: ['A powerful curse that raises a reinforced Bone Nightmare on death.', 'Lời nguyền mạnh, triệu hồi Bone Nightmare cường hóa khi chết.'] },
+  { type: 'ABHORRENT_CURSE', description: ['The strongest curse variant, raising an empowered undead minion on death.', 'Biến thể lời nguyền mạnh nhất, triệu hồi undead cường hóa khi chết.'] },
+  { type: 'SKELETON_KEY', description: ['Marks the key objective needed by some raid routes.', 'Đánh dấu mục tiêu chìa khóa cần cho một số nhánh raid.'] },
+  { type: 'FEEBLE_TETHER', description: ['Marks a tethered target for related skill interactions.', 'Đánh dấu mục tiêu bị liên kết cho các tương tác skill liên quan.'] },
+  { type: 'FALSE_LIFE', description: ['A temporary life-preserving effect used by specific skills.', 'Hiệu ứng duy trì sự sống tạm thời của một số skill.'] },
+]
+
+const UPGRADE_REFERENCE = [
+  { id: 'quarters', label: ['Quarters capacity', 'Sức chứa Khu nhà'], max: 22, price: quartersPrice },
+  { id: 'tavernCapacity', label: ['Tavern capacity', 'Sức chứa Tavern'], max: 6, price: tavernCapacityPrice },
+  { id: 'tavernTime', label: ['Tavern time', 'Thời gian Tavern'], max: 19, price: tavernTimePrice },
+  { id: 'storage', label: ['Storage capacity', 'Sức chứa Storage'], max: 79, price: storagePrice },
+  { id: 'workshopQueue', label: ['Workshop queue', 'Hàng chờ Workshop'], max: 9, price: workshopQueuePrice },
+  { id: 'workshopTime', label: ['Workshop time', 'Thời gian Workshop'], max: 24, price: workshopTimePrice },
+  { id: 'marketListings', label: ['Market listings', 'Ô đăng bán Market'], max: 9, price: marketListingsPrice },
+  { id: 'marketTime', label: ['Market time', 'Thời gian Market'], max: 24, price: marketTimePrice },
+  { id: 'shelter', label: ['Shelter capacity', 'Sức chứa Shelter'], max: 10, price: shelterPrice },
+  { id: 'shelterAutofeed', label: ['Shelter Auto-feed', 'Tự cho ăn Shelter'], max: 0, price: shelterAutofeedPrice },
+] as const
+
+function SettingsInfo({ language }: { language: string }) {
+  const [open, setOpen] = useState(false)
+  const [tab, setTab] = useState<SettingsInfoTab>('upgrades')
+  const [upgradeId, setUpgradeId] = useState<(typeof UPGRADE_REFERENCE)[number]['id']>('quarters')
+  const [ascended, setAscended] = useState(false)
+  const vi = language === 'vi'
+  const text = vi
+    ? { title: 'Thông tin game', upgrades: 'Chi phí nâng cấp', statuses: 'Hiệu ứng trạng thái', experience: 'Bảng EXP', building: 'Nâng cấp', level: 'Cấp hiện tại', next: 'Lên cấp', cost: 'Chi phí', status: 'Hiệu ứng', description: 'Tác dụng', required: 'EXP cần', reached: 'EXP đã đạt', total: 'EXP cộng dồn', ascended: 'Ascended ×2 EXP' }
+    : { title: 'Game information', upgrades: 'Upgrade costs', statuses: 'Status effects', experience: 'EXP table', building: 'Upgrade', level: 'Current level', next: 'Next level', cost: 'Cost', status: 'Status', description: 'Effect', required: 'XP required', reached: 'XP reached', total: 'Cumulative XP', ascended: 'Ascended ×2 XP' }
+  const upgrade = UPGRADE_REFERENCE.find((entry) => entry.id === upgradeId) ?? UPGRADE_REFERENCE[0]
+  let accumulatedXp = 0
+  return <section className="settings-info">
+    <button className="settings-info-trigger" type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)}>ⓘ {text.title}</button>
+    {open && <div className="settings-info-body">
+      <div className="settings-info-tabs" role="tablist" aria-label={text.title}>
+        {(['upgrades', 'statuses', 'experience'] as SettingsInfoTab[]).map((entry) => <button type="button" key={entry} className={tab === entry ? 'active' : ''} onClick={() => setTab(entry)}>{text[entry]}</button>)}
+      </div>
+      {tab === 'upgrades' && <>
+        <label className="settings-reference-select">{text.building}<select value={upgradeId} onChange={(event) => setUpgradeId(event.target.value as typeof upgradeId)}>{UPGRADE_REFERENCE.map((entry) => <option key={entry.id} value={entry.id}>{entry.label[vi ? 1 : 0]}</option>)}</select></label>
+        <div className="settings-reference-table"><table><thead><tr><th>{text.level}</th><th>{text.next}</th><th>{text.cost}</th></tr></thead><tbody>{Array.from({ length: upgrade.max + 1 }, (_, level) => <tr key={level}><td>{level}</td><td>{upgradeId === 'shelterAutofeed' ? text.next : level + 1}</td><td>{upgrade.price(level).toLocaleString()}</td></tr>)}</tbody></table></div>
+      </>}
+      {tab === 'statuses' && <div className="settings-reference-table"><table><thead><tr><th>{text.status}</th><th>{text.description}</th></tr></thead><tbody>{STATUS_REFERENCE.map((entry) => <tr key={entry.type}><td><span className="settings-status-name"><img src={assetUrl(statusIconKey(entry.type))} alt="" />{localizeStatus(language as 'en' | 'vi', entry.type)}</span></td><td>{entry.description[vi ? 1 : 0]}</td></tr>)}</tbody></table></div>}
+      {tab === 'experience' && <><label className="settings-info-toggle"><input type="checkbox" checked={ascended} onChange={(event) => setAscended(event.target.checked)} />{text.ascended}</label><div className="settings-reference-table"><table><thead><tr><th>{text.level}</th><th>{text.required}</th><th>{text.reached}</th><th>{text.total}</th></tr></thead><tbody>{Array.from({ length: 45 }, (_, index) => { const level = index + 1; const required = experienceToNextLevel(level, ascended); const reached = accumulatedXp; accumulatedXp += required; return <tr key={level}><td>{level}</td><td>{required.toLocaleString()}</td><td>{reached.toLocaleString()}</td><td>{accumulatedXp.toLocaleString()}</td></tr> })}</tbody></table></div></>}
+    </div>}
+  </section>
+}
+
 function SettingsDialog({ store, onClose }: { store: GameStore; onClose: () => void }) {
   const state = useGame(store)
-  const { t } = useI18n()
+  const { language, t } = useI18n()
   const amounts = [1, 5, 10, 25, 50, 100, 999]
   const update = (key: keyof typeof state.settings, value: number | boolean) => store.updateSettings({ [key]: value })
   const toggle = (key: keyof typeof state.settings, label: string, detail: string) => <label className="settings-toggle" key={key}><span><strong>{label}</strong><small>{detail}</small></span><input type="checkbox" checked={Boolean(state.settings[key])} onChange={(event) => update(key, event.target.checked)} /></label>
@@ -431,6 +501,7 @@ function SettingsDialog({ store, onClose }: { store: GameStore; onClose: () => v
       {toggle('autoOpenDungeonDetail', t('settings.autoOpen'), t('settings.autoOpenHint'))}
       {toggle('verboseLogs', t('settings.verbose'), t('settings.verboseHint'))}
       {toggle('colorblindMode', t('settings.colorblind'), t('settings.colorblindHint'))}
+      <SettingsInfo language={language} />
     </section>
     <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
   </Modal>
