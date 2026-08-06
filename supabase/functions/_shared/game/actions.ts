@@ -2,6 +2,7 @@ import type { DoctrineId, EquipmentSlot, GameSettings, GameState } from './types
 import type { ContentIndex } from './content.ts'
 import {
   ascendAdventurer,
+  buyPack,
   buyMerchantOffer,
   buyQuestRefresh,
   cancelMarketListing,
@@ -112,6 +113,7 @@ export function applyAuthoritativeAction(state: GameState, index: ContentIndex, 
     case 'upgradeMarket': return payload.kind === 'listings' || payload.kind === 'time' ? upgradeMarket(state, payload.kind) : false
     case 'refreshMerchant': refreshMerchantRegular(state, index); refreshMerchantSpecial(state, index); return true
     case 'buyMerchant': return uid !== null ? buyMerchantOffer(state, uid) : false
+    case 'buyPack': return payload.pack === 'starter' || payload.pack === 'merchant' ? buyPack(state, payload.pack) : false
     case 'promote': {
       const classId = text(payload.classId)
       return uid !== null && classId ? promoteAdventurer(state, index, uid, classId) : false

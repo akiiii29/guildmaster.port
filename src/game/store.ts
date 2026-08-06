@@ -26,6 +26,7 @@ import {
   upgradeTavern,
   upgradeMarket,
   buyMerchantOffer,
+  buyPack,
   refreshMerchantRegular,
   refreshMerchantSpecial,
   promoteAdventurer,
@@ -180,7 +181,9 @@ export class GameStore {
           verboseLogs: parsed.settings?.verboseLogs ?? false,
           colorblindMode: parsed.settings?.colorblindMode ?? false,
         },
-        purchasedPacks: { starter: true, merchant: true },
+        // Packs are paid with protected Gems, so legacy local flags must never
+        // grant their bonuses. Authoritative actions restore valid purchases.
+        purchasedPacks: { starter: false, merchant: false },
         lastDailyReset: parsed.lastDailyReset ?? (() => {
           const date = new Date(parsed.lastAccess || Date.now())
           date.setHours(0, 0, 0, 0)
@@ -516,6 +519,10 @@ export class GameStore {
 
   buyMerchant(uid: number) {
     return this.commitAuthoritative('buyMerchant', { uid }, (draft) => { buyMerchantOffer(draft, uid) })
+  }
+
+  buyPack(pack: 'starter' | 'merchant') {
+    return this.commitAuthoritative('buyPack', { pack }, (draft) => { buyPack(draft, pack) })
   }
 
   promote(uid: number, classId: string) {

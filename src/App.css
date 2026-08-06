@@ -458,6 +458,14 @@ button { color: inherit; }
 .battle-result-actions { display: flex; justify-content: center; gap: 8px; margin-top: 5px; }
 .battle-result-actions button, .battle-inspect-close { border: 0; background: transparent; padding: 8px; color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
 .battle-result-actions button:hover, .battle-inspect-close:hover { color: var(--brass); background: rgba(255,255,255,.06); }
+.chest-loot-dialog { display: grid; gap: 12px; }
+.chest-loot-dialog > p { margin: 0; color: var(--muted); font-size: 13px; }
+.chest-loot-dialog .battle-result-loot { margin: 0; }
+.chest-loot-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.chest-loot-actions button { border: 0; background: transparent; padding: 8px; color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
+.chest-loot-actions button:hover { color: var(--brass); background: rgba(255,255,255,.06); }
+.iap-pack-heading { margin: 18px 0 8px; color: var(--brass); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
+.iap-permanent-pack small { line-height: 1.35; }
 .battle-inspect-layer { position: absolute; z-index: 8; inset: 0; display: grid; place-items: center; padding: 12px; background: rgba(0,0,0,.76); }
 .battle-inspect-panel { width: min(100%, 390px); max-height: 100%; overflow-y: auto; padding: 16px; background: #424242; border: 3px solid #000; border-radius: 10px; box-shadow: 0 16px 40px #000; }
 .battle-inspect-header { display: grid; grid-template-columns: 82px minmax(0,1fr); align-items: center; gap: 12px; }

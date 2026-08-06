@@ -25,6 +25,7 @@ type DialogState =
   | { type: 'building'; id: string }
   | { type: 'market'; itemId?: string }
   | { type: 'area'; areaId: string }
+  | { type: 'loot'; areaId: string }
   | { type: 'send'; areaId: string }
   | { type: 'refillRaid'; areaId: string }
   | { type: 'adventurer'; uid: number }
@@ -273,7 +274,7 @@ function AreaCard({
   run,
   party,
   onClick,
-  onCollect,
+  onOpenLoot,
   raidTry,
   nextUnlock,
 }: {
@@ -281,7 +282,7 @@ function AreaCard({
   run?: AreaRun
   party: Array<{ member: AdventurerState; imageKey: string; maxHp: number }>
   onClick: () => void
-  onCollect: () => void
+  onOpenLoot: () => void
   raidTry?: boolean
   nextUnlock?: { name: string; progress: number }
 }) {
@@ -324,9 +325,9 @@ function AreaCard({
       </div>
       </button>
       {lootCount > 0 && (
-        <button className="area-loot" onClick={onCollect} aria-label={t('dungeon.collectDrops', { count: lootCount, area: name(area.name) })}>
-          <strong>{lootCount}/2k</strong>
-          <img src={assetUrl(lootCount >= 2000 ? 'loot_chest_full' : 'loot_chest')} alt="" />
+        <button className="area-loot" onClick={onOpenLoot} aria-label={t('dungeon.collectDrops', { count: lootCount, area: name(area.name) })}>
+          <strong>{lootCount}</strong>
+          <img src={assetUrl('loot_chest')} alt="" />
         </button>
       )}
     </article>
@@ -339,12 +340,14 @@ function AreasView({
   content,
   raid,
   onOpen,
+  onOpenLoot,
 }: {
   store: GameStore
   index: ContentIndex
   content: GameContent
   raid: boolean
   onOpen: (areaId: string) => void
+  onOpenLoot: (areaId: string) => void
 }) {
   const state = useGame(store)
   const { t, name } = useI18n()
@@ -383,7 +386,7 @@ function AreasView({
             return member && definition ? [{ member, imageKey: definition.imageKey, maxHp: adventurerStats(member, index).maxHp }] : []
           })}
           onClick={() => onOpen(area.id)}
-          onCollect={() => store.collect(area.id)}
+          onOpenLoot={() => onOpenLoot(area.id)}
           raidTry={area.areaType !== 0 ? raidTryAvailable(state, area.id) : undefined}
           nextUnlock={area.unlocks
             .filter((unlock) => !state.unlockedAreas.includes(unlock.areaGetter))
@@ -521,8 +524,14 @@ const GEM_PACKAGES = [
   { productId: 'gems_50000', gems: 50_000, price: 50_000 },
 ] as const
 
+const PERMANENT_PACKAGES = [
+  { id: 'starter', titleKey: 'shop.starterPack', descriptionKey: 'shop.starterPackDescription', gems: 700 },
+  { id: 'merchant', titleKey: 'shop.merchantPack', descriptionKey: 'shop.merchantPackDescription', gems: 3_000 },
+] as const
+
 function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void }) {
   const { t } = useI18n()
+  const state = useGame(store)
   const [order, setOrder] = useState<{ orderId: string; productId: string; priceMinor: number; paymentCode: string } | null>(null)
   const [creating, setCreating] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -539,6 +548,14 @@ function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void 
     }
     setPaid(false)
     setOrder(result.order)
+  }
+
+  const buyPermanentPack = async (pack: 'starter' | 'merchant') => {
+    setMessage(null)
+    setCreating(true)
+    const bought = await store.buyPack(pack)
+    setCreating(false)
+    if (!bought) setMessage(t('shop.packUnavailable'))
   }
 
   useEffect(() => {
@@ -569,7 +586,14 @@ function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void 
     <section className="iap-dialog">
       <img className="iap-gem-icon" src={assetUrl('gem')} alt="" />
       <p>{t('shop.intro')}</p>
-      {!order ? <div className="iap-package-list">{GEM_PACKAGES.map((pack) => <button className="iap-package" disabled={creating} key={pack.productId} onClick={() => void createOrder(pack.productId)}><img src={assetUrl('gem')} alt="" /><span><strong>{pack.gems.toLocaleString()} {t('currency.gems')}</strong><small>{t('shop.gemPackAmount')}</small></span><b>{pack.price.toLocaleString()} VND</b></button>)}</div> : <>
+      {!order ? <>
+        <div className="iap-package-list">{GEM_PACKAGES.map((pack) => <button className="iap-package" disabled={creating} key={pack.productId} onClick={() => void createOrder(pack.productId)}><img src={assetUrl('gem')} alt="" /><span><strong>{pack.gems.toLocaleString()} {t('currency.gems')}</strong><small>{t('shop.gemPackAmount')}</small></span><b>{pack.price.toLocaleString()} VND</b></button>)}</div>
+        <h3 className="iap-pack-heading">{t('shop.permanentPacks')}</h3>
+        <div className="iap-package-list">{PERMANENT_PACKAGES.map((pack) => {
+          const owned = state.purchasedPacks[pack.id]
+          return <button className="iap-package iap-permanent-pack" disabled={creating || owned} key={pack.id} onClick={() => void buyPermanentPack(pack.id)}><img src={assetUrl(pack.id === 'starter' ? 'sign_storage' : 'merchant')} alt="" /><span><strong>{t(pack.titleKey)}</strong><small>{t(pack.descriptionKey)}</small></span><b>{owned ? t('shop.owned') : `${pack.gems.toLocaleString()} ${t('currency.gems')}`}</b></button>
+        })}</div>
+      </> : <>
         <div className="iap-qr"><img src={qrUrl} alt={t('shop.qrAlt')} /></div>
         <strong className="iap-payment-code">{order.paymentCode}</strong>
         <p>{t('shop.transferExact', { price: order.priceMinor.toLocaleString() })}</p>
@@ -1644,6 +1668,32 @@ function AdventureReportPanel({ run, index, onClose }: { run: AreaRun; index: Co
   </div>
 }
 
+function ChestLootDialog({ areaId, store, index, onClose }: { areaId: string; store: GameStore; index: ContentIndex; onClose: () => void }) {
+  const state = useGame(store)
+  const { t, name } = useI18n()
+  const run = state.runs[areaId]
+  const [collectFailed, setCollectFailed] = useState(false)
+  if (!run || run.chest.length === 0) return null
+  const lootCount = run.chest.reduce((total, stack) => total + stack.stack, 0)
+  const collect = async () => {
+    if (await store.collect(areaId)) onClose()
+    else setCollectFailed(true)
+  }
+  return (
+    <Modal title={t('battle.loot')} onClose={onClose}>
+      <div className="chest-loot-dialog">
+        <p>{t('dungeon.collectDrops', { count: lootCount, area: name(index.areas.get(areaId)?.name ?? areaId) })}</p>
+        <div className="battle-result-loot">{run.chest.map((stack) => {
+          const item = index.items.get(stack.itemId)
+          return <span key={stack.itemId}><img src={assetUrl(item?.imageKey)} alt="" />{name(item?.name ?? stack.itemId)} ×{stack.stack}</span>
+        })}</div>
+        {collectFailed && <p className="battle-result-error">{t('battle.lootFull')}</p>}
+        <div className="chest-loot-actions"><button onClick={collect}>{t('common.collect')}</button><button onClick={onClose}>{t('common.close')}</button></div>
+      </div>
+    </Modal>
+  )
+}
+
 function AreaDialog({ areaId, store, index, onClose }: { areaId: string; store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
   const { t, name, log } = useI18n()
@@ -2290,8 +2340,8 @@ function AppShell({ content, index, store }: AppProps) {
       <main className="game-content">
         {screen === 'headquarters' && <Headquarters onOpen={(id) => setDialog({ type: 'building', id })} tavernCount={state.tavernGuests.length} tavernCapacity={buildingCapacity('tavern', state.buildings.tavernCapacity, state.permanentUpgrades.UpgradeTavernCapacity ?? 0, state.purchasedPacks)} />}
         {screen === 'adventurers' && <AdventurersView store={store} index={index} onOpen={(uid) => setDialog({ type: 'adventurer', uid })} onManage={() => setDialog({ type: 'roster' })} />}
-        {screen === 'dungeons' && <AreasView store={store} index={index} content={content} raid={false} onOpen={openArea} />}
-        {screen === 'raids' && <AreasView store={store} index={index} content={content} raid onOpen={openArea} />}
+        {screen === 'dungeons' && <AreasView store={store} index={index} content={content} raid={false} onOpen={openArea} onOpenLoot={(areaId) => setDialog({ type: 'loot', areaId })} />}
+        {screen === 'raids' && <AreasView store={store} index={index} content={content} raid onOpen={openArea} onOpenLoot={(areaId) => setDialog({ type: 'loot', areaId })} />}
       </main>
 
       <nav className="bottom-nav" aria-label="Primary navigation">
@@ -2311,6 +2361,7 @@ function AppShell({ content, index, store }: AppProps) {
       {dialog?.type === 'send' && <SendTeamDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} onSent={() => state.settings.autoOpenDungeonDetail ? setDialog({ type: 'area', areaId: dialog.areaId }) : setDialog(null)} />}
       {dialog?.type === 'refillRaid' && <RefillRaidDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} onBought={() => setDialog({ type: 'send', areaId: dialog.areaId })} />}
       {dialog?.type === 'area' && <AreaDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} />}
+      {dialog?.type === 'loot' && <ChestLootDialog areaId={dialog.areaId} store={store} index={index} onClose={() => setDialog(null)} />}
       {dialog?.type === 'adventurer' && <AdventurerDialog uid={dialog.uid} store={store} index={index} onClose={() => setDialog(null)} onSelectEquipment={(slot) => setDialog({ type: 'equipment', uid: dialog.uid, slot })} />}
       {dialog?.type === 'equipment' && <SelectEquipmentDialog uid={dialog.uid} slot={dialog.slot} store={store} index={index} onDone={() => setDialog({ type: 'adventurer', uid: dialog.uid })} />}
       {dialog?.type === 'merchant' && <MerchantDialog store={store} index={index} onClose={() => setDialog(null)} />}

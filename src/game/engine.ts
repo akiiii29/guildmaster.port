@@ -309,7 +309,7 @@ export function createInitialState(index: ContentIndex): GameState {
     tutorialStep: 1,
     money: 0,
     gems: 1_000,
-    purchasedPacks: { starter: true, merchant: true },
+    purchasedPacks: { starter: false, merchant: false },
     loyalty: {
       Affliction: { level: 0, stars: 0 }, Control: { level: 0, stars: 0 },
       Fortitude: { level: 0, stars: 0 }, Grace: { level: 0, stars: 0 },
@@ -2497,6 +2497,7 @@ function finishAction(state: GameState, run: AreaRun, index: ContentIndex) {
       combatTurn(state, run, index)
       if (!livingParty(state, run).length) {
         appendLog(run, 'The party was defeated.')
+        run.report.wipes += 1
         if (isRaid) finishRaidRun(state, run, 'defeat')
         else action(run, 'RESPAWN')
       } else if (!livingEnemies(run).length) {
@@ -3236,6 +3237,15 @@ export function buyMerchantOffer(state: GameState, offerUid: number) {
     addToInventory(state, { itemId: offer.itemId, stack: offer.stack })
   }
   list.splice(list.indexOf(offer), 1)
+  return true
+}
+
+export const PACK_GEM_COST = { starter: 700, merchant: 3_000 } as const
+
+export function buyPack(state: GameState, pack: keyof typeof PACK_GEM_COST) {
+  if (state.purchasedPacks[pack] || state.gems < PACK_GEM_COST[pack]) return false
+  state.gems -= PACK_GEM_COST[pack]
+  state.purchasedPacks[pack] = true
   return true
 }
 

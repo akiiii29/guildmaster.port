@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { indexContent } from './content'
-import { areaTeamSize, ascendAdventurer, buyMerchantOffer, buyQuestRefresh, cancelMarketListing, changeDoctrineAbility, claimQuest, collectChest, collectMarketSale, collectWorkshopJob, combatTurn, completedEpicRaid, consumePotion, consumeSpecial, createInitialState, dismissAdventurer, equipItem, feedPet, hatchPetEgg, hireGuest, incrementQuest, listMarketItem, markTavernGuestsSeen, mergePet, moveAdventurer, openGeodes, potionLimit, promoteAdventurer, promotionChoices, progressTavernTime, queueWorkshopRecipe, questRefreshPrice, raidTryCost, recallAdventurer, refillRaidTry, refreshDailyRaidTries, refreshMerchantCooldowns, refreshMerchantRegular, refreshMerchantSpecial, refreshQuests, releasePet, resetDoctrine, retreatRun, selectDoctrine, setTavernLocked, startRun, tickGame, togglePetFavourite, upgradeFacility, upgradeMarket, upgradeShelter, upgradeTavern } from './engine'
+import { areaTeamSize, ascendAdventurer, buyMerchantOffer, buyPack, buyQuestRefresh, cancelMarketListing, changeDoctrineAbility, claimQuest, collectChest, collectMarketSale, collectWorkshopJob, combatTurn, completedEpicRaid, consumePotion, consumeSpecial, createInitialState, dismissAdventurer, equipItem, feedPet, hatchPetEgg, hireGuest, incrementQuest, listMarketItem, markTavernGuestsSeen, mergePet, moveAdventurer, openGeodes, potionLimit, promoteAdventurer, promotionChoices, progressTavernTime, queueWorkshopRecipe, questRefreshPrice, raidTryCost, recallAdventurer, refillRaidTry, refreshDailyRaidTries, refreshMerchantCooldowns, refreshMerchantRegular, refreshMerchantSpecial, refreshQuests, releasePet, resetDoctrine, retreatRun, selectDoctrine, setTavernLocked, startRun, tickGame, togglePetFavourite, upgradeFacility, upgradeMarket, upgradeShelter, upgradeTavern } from './engine'
 import { adventurerAttackBounds, applyDamage, buildingCapacity, experienceToNextLevel, marketListingsCapacity, marketListingsPrice, marketSaleSeconds, marketTimePrice, offlineSeconds, quartersPrice, shelterAutofeedPrice, shelterPrice, storagePrice, tavernCapacityPrice, tavernTimePrice, workshopCraftSeconds, workshopQueueCapacity, workshopQueuePrice, workshopTimePrice } from './formulas'
 import { RECIPES } from './recipes'
 import { adventurerStats } from './stats'
@@ -85,10 +85,17 @@ describe('original-compatible game loop', () => {
     expect(upgradeMarket(state, 'time')).toBe(false)
   })
 
-  it('applies Starter and Merchant Pack bonuses to the market as in the APK', () => {
+  it('applies Starter and Merchant Pack bonuses only after their Gem purchase', () => {
     const index = indexContent(content)
     const state = createInitialState(index)
+    expect(state.purchasedPacks).toEqual({ starter: false, merchant: false })
+    expect(buyPack(state, 'merchant')).toBe(false)
+    state.gems = 3_700
+    expect(buyPack(state, 'starter')).toBe(true)
+    expect(buyPack(state, 'merchant')).toBe(true)
+    expect(state.gems).toBe(0)
     expect(state.purchasedPacks).toEqual({ starter: true, merchant: true })
+    expect(buyPack(state, 'starter')).toBe(false)
     expect(marketListingsCapacity(0, 0, true, true)).toBe(4)
     expect(marketSaleSeconds(100, 1, 0, 0, true)).toBe(266)
 
@@ -97,8 +104,14 @@ describe('original-compatible game loop', () => {
     expect(state.marketListings[0].totalSeconds).toBe(marketSaleSeconds(1, 1, 0, 0, true) + 1)
   })
 
-  it('applies the enabled packs to every capacity and Workshop craft speed', () => {
+  it('starts without pack bonuses and applies them after purchase', () => {
     const state = createInitialState(indexContent(content))
+    expect(buildingCapacity('quarters', 0, 0, state.purchasedPacks)).toBe(2)
+    expect(buildingCapacity('tavern', 0, 0, state.purchasedPacks)).toBe(1)
+    expect(buildingCapacity('storage', 0, 0, state.purchasedPacks)).toBe(35)
+    state.gems = 3_700
+    expect(buyPack(state, 'starter')).toBe(true)
+    expect(buyPack(state, 'merchant')).toBe(true)
     expect(buildingCapacity('quarters', 0, 0, state.purchasedPacks)).toBe(3)
     expect(buildingCapacity('tavern', 0, 0, state.purchasedPacks)).toBe(2)
     expect(buildingCapacity('storage', 0, 0, state.purchasedPacks)).toBe(140)
@@ -709,6 +722,33 @@ describe('original-compatible game loop', () => {
 
     expect(state.adventurers[0].xp).toBe(8)
     expect(run.report.xpLost).toBe(3)
+  })
+
+  it('keeps recording kills across successive encounters and records combat wipes', () => {
+    vi.mocked(Math.random).mockReturnValue(0.01)
+    const index = indexContent(content)
+    const state = createInitialState(index)
+    expect(hireGuest(state, 1)).toBe(true)
+    expect(startRun(state, 'EnchantedForest', [1], index)).toBe(true)
+    const run = state.runs.EnchantedForest
+
+    for (const uid of ['first-wolf', 'second-wolf']) {
+      run.enemies = [{ uid, enemyId: 'TutorialWolf', hp: 1, mana: 0, shield: 0, positiveStatusEffects: [], negativeStatusEffects: [] }]
+      run.turnOrder = ['a:1']
+      run.turnIndex = 0
+      combatTurn(state, run, index)
+    }
+    expect(run.report.enemiesKilled).toEqual({ TutorialWolf: 2 })
+
+    state.adventurers[0].hp = 1
+    run.enemies = [{ uid: 'dummy', enemyId: 'TestDummy', hp: 1000, mana: 0, shield: 0, positiveStatusEffects: [], negativeStatusEffects: [] }]
+    run.turnOrder = ['e:dummy']
+    run.turnIndex = 0
+    run.action = 'FIGHT'
+    run.actionRemaining = 1
+    run.actionTotal = 1
+    tickGame(state, index)
+    expect(run.report.wipes).toBe(1)
   })
 
   it('records a raid retreat separately from a victory result', () => {

@@ -42,7 +42,7 @@ import {
   workshopQueuePrice,
   workshopTimePrice,
 } from './formulas.ts'
-import { maxCraftable, recipeById } from './recipes.ts'
+import { maxCraftable, RECIPES, recipeById } from './recipes.ts'
 import { PROMOTION_PATHS } from './promotionPaths.ts'
 import {
   adventurerStats,
@@ -292,7 +292,7 @@ export function createInitialState(index: ContentIndex): GameState {
   const firstGuest = makeAdventurer(guestClass, 1)
   firstGuest.trait = null
   return {
-    version: 24,
+    version: 25,
     language: 'en',
     settings: {
       sellMaxAmount: 1,
@@ -309,7 +309,7 @@ export function createInitialState(index: ContentIndex): GameState {
     tutorialStep: 1,
     money: 0,
     gems: 1_000,
-    purchasedPacks: { starter: true, merchant: true },
+    purchasedPacks: { starter: false, merchant: false },
     loyalty: {
       Affliction: { level: 0, stars: 0 }, Control: { level: 0, stars: 0 },
       Fortitude: { level: 0, stars: 0 }, Grace: { level: 0, stars: 0 },
@@ -326,6 +326,7 @@ export function createInitialState(index: ContentIndex): GameState {
     adventurers: [],
     dismissedAdventurers: [],
     inventory: [],
+    knownRecipes: [],
     nextWorkshopJobId: 1,
     workshopQueue: [],
     completedWorkshopItems: [],
@@ -526,6 +527,18 @@ function ownsItem(state: GameState, itemId: string, areaId?: string) {
 
 function rememberItem(state: GameState, itemId: string) {
   if (!state.seenItems.includes(itemId)) state.seenItems.push(itemId)
+  discoverRecipesForItem(state, itemId)
+}
+
+export function discoverRecipesForItem(state: GameState, itemId: string) {
+  RECIPES.forEach((recipe) => {
+    if (recipe.ingredients.some((ingredient) => ingredient.itemId === itemId) && !state.knownRecipes.includes(recipe.id)) state.knownRecipes.push(recipe.id)
+  })
+}
+
+function addToInventory(state: GameState, stack: InventoryStack) {
+  addStack(state.inventory, stack)
+  rememberItem(state, stack.itemId)
 }
 
 function uniqueItemsHeld(state: GameState, index: ContentIndex) {
@@ -2484,6 +2497,7 @@ function finishAction(state: GameState, run: AreaRun, index: ContentIndex) {
       combatTurn(state, run, index)
       if (!livingParty(state, run).length) {
         appendLog(run, 'The party was defeated.')
+        run.report.wipes += 1
         if (isRaid) finishRaidRun(state, run, 'defeat')
         else action(run, 'RESPAWN')
       } else if (!livingEnemies(run).length) {
@@ -2807,7 +2821,7 @@ export function cancelMarketListing(state: GameState, uid: number) {
   const listing = state.marketListings.find((entry) => entry.uid === uid)
   if (!listing || !hasStorageSpaceFor(state, [{ itemId: listing.itemId, stack: listing.stack }])) return false
   state.marketListings.splice(state.marketListings.indexOf(listing), 1)
-  addStack(state.inventory, { itemId: listing.itemId, stack: listing.stack })
+  addToInventory(state, { itemId: listing.itemId, stack: listing.stack })
   return true
 }
 
@@ -2935,7 +2949,7 @@ export function changeDoctrineAbility(state: GameState, index: ContentIndex, uid
       const definition = index.adventurers.get(member.classId)
       const equipped = member.weaponId ? index.items.get(member.weaponId) : undefined
       if (definition && equipped && !itemMatchesSlot(equipped, definition, 'weapon', member)) {
-        addStack(state.inventory, { itemId: equipped.id, stack: 1 })
+        addToInventory(state, { itemId: equipped.id, stack: 1 })
         member.weaponId = defaultWeaponId(definition)
       }
     }
@@ -2979,7 +2993,7 @@ export function hatchPetEgg(state: GameState, index: ContentIndex, eggId: string
   const petId = roll < 0.75 ? species[0] : roll < 0.95 ? species[1] : species[2]
   const definition = index.pets.get(petId)
   if (!definition) {
-    addStack(state.inventory, { itemId: eggId, stack: 1 })
+    addToInventory(state, { itemId: eggId, stack: 1 })
     return false
   }
   const firstPool = PET_FAMILY_FIRST[definition.family] ?? PET_ABILITIES
@@ -3220,10 +3234,18 @@ export function buyMerchantOffer(state: GameState, offerUid: number) {
   else state.money -= offer.price
   if (offer.itemId.startsWith('Upgrade')) state.permanentUpgrades[offer.itemId] = (state.permanentUpgrades[offer.itemId] ?? 0) + 1
   else {
-    addStack(state.inventory, { itemId: offer.itemId, stack: offer.stack })
-    rememberItem(state, offer.itemId)
+    addToInventory(state, { itemId: offer.itemId, stack: offer.stack })
   }
   list.splice(list.indexOf(offer), 1)
+  return true
+}
+
+export const PACK_GEM_COST = { starter: 700, merchant: 3_000 } as const
+
+export function buyPack(state: GameState, pack: keyof typeof PACK_GEM_COST) {
+  if (state.purchasedPacks[pack] || state.gems < PACK_GEM_COST[pack]) return false
+  state.gems -= PACK_GEM_COST[pack]
+  state.purchasedPacks[pack] = true
   return true
 }
 
@@ -3439,7 +3461,7 @@ export function equipItem(
   if (itemId === null) {
     if (!oldItemId || (slot === 'weapon' && oldItemId === defaultId)) return false
     if (!hasStorageSpaceFor(state, [{ itemId: oldItemId, stack: 1 }])) return false
-    addStack(state.inventory, { itemId: oldItemId, stack: 1 })
+    addToInventory(state, { itemId: oldItemId, stack: 1 })
     setEquipmentItemId(member, slot, slot === 'weapon' ? defaultId : null)
     member.hp = Math.min(member.hp, adventurerStats(member, index).maxHp)
     return true
@@ -3453,7 +3475,7 @@ export function equipItem(
   const storageCapacity = buildingCapacity('storage', state.buildings.storage, state.permanentUpgrades.UpgradeStorage ?? 0, state.purchasedPacks)
   if (projectedInventory.length > storageCapacity) return false
   if (!removeStack(state.inventory, itemId, 1)) return false
-  if (oldItemId && !(slot === 'weapon' && oldItemId === defaultId)) addStack(state.inventory, { itemId: oldItemId, stack: 1 })
+  if (oldItemId && !(slot === 'weapon' && oldItemId === defaultId)) addToInventory(state, { itemId: oldItemId, stack: 1 })
   setEquipmentItemId(member, slot, itemId)
   member.hp = Math.min(member.hp, adventurerStats(member, index).maxHp)
 
@@ -3556,8 +3578,7 @@ export function collectChest(state: GameState, areaId: string, index?: ContentIn
     const feedPower = Number(index?.items.get(stack.itemId)?.fields.feedPower ?? 0)
     if (favouritePets.length > 0 && feedPower > 0) totalFeedPower += feedPower * stack.stack
     else {
-      addStack(state.inventory, stack)
-      rememberItem(state, stack.itemId)
+      addToInventory(state, stack)
     }
   })
   if (totalFeedPower > 0) {
@@ -3572,7 +3593,7 @@ export function queueWorkshopRecipe(state: GameState, index: ContentIndex, recip
   const recipe = recipeById.get(recipeId)
   const result = recipe && index.items.get(recipe.result.itemId)
   const batches = Math.trunc(amount)
-  if (!recipe || !result || batches < 1 || maxCraftable(state, recipe) < batches) return false
+  if (!recipe || !result || !state.knownRecipes.includes(recipeId) || batches < 1 || maxCraftable(state, recipe) < batches) return false
   const capacity = workshopQueueCapacity(state.buildings.workshopQueue, state.permanentUpgrades.UpgradeWorkshopQueue ?? 0, state.purchasedPacks.starter, state.purchasedPacks.merchant)
   if (state.workshopQueue.length + state.completedWorkshopItems.length >= capacity) return false
   recipe.ingredients.forEach((ingredient) => removeStack(state.inventory, ingredient.itemId, ingredient.stack * batches))
@@ -3593,14 +3614,12 @@ export function collectWorkshopJob(state: GameState, uid: number, index?: Conten
   const job = state.completedWorkshopItems.find((entry) => entry.uid === uid)
   if (!job || !hasStorageSpaceFor(state, [{ itemId: job.itemId, stack: job.stack }])) return false
   state.completedWorkshopItems = state.completedWorkshopItems.filter((entry) => entry.uid !== uid)
-  addStack(state.inventory, { itemId: job.itemId, stack: job.stack })
+  addToInventory(state, { itemId: job.itemId, stack: job.stack })
   state.achievementStats.craftedItems += job.stack
-  rememberItem(state, job.itemId)
   incrementQuest(state, 'MasterCrafter', Math.trunc(Number(index?.items.get(job.itemId)?.fields.price ?? 0) * 0.01), true)
   if (state.tutorialStep === 3 && job.itemId === 'Leather') {
     state.tutorialStep = 4
-    addStack(state.inventory, { itemId: 'CopperIngot', stack: 2 })
-    rememberItem(state, 'CopperIngot')
+    addToInventory(state, { itemId: 'CopperIngot', stack: 2 })
   } else if (state.tutorialStep === 4 && job.itemId === 'CopperArmor') {
     state.tutorialStep = 5
   }
@@ -3614,6 +3633,6 @@ export function cancelWorkshopJob(state: GameState, uid: number) {
   const refund = recipe?.ingredients.map((ingredient) => ({ itemId: ingredient.itemId, stack: ingredient.stack * batches })) ?? []
   if (!job || !recipe || !hasStorageSpaceFor(state, refund)) return false
   state.workshopQueue = state.workshopQueue.filter((entry) => entry.uid !== uid)
-  refund.forEach((ingredient) => addStack(state.inventory, ingredient))
+  refund.forEach((ingredient) => addToInventory(state, ingredient))
   return true
 }

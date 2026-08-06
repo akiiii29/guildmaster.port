@@ -440,6 +440,7 @@ export interface GameState {
   adventurers: AdventurerState[]
   dismissedAdventurers: DismissedAdventurer[]
   inventory: InventoryStack[]
+  knownRecipes: string[]
   nextWorkshopJobId: number
   workshopQueue: WorkshopJob[]
   completedWorkshopItems: WorkshopJob[]
