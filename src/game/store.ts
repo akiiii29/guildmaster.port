@@ -101,7 +101,7 @@ export class GameStore {
     return this.migrateSerialized(localStorage.getItem(SAVE_KEY)) ?? createInitialState(this.index)
   }
 
-  private migrateSerialized(raw: string | null): GameState | null {
+  private migrateSerialized(raw: string | null, allowAuthoritativePacks = false): GameState | null {
     try {
       if (!raw) return null
       const parsed = JSON.parse(raw) as GameState
@@ -181,9 +181,11 @@ export class GameStore {
           verboseLogs: parsed.settings?.verboseLogs ?? false,
           colorblindMode: parsed.settings?.colorblindMode ?? false,
         },
-        // Packs are paid with protected Gems, so legacy local flags must never
-        // grant their bonuses. Authoritative actions restore valid purchases.
-        purchasedPacks: { starter: false, merchant: false },
+        // Only a state returned by gem-action may restore purchased packs.
+        // Local storage and imported saves cannot grant a paid bonus.
+        purchasedPacks: allowAuthoritativePacks
+          ? { starter: parsed.purchasedPacks?.starter === true, merchant: parsed.purchasedPacks?.merchant === true }
+          : { starter: false, merchant: false },
         lastDailyReset: parsed.lastDailyReset ?? (() => {
           const date = new Date(parsed.lastAccess || Date.now())
           date.setHours(0, 0, 0, 0)
@@ -288,7 +290,7 @@ export class GameStore {
       if (status.kind === 'conflict') this.replaceWithCloudSave(status.remote)
       return false
     }
-    const migrated = this.migrateSerialized(JSON.stringify(remote.state))
+    const migrated = this.migrateSerialized(JSON.stringify(remote.state), true)
     if (!migrated) return false
     this.state = migrated
     this.persist(false)
@@ -382,7 +384,7 @@ export class GameStore {
   }
 
   replaceWithCloudSave(save: RemoteSave) {
-    const migrated = this.migrateSerialized(JSON.stringify(save.state))
+    const migrated = this.migrateSerialized(JSON.stringify(save.state), true)
     if (!migrated) return false
     this.state = migrated
     this.persist(false)

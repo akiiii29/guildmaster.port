@@ -54,4 +54,14 @@ describe('save migrations', () => {
     expect(target.importSave(backup)).toMatchObject({ ok: true })
     expect(target.getSnapshot()).toMatchObject({ version: 25, language: 'vi' })
   })
+
+  it('accepts purchased packs only from an authoritative server response', () => {
+    const store = new GameStore(index)
+    const claimed = createInitialState(index)
+    claimed.purchasedPacks = { starter: true, merchant: true }
+    const privateStore = store as unknown as { migrateSerialized: (raw: string, allowAuthoritativePacks?: boolean) => ReturnType<GameStore['getSnapshot']> }
+
+    expect(privateStore.migrateSerialized(JSON.stringify(claimed))?.purchasedPacks).toEqual({ starter: false, merchant: false })
+    expect(privateStore.migrateSerialized(JSON.stringify(claimed), true)?.purchasedPacks).toEqual({ starter: true, merchant: true })
+  })
 })
