@@ -20,7 +20,6 @@ export function Modal({ title, onClose, children, wide }: ModalProps) {
   useEffect(() => {
     const panel = panelRef.current
     const focusable = () => [...(panel?.querySelectorAll<HTMLElement>('button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])') ?? [])]
-    focusable()[0]?.focus()
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onCloseRef.current()
       if (event.key !== 'Tab') return
