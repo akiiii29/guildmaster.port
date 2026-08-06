@@ -432,7 +432,7 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
   const [craftAmount, setCraftAmount] = useState(1)
   const [recipeFilter, setRecipeFilter] = useState<'all' | 'materials' | 'weapons' | 'armors' | 'accessories'>('all')
   const [recipeSort, setRecipeSort] = useState<'type' | 'craftable' | 'alphabetical'>('type')
-  const [hideInsufficient, setHideInsufficient] = useState(false)
+  const [hideInsufficient, setHideInsufficient] = useState(true)
   const [highlightRecipeId, setHighlightRecipeId] = useState<string | null>(null)
   const [cancelJobUid, setCancelJobUid] = useState<number | null>(null)
   const [upgrade, setUpgrade] = useState<'queue' | 'time' | null>(null)
@@ -440,7 +440,7 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
   const capacity = workshopQueueCapacity(state.buildings.workshopQueue, state.permanentUpgrades.UpgradeWorkshopQueue ?? 0, state.purchasedPacks.starter, state.purchasedPacks.merchant)
   const visibleRecipes = state.tutorialStep === 3
     ? RECIPES.filter((recipe) => recipe.id === 'Leather')
-    : RECIPES
+    : RECIPES.filter((recipe) => state.knownRecipes.includes(recipe.id))
   const jobs = [...state.completedWorkshopItems, ...state.workshopQueue]
   const cancellableJobs = jobs.filter((job) => !state.completedWorkshopItems.some((entry) => entry.uid === job.uid))
   const queueFull = jobs.length >= capacity

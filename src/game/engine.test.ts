@@ -2161,6 +2161,7 @@ describe('original-compatible game loop', () => {
     const index = indexContent(variant)
     const state = createInitialState(index)
     state.inventory.push({ itemId: 'BeastPelt', stack: 2 })
+    state.knownRecipes.push('Leather')
     state.activeQuests = [{ id: 'MasterCrafter', category: 'King', rarity: 1, progress: 0, target: 1 }]
     expect(queueWorkshopRecipe(state, index, 'Leather')).toBe(true)
     expect(state.activeQuests[0].progress).toBe(0)

@@ -12,6 +12,7 @@ import {
   consumePotion,
   createInitialState,
   dismissAdventurer,
+  discoverRecipesForItem,
   equipItem,
   hireGuest,
   markTavernGuestsSeen,
@@ -47,13 +48,14 @@ import {
 } from './engine'
 import { offlineSeconds } from './formulas'
 import { defaultWeaponId } from './stats'
+import { recipeById } from './recipes'
 import { reconcileAchievements } from './achievements'
 import { createGameSync, type GameSync } from '../sync/client'
 import type { CloudSyncStatus, RemoteSave } from '../sync/protocol'
 
 const SAVE_KEY = 'guild-master-web-save-v1'
 const CLOUD_TICK_SYNC_INTERVAL_MS = 60_000
-const SUPPORTED_SAVE_VERSIONS = new Set(Array.from({ length: 24 }, (_, index) => index + 1))
+const SUPPORTED_SAVE_VERSIONS = new Set(Array.from({ length: 25 }, (_, index) => index + 1))
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value)
@@ -167,7 +169,7 @@ export class GameStore {
 
       const migrated: GameState = {
         ...parsed,
-        version: 24,
+        version: 25,
         language: parsed.language ?? 'en',
         settings: {
           sellMaxAmount: parsed.settings?.sellMaxAmount ?? 1,
@@ -220,6 +222,7 @@ export class GameStore {
         pets: parsed.pets ?? [],
         buildings: { ...parsed.buildings, shelterAutofeed: parsed.buildings.shelterAutofeed ?? 0 },
         seenItems: parsed.seenItems ?? [],
+        knownRecipes: [],
         achievementStats: isRecord(parsed.achievementStats) ? {
           craftedItems: Number.isFinite(parsed.achievementStats.craftedItems) ? Math.max(0, parsed.achievementStats.craftedItems) : 0,
           soldItems: Number.isFinite(parsed.achievementStats.soldItems) ? Math.max(0, parsed.achievementStats.soldItems) : 0,
@@ -228,6 +231,14 @@ export class GameStore {
         } : { craftedItems: 0, soldItems: 0, claimedQuests: 0, defeatedEnemies: Object.fromEntries((Array.isArray(parsed.seenEnemies) ? parsed.seenEnemies : []).map((enemyId) => [enemyId, 1])) },
         unlockedAchievements: Array.isArray(parsed.unlockedAchievements) ? [...new Set(parsed.unlockedAchievements.filter((id): id is string => typeof id === 'string'))] : [],
         pendingAchievementNotifications: [],
+      }
+      const knownRecipeIds = Array.isArray(parsed.knownRecipes)
+        ? parsed.knownRecipes.filter((recipeId): recipeId is string => typeof recipeId === 'string')
+        : []
+      migrated.knownRecipes = [...new Set(knownRecipeIds.filter((recipeId) => recipeById.has(recipeId)))]
+      if (migrated.knownRecipes.length === 0) {
+        const discoveredItems = new Set([...migrated.seenItems, ...migrated.inventory.map((stack) => stack.itemId)])
+        discoveredItems.forEach((itemId) => discoverRecipesForItem(migrated, itemId))
       }
       reconcileAchievements(migrated, this.index)
       return migrated
@@ -346,6 +357,7 @@ export class GameStore {
         const stack = draft.inventory.find((entry) => entry.itemId === result.reward!.itemId)
         if (stack) stack.stack += result.reward!.stack
         else draft.inventory.push({ itemId: result.reward!.itemId, stack: result.reward!.stack })
+        discoverRecipesForItem(draft, result.reward!.itemId)
       })
     }
     return result

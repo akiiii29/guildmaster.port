@@ -19,6 +19,7 @@ describe('new guild progression e2e', () => {
     expect(state.inventory).toEqual([])
     expect(queueWorkshopRecipe(state, index, 'Leather', 1)).toBe(false)
     expect(collectChest(state, 'EnchantedForest', index)).toBe(true)
+    expect(state.knownRecipes).toContain('Leather')
     expect(queueWorkshopRecipe(state, index, 'Leather', 1)).toBe(true)
     state.workshopQueue[0].remainingSeconds = 1
     tickGame(state, index, 1)

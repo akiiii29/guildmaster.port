@@ -19,7 +19,7 @@ afterEach(() => vi.unstubAllGlobals())
 
 describe('save migrations', () => {
   it('migrates every supported save version without dropping new achievement state', () => {
-    for (let version = 1; version <= 23; version += 1) {
+    for (let version = 1; version <= 24; version += 1) {
       const legacy = structuredClone(createInitialState(index)) as unknown as Record<string, unknown>
       legacy.version = version
       delete legacy.achievementStats
@@ -29,10 +29,11 @@ describe('save migrations', () => {
 
       const store = new GameStore(index)
       const migrated = store.getSnapshot()
-      expect(migrated.version).toBe(24)
+      expect(migrated.version).toBe(25)
       expect(migrated.achievementStats).toEqual(expect.objectContaining({ craftedItems: 0, soldItems: 0, claimedQuests: 0 }))
       expect(Array.isArray(migrated.unlockedAchievements)).toBe(true)
       expect(migrated.buildings.shelterAutofeed).toBe(0)
+      expect(Array.isArray(migrated.knownRecipes)).toBe(true)
     }
   })
 
@@ -51,6 +52,6 @@ describe('save migrations', () => {
     const backup = source.exportSave()
     const target = new GameStore(index)
     expect(target.importSave(backup)).toMatchObject({ ok: true })
-    expect(target.getSnapshot()).toMatchObject({ version: 24, language: 'vi' })
+    expect(target.getSnapshot()).toMatchObject({ version: 25, language: 'vi' })
   })
 })
