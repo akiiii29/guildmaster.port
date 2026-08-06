@@ -1748,7 +1748,7 @@ function AreaDialog({ areaId, store, index, onClose }: { areaId: string; store: 
           <i><span style={{ width: `${progress}%` }} /></i>
           <i><span style={{ width: `${progress}%` }} /></i>
         </div>
-        <div className="original-dungeon-log" aria-live="polite">{(state.settings.verboseLogs ? run.logs : run.logs.slice(0, 8)).map((line, logIndex) => { const faction = battleLogFaction(line, partyLogNames, enemyLogNames); return <p className={`battle-log-line ${battleLogTone(line)} ${faction} ${logIndex === 0 ? 'is-latest' : ''}`} key={`${line}-${logIndex}`}><i className="battle-log-faction" aria-label={faction === 'party' ? 'Party action' : faction === 'enemy' ? 'Enemy action' : 'System event'} aria-hidden="true" />{log(line)}</p> })}</div>
+        <div className="original-dungeon-log" aria-live="polite">{run.logs.slice(0, 30).map((line, logIndex) => { const faction = battleLogFaction(line, partyLogNames, enemyLogNames); return <p className={`battle-log-line ${battleLogTone(line)} ${faction} ${logIndex === 0 ? 'is-latest' : ''}`} key={`${line}-${logIndex}`}><i className="battle-log-faction" aria-label={faction === 'party' ? 'Party action' : faction === 'enemy' ? 'Enemy action' : 'System event'} aria-hidden="true" />{log(line)}</p> })}</div>
         <div className="battle-actions">
           <button onClick={() => setShowReport(true)}>{t('report.title')}</button>
           <button onClick={() => state.settings.confirmRetreat ? setConfirmRetreat(true) : (store.retreat(areaId), onClose())}>{t('battle.retreat')}</button>

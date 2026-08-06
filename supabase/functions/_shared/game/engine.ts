@@ -253,7 +253,7 @@ export function refreshDailyRaidTries(state: GameState, index: ContentIndex, now
 }
 
 const appendLog = (run: AreaRun, message: string) => {
-  run.logs = [message, ...run.logs].slice(0, 100)
+  run.logs = [message, ...run.logs].slice(0, 30)
 }
 
 export function makeAdventurer(

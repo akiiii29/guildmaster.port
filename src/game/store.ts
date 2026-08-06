@@ -85,10 +85,12 @@ export class GameStore {
     void this.cloudSync?.initialize().then(async () => {
       if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) return
       const remote = await this.cloudSync.pullLatest()
-      if (remote) this.replaceWithCloudSave(remote)
-      // This performs the one-time strict-gem cutover (including legacy gems
-      // reset) after the latest cloud state has been loaded.
-      await this.commitAuthoritative('tick', {}, () => {})
+      if (remote) this.mergeAuthoritativeBenefits(remote)
+      // Keep the active browser expedition intact. In strict Gem mode the
+      // server is authoritative only for protected Gems and Gem-pack flags;
+      // replaying its independent RNG state would replace local combat loot
+      // and reports with a different run.
+      await this.refreshAuthoritativeBenefits()
     })
     const elapsed = offlineSeconds(Date.now(), this.state.lastAccess)
     this.offlineProgressSeconds = elapsed
@@ -277,6 +279,26 @@ export class GameStore {
 
   private actionId() {
     return crypto.randomUUID()
+  }
+
+  private mergeAuthoritativeBenefits(remote: RemoteSave) {
+    const migrated = this.migrateSerialized(JSON.stringify(remote.state), true)
+    if (!migrated) return false
+    const draft = structuredClone(this.state)
+    draft.gems = migrated.gems
+    draft.purchasedPacks = migrated.purchasedPacks
+    this.state = draft
+    this.persist(false)
+    void this.cloudSync?.adoptRemote(remote)
+    this.listeners.forEach((listener) => listener())
+    return true
+  }
+
+  private async refreshAuthoritativeBenefits() {
+    if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) return false
+    const remote = await this.cloudSync.applyGemAuthorityAction({ id: this.actionId(), type: 'tick' }, this.state)
+    if (!remote) return false
+    return this.mergeAuthoritativeBenefits(remote)
   }
 
   private async commitAuthoritative(type: string, payload: Record<string, unknown>, fallback: (draft: GameState) => void) {
@@ -473,7 +495,9 @@ export class GameStore {
   }
 
   collect(areaId: string) {
-    return this.commitAuthoritative('collectChest', { areaId }, (draft) => { collectChest(draft, areaId, this.index) })
+    let collected = false
+    this.commit((draft) => { collected = collectChest(draft, areaId, this.index) })
+    return Promise.resolve(collected)
   }
 
   setLanguage(language: Language) {
@@ -524,7 +548,13 @@ export class GameStore {
   }
 
   buyPack(pack: 'starter' | 'merchant') {
-    return this.commitAuthoritative('buyPack', { pack }, (draft) => { buyPack(draft, pack) })
+    if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) {
+      let purchased = false
+      this.commit((draft) => { purchased = buyPack(draft, pack) })
+      return Promise.resolve(purchased)
+    }
+    return this.cloudSync.applyGemAuthorityAction({ id: this.actionId(), type: 'buyPack', payload: { pack } }, this.state)
+      .then((remote) => remote ? this.mergeAuthoritativeBenefits(remote) : false)
   }
 
   promote(uid: number, classId: string) {
