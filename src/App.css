@@ -464,7 +464,7 @@ button { color: inherit; }
 .confirm-box { width: 100%; padding: 18px; background: #424242; border: 3px solid #000; border-radius: 10px; box-shadow: 0 12px 32px #000; }
 .confirm-box h3 { margin: 0 0 12px; }
 .confirm-box p { color: var(--muted); font-size: 14px; }
-.confirm-box > div { display: flex; justify-content: flex-end; gap: 8px; }
+.confirm-box > div:last-child { display: flex; justify-content: flex-end; gap: 8px; }
 .settings-dialog { display: grid; gap: 8px; }
 .settings-dialog > label { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.08); font-size: 13px; }
 .settings-dialog select { min-width: 120px; padding: 6px; color: var(--text); border: 1px solid var(--line); border-radius: 6px; background: var(--surface-3); }
@@ -628,10 +628,12 @@ button { color: inherit; }
  .merchant-offer small { display: flex; align-items: center; justify-content: center; gap: 4px; color: #e5bd65; font-weight: 800; }
  .merchant-offer small img { width: 16px; height: 16px; }
  .merchant-offer:disabled { opacity: .45; cursor: not-allowed; }
- .merchant-confirm { max-width: 450px; align-items: center; }
- .merchant-confirm > img { width: 72px; height: 72px; object-fit: contain; }
+ .merchant-confirm { width: min(100%, 580px); max-height: calc(100dvh - 48px); display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 14px; align-items: start; overflow-y: auto; }
+ .merchant-confirm > img { width: 76px; height: 76px; object-fit: contain; image-rendering: pixelated; }
+ .confirm-box > .merchant-confirm-copy { display: block; min-width: 0; }
  .merchant-confirm h3, .merchant-confirm p { margin: 0 0 6px; }
- .merchant-confirm > div:last-child { display: flex; gap: 6px; }
+ .merchant-confirm p { line-height: 1.45; overflow-wrap: anywhere; }
+ .merchant-confirm-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
  .merchant-confirm button img { width: 16px; height: 16px; vertical-align: middle; }
  .entity-detail.ascended { color: #dba5ff; }
  .promotion-panel { margin-top: 18px; border-top: 1px solid rgba(229,189,101,.35); padding-top: 12px; }
