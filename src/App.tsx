@@ -548,7 +548,7 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
                         const item = index.items.get(ingredient.itemId)
                         const owned = inventoryCount(state, ingredient.itemId)
                         const canShowRecipe = visibleRecipes.some((candidate) => candidate.result.itemId === ingredient.itemId)
-                        return <button className={`recipe-ingredient ${owned < ingredient.stack ? 'missing' : ''}`} disabled={!canShowRecipe} key={ingredient.itemId} title={canShowRecipe ? name(item?.name ?? ingredient.itemId) : undefined} onClick={() => showIngredientRecipe(ingredient.itemId)}><img src={assetUrl(item?.imageKey)} alt="" /><b>{ingredient.stack}</b><small>{owned}</small></button>
+                        return <button className={`recipe-ingredient ${owned < ingredient.stack ? 'missing' : ''} ${canShowRecipe ? '' : 'is-static'}`} aria-disabled={!canShowRecipe} key={ingredient.itemId} title={name(item?.name ?? ingredient.itemId)} onClick={() => { if (canShowRecipe) showIngredientRecipe(ingredient.itemId) }}><img src={assetUrl(item?.imageKey)} alt="" /><b>{ingredient.stack}</b><small>{owned}</small><ItemOriginTooltip itemId={ingredient.itemId} index={index} /></button>
                       })}
                     </span>
                     <span className="recipe-meta">{t('workshop.available', { count: craftable })}</span>
@@ -958,15 +958,49 @@ export function LegacyStorageDialog({ store, index, onClose, onConsume }: { stor
   </Modal>
 }
 
+function areaNamesForEnemy(enemyId: string, index: ContentIndex, name: (value: string) => string) {
+  return [...index.areas.values()]
+    .filter((area) => area.enemies.includes(enemyId) || area.encounterRosters.some((roster) => roster.enemies.includes(enemyId)))
+    .map((area) => name(area.name))
+}
+
+function ItemOriginTooltip({ itemId, index }: { itemId: string; index: ContentIndex }) {
+  const { language, name } = useI18n()
+  const item = index.items.get(itemId)
+  const enemies = [...index.enemies.values()].filter((enemy) => enemy.drops.some((drop) => drop.item === itemId))
+  const crafted = RECIPES.some((recipe) => recipe.result.itemId === itemId)
+  const copy = language === 'vi'
+    ? { drop: 'Rơi từ', craft: 'Có thể chế tạo tại Workshop', none: 'Chưa có nguồn rơi hoặc công thức.' }
+    : { drop: 'Drops from', craft: 'Can be crafted in the Workshop', none: 'No drop source or recipe is known.' }
+  return <span className="item-origin-tooltip" role="tooltip"><strong>{name(item?.name ?? itemId)}</strong>{enemies.length > 0 && <><small>{copy.drop}</small><span className="origin-enemy-list">{enemies.map((enemy) => { const maps = areaNamesForEnemy(enemy.id, index, name); return <span className="origin-enemy" title={maps.join(' · ')} key={enemy.id}><img src={assetUrl(enemy.imageKey)} alt="" /><span><b>{name(enemy.name)}</b><small>{maps.join(' · ') || '—'}</small></span></span> })}</span></>}{crafted && <small className="origin-crafted">{copy.craft}</small>}{enemies.length === 0 && !crafted && <small>{copy.none}</small>}</span>
+}
+
+function ItemRelationIcon({ itemId, index, amount }: { itemId: string; index: ContentIndex; amount?: number }) {
+  const { name } = useI18n()
+  const [open, setOpen] = useState(false)
+  const item = index.items.get(itemId)
+  return <span className={`relation-icon ${open ? 'is-open' : ''}`}><button type="button" title={name(item?.name ?? itemId)} aria-expanded={open} onClick={() => setOpen((value) => !value)}><img src={assetUrl(item?.imageKey)} alt="" />{amount !== undefined && <b>×{amount}</b>}</button><ItemOriginTooltip itemId={itemId} index={index} /></span>
+}
+
+function EnemyRelationIcon({ enemyId, index }: { enemyId: string; index: ContentIndex }) {
+  const { language, name } = useI18n()
+  const [open, setOpen] = useState(false)
+  const enemy = index.enemies.get(enemyId)
+  if (!enemy) return null
+  const maps = areaNamesForEnemy(enemyId, index, name)
+  const mapLabel = language === 'vi' ? 'Xuất hiện ở' : 'Appears in'
+  return <span className={`relation-icon ${open ? 'is-open' : ''}`}><button type="button" title={name(enemy.name)} aria-expanded={open} onClick={() => setOpen((value) => !value)}><img src={assetUrl(enemy.imageKey)} alt="" /></button><span className="enemy-origin-tooltip" role="tooltip"><strong>{name(enemy.name)}</strong><small>{mapLabel}: {maps.join(' · ') || '—'}</small></span></span>
+}
+
 function ItemFacts({ item, index }: { item: ItemDefinition; index: ContentIndex }) {
-  const { t, name } = useI18n()
+  const { t } = useI18n()
   const labels: Record<string, string> = { maxHp: 'HP', constitution: 'CON', intelligence: 'INT', dexterity: 'DEX', defense: 'DEF', magicDefense: 'MDEF', criticalChance: 'CRIT', criticalDamage: 'CRIT DMG.', bonusExperience: 'XP BONUS', lifesteal: 'LIFESTEAL', counterattack: 'COUNTER', regeneration: 'REGEN', healingModifier: 'HEAL MOD.', darknessReduction: 'DARKNESS RED.', darknessDamageAmplification: 'DARKNESS DMG.', immunityToStatus: 'STATUS IMM.', flatDodgeChance: 'DODGE', threat: 'THREAT', price: 'VALUE', feedPower: 'FEED POWER' }
   const percent = new Set(['criticalChance', 'criticalDamage', 'bonusExperience', 'lifesteal', 'counterattack', 'healingModifier', 'darknessDamageAmplification', 'immunityToStatus', 'flatDodgeChance'])
   const facts = Object.entries(item.fields).filter(([, value]) => ['string', 'number', 'boolean'].includes(typeof value) && value !== 0 && value !== false)
-  const sources = [...index.enemies.values()].filter((enemy) => enemy.drops.some((drop) => drop.item === item.id)).map((enemy) => name(enemy.name))
+  const sources = [...index.enemies.values()].filter((enemy) => enemy.drops.some((drop) => drop.item === item.id))
   const buildsFrom = RECIPES.find((recipe) => recipe.result.itemId === item.id)
-  const buildsInto = RECIPES.filter((recipe) => recipe.ingredients.some((ingredient) => ingredient.itemId === item.id)).map((recipe) => name(index.items.get(recipe.result.itemId)?.name ?? recipe.result.itemId))
-  return <><dl className="item-facts"><div><dt>{t('item.type')}</dt><dd>{item.type}</dd></div>{facts.map(([key, value]) => <div key={key}><dt>{labels[key] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, (letter) => letter.toUpperCase())}</dt><dd>{typeof value === 'boolean' ? t('common.yes') : `${value}${percent.has(key) ? '%' : ''}`}</dd></div>)}</dl><section className="item-relations">{sources.length > 0 && <p><strong>{t('item.sources')}</strong>{sources.join(' · ')}</p>}{buildsFrom && <p><strong>{t('item.buildsFrom')}</strong>{buildsFrom.ingredients.map((ingredient) => `${name(index.items.get(ingredient.itemId)?.name ?? ingredient.itemId)} ×${ingredient.stack}`).join(' + ')}</p>}{buildsInto.length > 0 && <p><strong>{t('item.buildsInto')}</strong>{buildsInto.join(' · ')}</p>}</section></>
+  const buildsInto = RECIPES.filter((recipe) => recipe.ingredients.some((ingredient) => ingredient.itemId === item.id))
+  return <><dl className="item-facts"><div><dt>{t('item.type')}</dt><dd>{item.type}</dd></div>{facts.map(([key, value]) => <div key={key}><dt>{labels[key] ?? key.replace(/([A-Z])/g, ' $1').replace(/^./, (letter) => letter.toUpperCase())}</dt><dd>{typeof value === 'boolean' ? t('common.yes') : `${value}${percent.has(key) ? '%' : ''}`}</dd></div>)}</dl><section className="item-relations">{sources.length > 0 && <div><strong>{t('item.sources')}</strong><span className="relation-icons">{sources.map((enemy) => <EnemyRelationIcon enemyId={enemy.id} index={index} key={enemy.id} />)}</span></div>}{buildsFrom && <div><strong>{t('item.buildsFrom')}</strong><span className="relation-icons">{buildsFrom.ingredients.map((ingredient) => <ItemRelationIcon itemId={ingredient.itemId} amount={ingredient.stack} index={index} key={ingredient.itemId} />)}</span></div>}{buildsInto.length > 0 && <div><strong>{t('item.buildsInto')}</strong><span className="relation-icons">{buildsInto.map((recipe) => <ItemRelationIcon itemId={recipe.result.itemId} amount={recipe.result.stack} index={index} key={recipe.id} />)}</span></div>}</section></>
 }
 
 function StorageDialog({ store, index, onClose, onConsume, onSell }: { store: GameStore; index: ContentIndex; onClose: () => void; onConsume: (itemId: string) => void; onSell: (itemId: string) => void }) {

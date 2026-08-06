@@ -197,9 +197,26 @@ button { color: inherit; }
 .item-detail h3, .item-detail p { margin: 0; overflow-wrap: anywhere; }
 .item-detail p { margin-top: 5px; color: var(--muted); font-size: 13px; line-height: 1.45; }
 .item-detail small { display: block; margin-top: 7px; color: var(--brass); }
-.item-relations { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 7px; }
-.item-relations p { margin: 5px 0; color: var(--muted); font-size: 11px; }
-.item-relations strong { margin-right: 4px; color: var(--brass); }
+.item-relations { margin-top: 10px; padding-top: 7px; display: grid; gap: 8px; border-top: 1px solid var(--line); }
+.item-relations > div { display: grid; grid-template-columns: minmax(72px, auto) minmax(0, 1fr); align-items: start; gap: 7px; color: var(--muted); font-size: 11px; }
+.item-relations strong { color: var(--brass); }
+.relation-icons { min-width: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.relation-icon { position: relative; width: 34px; height: 34px; }
+.relation-icon > button { width: 100%; height: 100%; padding: 3px; position: relative; border: 1px solid var(--line); border-radius: 6px; background: rgba(255,255,255,.06); cursor: pointer; }
+.relation-icon > button:hover { border-color: var(--brass-border); background: rgba(250,160,62,.1); }
+.relation-icon img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.relation-icon b { position: absolute; right: 1px; bottom: 0; color: var(--brass); font-size: 8px; text-shadow: 0 1px 2px #000; }
+.item-origin-tooltip, .enemy-origin-tooltip { position: absolute; z-index: 30; left: 0; bottom: calc(100% + 7px); width: min(300px, calc(100vw - 48px)); padding: 9px; display: grid; gap: 6px; border: 1px solid var(--brass-border); border-radius: 8px; background: #242424; box-shadow: 0 8px 22px #000; color: var(--text); font-size: 11px; line-height: 1.3; text-align: left; pointer-events: none; opacity: 0; transform: translateY(3px); transition: opacity .14s ease, transform .14s ease; }
+.item-origin-tooltip > strong, .enemy-origin-tooltip > strong { color: var(--brass); }
+.item-origin-tooltip > small, .enemy-origin-tooltip > small { color: var(--text-dim); }
+.origin-enemy-list { display: grid; gap: 5px; }
+.origin-enemy { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 6px; align-items: center; }
+.origin-enemy > img { width: 30px; height: 30px; object-fit: contain; image-rendering: pixelated; }
+.origin-enemy > span { min-width: 0; display: grid; gap: 1px; }
+.origin-enemy b { color: var(--text); font-size: 11px; }
+.origin-enemy small { overflow-wrap: anywhere; color: var(--text-dim); font-size: 10px; }
+.origin-crafted { color: #a9dca0 !important; }
+.relation-icon:hover > .item-origin-tooltip, .relation-icon:focus-within > .item-origin-tooltip, .relation-icon.is-open > .item-origin-tooltip, .relation-icon:hover > .enemy-origin-tooltip, .relation-icon:focus-within > .enemy-origin-tooltip, .relation-icon.is-open > .enemy-origin-tooltip { opacity: 1; transform: translateY(0); pointer-events: auto; }
 .item-detail-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
 .item-detail button { padding: 7px; border: 0; background: transparent; color: var(--brass); font-weight: 700; cursor: pointer; }
 .tavern-upgrades > button { min-height: 61px; padding: 8px; display: grid; place-items: center; align-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.12); cursor: pointer; }
@@ -283,12 +300,14 @@ button { color: inherit; }
 .recipe-arrow { color: var(--faint); font-size: 20px; }
 .recipe-ingredients { display: flex; gap: 5px; }
 .recipe-ingredient { position: relative; width: 52px; height: 52px; padding: 4px; border: 1px solid var(--line); background: rgba(255,255,255,.04); cursor: pointer; }
-.recipe-ingredient:hover:not(:disabled) { border-color: var(--brass-border); background: rgba(250,160,62,.1); }
-.recipe-ingredient:disabled { cursor: default; opacity: .78; }
+.recipe-ingredient:hover:not(.is-static) { border-color: var(--brass-border); background: rgba(250,160,62,.1); }
+.recipe-ingredient.is-static { cursor: default; opacity: .78; }
 .recipe-ingredient.missing { border-color: var(--danger); }
-.recipe-ingredients img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-.recipe-ingredients b { position: absolute; top: 1px; right: 3px; font-size: 11px; }
-.recipe-ingredients small { position: absolute; right: 2px; bottom: 1px; color: var(--muted); font-size: 9px; }
+.recipe-ingredients > .recipe-ingredient > img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.recipe-ingredients > .recipe-ingredient > b { position: absolute; top: 1px; right: 3px; font-size: 11px; }
+.recipe-ingredients > .recipe-ingredient > small { position: absolute; right: 2px; bottom: 1px; color: var(--muted); font-size: 9px; }
+.recipe-ingredient .item-origin-tooltip { left: 50%; transform: translate(-50%, 3px); }
+.recipe-ingredient:hover .item-origin-tooltip, .recipe-ingredient:focus .item-origin-tooltip { opacity: 1; transform: translate(-50%, 0); }
 .recipe-meta { grid-column: 1 / 4; color: var(--muted); font-size: 11px; }
 .recipe-card > button { grid-column: 4; grid-row: 1 / 3; padding: 8px; border: 0; background: transparent; color: var(--brass); font-weight: 700; cursor: pointer; }
 .recipe-card > button:disabled { color: var(--faint); opacity: .35; cursor: default; }
