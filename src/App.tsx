@@ -433,8 +433,10 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
   const [recipeFilter, setRecipeFilter] = useState<'all' | 'materials' | 'weapons' | 'armors' | 'accessories'>('all')
   const [recipeSort, setRecipeSort] = useState<'type' | 'craftable' | 'alphabetical'>('type')
   const [hideInsufficient, setHideInsufficient] = useState(false)
+  const [highlightRecipeId, setHighlightRecipeId] = useState<string | null>(null)
   const [cancelJobUid, setCancelJobUid] = useState<number | null>(null)
   const [upgrade, setUpgrade] = useState<'queue' | 'time' | null>(null)
+  const recipeListRef = useRef<HTMLDivElement>(null)
   const capacity = workshopQueueCapacity(state.buildings.workshopQueue, state.permanentUpgrades.UpgradeWorkshopQueue ?? 0, state.purchasedPacks.starter, state.purchasedPacks.merchant)
   const visibleRecipes = state.tutorialStep === 3
     ? RECIPES.filter((recipe) => recipe.id === 'Leather')
@@ -463,6 +465,23 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
     if (recipeSort === 'alphabetical') return name(leftItem?.name ?? left.result.itemId).localeCompare(name(rightItem?.name ?? right.result.itemId))
     return (leftItem?.type ?? '').localeCompare(rightItem?.type ?? '') || name(leftItem?.name ?? left.result.itemId).localeCompare(name(rightItem?.name ?? right.result.itemId))
   })
+
+  useEffect(() => {
+    if (!highlightRecipeId || craftingRecipeId || !showRecipes) return
+    const card = recipeListRef.current?.querySelector<HTMLElement>(`[data-recipe-id="${highlightRecipeId}"]`)
+    if (!card) return
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    const clearHighlight = window.setTimeout(() => setHighlightRecipeId(null), 1_000)
+    return () => window.clearTimeout(clearHighlight)
+  }, [craftingRecipeId, highlightRecipeId, hideInsufficient, recipeFilter, recipeSort, showRecipes])
+
+  const showIngredientRecipe = (itemId: string) => {
+    const target = visibleRecipes.find((recipe) => recipe.result.itemId === itemId)
+    if (!target) return
+    setRecipeFilter('all')
+    setHideInsufficient(false)
+    setHighlightRecipeId(target.id)
+  }
 
   return (
     <Modal title={t('building.workshop')} onClose={onClose} wide>
@@ -516,19 +535,20 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
               <div className="market-quantity"><button disabled={amount <= 1} onClick={() => setCraftAmount(amount - 1)}>-</button><strong>{amount}</strong><button disabled={amount >= maxCraftAmount} onClick={() => setCraftAmount(amount + 1)}>+</button></div>
               <input className="market-quantity-slider" type="range" min="1" max={maxCraftAmount} value={amount} onChange={(event) => setCraftAmount(Number(event.target.value))} />
               <div className="workshop-actions"><button onClick={() => setCraftingRecipeId(null)}>{t('common.close')}</button><button disabled={queueFull || maxCraftAmount < 1} onClick={() => { store.craft(craftingRecipe.id, amount); setCraftingRecipeId(null); setShowRecipes(false) }}>{t('workshop.craft')}</button></div>
-            </section> : <><div className="storage-filters recipe-filters"><label>{t('workshop.recipeFilter')}<select value={recipeFilter} onChange={(event) => setRecipeFilter(event.target.value as typeof recipeFilter)}><option value="all">{t('storage.all')}</option><option value="materials">{t('storage.materials')}</option><option value="weapons">{t('storage.weapons')}</option><option value="armors">{t('storage.armors')}</option><option value="accessories">{t('storage.accessories')}</option></select></label><label>{t('workshop.recipeSort')}<select value={recipeSort} onChange={(event) => setRecipeSort(event.target.value as typeof recipeSort)}><option value="type">{t('storage.sortType')}</option><option value="craftable">{t('workshop.sortCraftable')}</option><option value="alphabetical">{t('storage.sortAlphabetical')}</option></select></label><label className="recipe-hide"><input type="checkbox" checked={hideInsufficient} onChange={(event) => setHideInsufficient(event.target.checked)} />{t('workshop.hideInsufficient')}</label></div><div className="recipe-list">
+            </section> : <section className="recipe-browser"><div className="storage-filters recipe-filters"><label>{t('workshop.recipeFilter')}<select value={recipeFilter} onChange={(event) => setRecipeFilter(event.target.value as typeof recipeFilter)}><option value="all">{t('storage.all')}</option><option value="materials">{t('storage.materials')}</option><option value="weapons">{t('storage.weapons')}</option><option value="armors">{t('storage.armors')}</option><option value="accessories">{t('storage.accessories')}</option></select></label><label>{t('workshop.recipeSort')}<select value={recipeSort} onChange={(event) => setRecipeSort(event.target.value as typeof recipeSort)}><option value="type">{t('storage.sortType')}</option><option value="craftable">{t('workshop.sortCraftable')}</option><option value="alphabetical">{t('storage.sortAlphabetical')}</option></select></label><label className="recipe-hide"><input type="checkbox" checked={hideInsufficient} onChange={(event) => setHideInsufficient(event.target.checked)} />{t('workshop.hideInsufficient')}</label></div><div className="recipe-list" ref={recipeListRef}>
               {filteredRecipes.map((recipe) => {
                 const result = index.items.get(recipe.result.itemId)
                 const craftable = maxCraftable(state, recipe)
                 return (
-                  <article className="recipe-card" key={recipe.id}>
+                  <article className={`recipe-card ${highlightRecipeId === recipe.id ? 'is-highlighted' : ''}`} data-recipe-id={recipe.id} key={recipe.id}>
                     <span className="recipe-result"><img src={assetUrl(result?.imageKey)} alt="" /><b>{name(result?.name ?? recipe.result.itemId)}</b></span>
                     <span className="recipe-arrow">←</span>
                     <span className="recipe-ingredients">
                       {recipe.ingredients.map((ingredient) => {
                         const item = index.items.get(ingredient.itemId)
                         const owned = inventoryCount(state, ingredient.itemId)
-                        return <i className={owned < ingredient.stack ? 'missing' : ''} key={ingredient.itemId}><img src={assetUrl(item?.imageKey)} alt="" /><b>{ingredient.stack}</b><small>{owned}</small></i>
+                        const canShowRecipe = visibleRecipes.some((candidate) => candidate.result.itemId === ingredient.itemId)
+                        return <button className={`recipe-ingredient ${owned < ingredient.stack ? 'missing' : ''}`} disabled={!canShowRecipe} key={ingredient.itemId} title={canShowRecipe ? name(item?.name ?? ingredient.itemId) : undefined} onClick={() => showIngredientRecipe(ingredient.itemId)}><img src={assetUrl(item?.imageKey)} alt="" /><b>{ingredient.stack}</b><small>{owned}</small></button>
                       })}
                     </span>
                     <span className="recipe-meta">{t('workshop.available', { count: craftable })}</span>
@@ -537,7 +557,7 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
                 )
               })}
               {filteredRecipes.length === 0 && <EmptyState text={t('workshop.noRecipes')} />}
-            </div></>}
+            </div></section>}
             {!craftingRecipe && <button className="recipes-close" onClick={() => setShowRecipes(false)}>{t('common.close')}</button>}
           </section>
         </div>
