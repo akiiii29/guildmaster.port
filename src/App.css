@@ -317,7 +317,7 @@ button { color: inherit; }
 .recipe-card > button:hover:not(:disabled) { background: rgba(250,160,62,.2); }
 .recipe-card > button:disabled { color: var(--faint); opacity: .35; cursor: default; }
 .recipes-close { justify-self: start; }
-.craft-preview { width: min(100%, 390px); min-height: 0; margin: 0 auto; padding: 14px; display: grid; gap: 14px; align-content: start; border: 1px solid var(--line); border-radius: 10px; background: rgba(0,0,0,.12); }
+.craft-preview { width: min(100%, 390px); min-height: 0; margin: 0 auto; padding: 14px; display: grid; align-self: start; gap: 14px; align-content: start; border: 1px solid var(--line); border-radius: 10px; background: rgba(0,0,0,.12); }
 .craft-preview-result { min-width: 0; padding-bottom: 12px; display: grid; grid-template-columns: 68px minmax(0,1fr); align-items: center; gap: 12px; border-bottom: 1px solid var(--line); color: var(--brass); }
 .craft-preview-result strong { min-width: 0; font-size: 16px; overflow-wrap: anywhere; }
 .craft-preview-result img { width: 68px; height: 68px; padding: 4px; object-fit: contain; image-rendering: pixelated; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.05); }
@@ -325,7 +325,8 @@ button { color: inherit; }
 .craft-preview-ingredients span { min-width: 0; display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 7px; background: rgba(255,255,255,.05); font-size: 12px; }
 .craft-preview-ingredients img { width: 27px; height: 27px; object-fit: contain; image-rendering: pixelated; }
 .craft-preview > p { margin: 0; padding: 8px; border-radius: 7px; color: var(--muted); background: rgba(255,255,255,.05); text-align: center; font-weight: 700; }
-.craft-preview .market-quantity { max-width: 250px; }
+.craft-preview .market-quantity { width: min(100%, 320px); max-width: none; grid-template-columns: 52px minmax(120px, 1fr) 52px; }
+.craft-preview .market-quantity strong { font-size: 18px; }
 .craft-preview .market-quantity-slider { margin: -6px 0 0; }
 .craft-preview .workshop-actions { margin-top: 0; padding-top: 12px; border-top: 1px solid var(--line); }
 .building-detail { text-align: center; }
