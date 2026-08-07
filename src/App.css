@@ -668,7 +668,8 @@ button { color: inherit; }
   .recipe-ingredients { grid-column: 2; grid-row: 1; max-width: 168px; }
   .recipe-card > button { grid-column: 1 / -1; grid-row: 2; justify-self: end; }
   .recipe-meta { grid-column: 1 / -1; grid-row: 3; }
-  .battle-dialog { width: 100%; height: auto; max-height: 90dvh; border-left: 3px solid #000; border-right: 3px solid #000; }
+  .battle-dialog { width: 100%; height: min(90dvh, 680px); max-height: 90dvh; grid-template-rows: auto minmax(0, 1fr) auto minmax(50px, .75fr) auto; border-left: 3px solid #000; border-right: 3px solid #000; }
+  .battle-scene-frame { min-height: 0; aspect-ratio: auto; }
   .team-dialog-backdrop { padding: 0; }
   .team-dialog { width: 100%; max-height: 90dvh; border-left: 3px solid #000; border-right: 3px solid #000; }
   .team-slot-equipment { gap: 5px; padding-right: 5px; }
