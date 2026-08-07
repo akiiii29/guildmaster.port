@@ -18,7 +18,7 @@
 }
 
 button { color: inherit; }
-.game-shell { width: min(100%, 760px); height: 100dvh; margin: 0 auto; display: flex; flex-direction: column; background: var(--bg); box-shadow: 0 0 70px #000; position: relative; overflow: hidden; }
+.game-shell { width: min(100%, 760px); height: var(--app-viewport-height, 100dvh); margin: 0 auto; display: flex; flex-direction: column; background: var(--bg); box-shadow: 0 0 70px #000; position: relative; overflow: hidden; }
 .game-shell.colorblind-mode { --hp: #ffcf3f; --mana: #40d9ff; --success: #70e86f; --danger: #ff8f64; --brass: #ffe56a; --gold: #ffe56a; }
 .top-bar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 16px 16px 4px; background: rgba(255,255,255,.12); }
 .top-bar h1 { font-size: 20px; margin: 0; }

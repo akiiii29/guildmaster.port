@@ -2341,10 +2341,6 @@ function AppShell({ content, index, store }: AppProps) {
   }, [store])
 
   useEffect(() => {
-    if (dialog === null && state.unreadMessages.length > 0) setDialog({ type: 'messages' })
-  }, [dialog, state.unreadMessages])
-
-  useEffect(() => {
     if (state.unreadMessages.length === 0 && idleProgress > 5) return
     if (state.unreadMessages.length > 0) setIdleProgress(0)
   }, [idleProgress, state.unreadMessages])

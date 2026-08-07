@@ -6,6 +6,16 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { indexContent, loadGameContent } from './game/content'
 import { GameStore } from './game/store'
 
+const syncAppViewportHeight = () => {
+  const height = window.visualViewport?.height ?? window.innerHeight
+  document.documentElement.style.setProperty('--app-viewport-height', `${Math.round(height)}px`)
+}
+
+syncAppViewportHeight()
+window.addEventListener('resize', syncAppViewportHeight)
+window.visualViewport?.addEventListener('resize', syncAppViewportHeight)
+window.visualViewport?.addEventListener('scroll', syncAppViewportHeight)
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => void navigator.serviceWorker.register('/sw.js'))
 }
