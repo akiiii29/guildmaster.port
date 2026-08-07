@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import './App.css'
 import type { ContentIndex } from './game/content'
 import { assetUrl } from './game/content'
@@ -76,12 +77,77 @@ const STAT_DETAILS: Record<string, [string, string]> = {
   MDEF: ['Reduces magic damage by 1% per point, capped at 100%, before Constitution and other flat reductions. Increase it with equipment, Magic Defense potions and doctrines; it drops if those bonuses are removed.', 'Giảm sát thương phép 1% mỗi điểm, tối đa 100%, trước khi tính Thể chất và các giảm trừ phẳng khác. Tăng bằng trang bị, Potion of Magic Defense và Doctrine; tháo bonus thì giảm.'],
 }
 
-function DetailHint({ label, value, detail, className = '' }: { label: string; value?: ReactNode; detail: string; className?: string }) {
+type TooltipController = {
+  anchorRef: React.RefObject<HTMLButtonElement | null>
+  isMobile: boolean
+  open: boolean
+  popupRef: React.RefObject<HTMLSpanElement | null>
+  position: CSSProperties
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+function useTooltipController(): TooltipController {
   const [open, setOpen] = useState(false)
-  return <span className={`detail-hint ${value === undefined ? 'trait-hint' : ''} ${className} ${open ? 'is-open' : ''}`}>
-    <button type="button" aria-expanded={open} onClick={() => setOpen((current) => !current)}>{label}<i aria-hidden="true">?</i></button>
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 520px)').matches)
+  const [position, setPosition] = useState<CSSProperties>({ left: -1000, top: -1000 })
+  const anchorRef = useRef<HTMLButtonElement>(null)
+  const popupRef = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 520px)')
+    const update = () => setIsMobile(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+
+  useEffect(() => {
+    if (!open || !isMobile) return
+    const close = () => setOpen(false)
+    document.addEventListener('pointerdown', close)
+    return () => document.removeEventListener('pointerdown', close)
+  }, [isMobile, open])
+
+  useLayoutEffect(() => {
+    if (!open || !isMobile) return
+    const updatePosition = () => {
+      const anchor = anchorRef.current?.getBoundingClientRect()
+      const popup = popupRef.current?.getBoundingClientRect()
+      if (!anchor || !popup) return
+      const padding = 12
+      const left = Math.max(padding, Math.min(anchor.left + anchor.width / 2 - popup.width / 2, window.innerWidth - popup.width - padding))
+      const below = anchor.bottom + 8
+      const top = below + popup.height <= window.innerHeight - padding ? below : Math.max(padding, anchor.top - popup.height - 8)
+      setPosition({ left, top })
+    }
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    window.addEventListener('scroll', updatePosition, true)
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('scroll', updatePosition, true)
+    }
+  }, [isMobile, open])
+
+  return { anchorRef, isMobile, open, popupRef, position, setOpen }
+}
+
+function MobileTooltip({ tooltip, className, children }: { tooltip: TooltipController; className: string; children: ReactNode }) {
+  if (!tooltip.isMobile || !tooltip.open) return null
+  return createPortal(
+    <span className={`${className} mobile-tooltip`} ref={tooltip.popupRef} role="tooltip" style={tooltip.position} onPointerDown={(event) => { event.stopPropagation(); tooltip.setOpen(false) }}>{children}</span>,
+    document.body,
+  )
+}
+
+function DetailHint({ label, value, detail, className = '' }: { label: string; value?: ReactNode; detail: string; className?: string }) {
+  const tooltip = useTooltipController()
+  const toggle = () => tooltip.setOpen((current) => !current)
+  return <span className={`detail-hint ${value === undefined ? 'trait-hint' : ''} ${className} ${tooltip.open ? 'is-open' : ''}`}>
+    <button ref={tooltip.anchorRef} type="button" aria-expanded={tooltip.open} onPointerDown={(event) => { if (!tooltip.isMobile) return; event.preventDefault(); event.stopPropagation(); toggle() }} onClick={() => { if (!tooltip.isMobile) toggle() }}>{label}<i aria-hidden="true">?</i></button>
     {value !== undefined && <b>{value}</b>}
-    <span className="detail-hint-popup" role="tooltip">{detail}</span>
+    {!tooltip.isMobile && <span className="detail-hint-popup" role="tooltip">{detail}</span>}
+    <MobileTooltip tooltip={tooltip} className="detail-hint-popup">{detail}</MobileTooltip>
   </span>
 }
 
@@ -868,7 +934,7 @@ function TavernDialog({ store, index, onClose }: { store: GameStore; index: Cont
 
         {showHelp && <div className="confirm-layer"><div className="confirm-box tavern-info"><h3>{t('building.tavern')}</h3>{t('tavern.help').split('\n').map((line, index) => line ? <p key={`${line}-${index}`}>{line}</p> : <br key={index} />)}<div><button onClick={() => setShowHelp(false)}>{t('common.close')}</button></div></div></div>}
         {showNoSpace && <div className="confirm-layer"><div className="confirm-box tavern-info"><h3>{t('tavern.noSpaceTitle')}</h3><p>{t('tavern.noSpace')}</p><div><button onClick={() => setShowNoSpace(false)}>{t('common.close')}</button></div></div></div>}
-        {detailsGuest && detailsDefinition && detailsStats && detailsAssessment && <div className="confirm-layer"><div className="confirm-box tavern-guest-detail"><div className="entity-detail"><div className="portrait-frame large"><img src={assetUrl(detailsDefinition.imageKey)} alt="" /></div><div><h3>{name(detailsDefinition.name)}</h3><p>{description(detailsDefinition.id, detailsDefinition.description)}</p></div></div><div className="stat-grid"><StatHint language={language} label="CON" value={detailsStats.constitution} /><StatHint language={language} label="INT" value={detailsStats.intelligence} /><StatHint language={language} label="DEX" value={detailsStats.dexterity} /><StatHint language={language} label="HP" value={detailsStats.maxHp} /><StatHint language={language} label="DEF" value={detailsStats.defense} /><StatHint language={language} label="MDEF" value={detailsStats.magicDefense} /></div>{detailsTraits.length > 0 && <p className="tavern-detail-traits"><strong>{t('battle.traits')}:</strong> {detailsTraits.map((trait, position) => <span key={trait}>{position > 0 && ' · '}<TraitHint language={language} trait={trait} /></span>)}</p>}<section className="adventurer-skills tavern-detail-skills"><article><small>{t('battle.active')}</small><strong>{detailsActiveSkill}</strong></article><article><small>{t('battle.passive')}</small><strong>{detailsPassiveSkill}</strong></article></section><section className="tavern-assessment"><h3>{t('tavern.assessment.title')}</h3><article><strong>{t('tavern.assessment.strengths')}</strong><ul>{detailsAssessment.strengths.map((insight) => <li key={insight}>{insight}</li>)}</ul></article><article><strong>{t('tavern.assessment.weaknesses')}</strong><ul>{detailsAssessment.weaknesses.map((insight) => <li key={insight}>{insight}</li>)}</ul></article></section><div className="tavern-detail-actions"><button onClick={() => setSelectedGuest(null)}>{t('common.close')}</button></div></div></div>}
+        {detailsGuest && detailsDefinition && detailsStats && detailsAssessment && <div className="confirm-layer"><div className="confirm-box tavern-guest-detail"><div className="entity-detail"><div className="portrait-frame large"><img src={assetUrl(detailsDefinition.imageKey)} alt="" /></div><div><h3>{name(detailsDefinition.name)}</h3><p>{description(detailsDefinition.id, detailsDefinition.description)}</p></div></div><div className="stat-grid"><StatHint language={language} label="CON" value={detailsStats.constitution} /><StatHint language={language} label="INT" value={detailsStats.intelligence} /><StatHint language={language} label="DEX" value={detailsStats.dexterity} /><StatHint language={language} label="HP" value={detailsStats.maxHp} /><StatHint language={language} label="DEF" value={detailsStats.defense} /><StatHint language={language} label="MDEF" value={detailsStats.magicDefense} /></div>{detailsTraits.length > 0 && <p className="tavern-detail-traits"><strong>{t('battle.traits')}:</strong> {detailsTraits.map((trait, position) => <span key={trait}>{position > 0 && ' · '}<TraitHint language={language} trait={trait} /></span>)}</p>}<section className="adventurer-skills tavern-detail-skills"><article><small>{t('battle.active')}</small>{detailsDefinition.fields.activeSkill && detailsDefinition.fields.activeSkill !== 'ACTIVE_NONE' ? <SkillHint language={language} kind="active" skillId={detailsDefinition.fields.activeSkill} fields={detailsDefinition.fields} /> : <strong>{detailsActiveSkill}</strong>}</article><article><small>{t('battle.passive')}</small>{detailsDefinition.fields.passiveSkill && detailsDefinition.fields.passiveSkill !== 'PASSIVE_NONE' ? <SkillHint language={language} kind="passive" skillId={detailsDefinition.fields.passiveSkill} fields={detailsDefinition.fields} /> : <strong>{detailsPassiveSkill}</strong>}</article></section><section className="tavern-assessment"><h3>{t('tavern.assessment.title')}</h3><article><strong>{t('tavern.assessment.strengths')}</strong><ul>{detailsAssessment.strengths.map((insight) => <li key={insight}>{insight}</li>)}</ul></article><article><strong>{t('tavern.assessment.weaknesses')}</strong><ul>{detailsAssessment.weaknesses.map((insight) => <li key={insight}>{insight}</li>)}</ul></article></section><div className="tavern-detail-actions"><button onClick={() => setSelectedGuest(null)}>{t('common.close')}</button></div></div></div>}
         {upgrade && <UpgradeConfirmation target={t(upgrade === 'capacity' ? 'tavern.upgradeCapacity' : 'tavern.upgradeTime')} cost={upgrade === 'capacity' ? capacityCost : timeCost} onCancel={() => setUpgrade(null)} onConfirm={() => { store.upgradeTavern(upgrade); setUpgrade(null) }} />}
       </section>
     </Modal>
@@ -1147,7 +1213,7 @@ function areaNamesForEnemy(enemyId: string, index: ContentIndex, name: (value: s
     .map((area) => name(area.name))
 }
 
-function ItemOriginTooltip({ itemId, index }: { itemId: string; index: ContentIndex }) {
+function ItemOriginTooltip({ itemId, index, mobileTooltip }: { itemId: string; index: ContentIndex; mobileTooltip?: TooltipController }) {
   const { language, name } = useI18n()
   const item = index.items.get(itemId)
   const enemies = [...index.enemies.values()].filter((enemy) => enemy.drops.some((drop) => drop.item === itemId))
@@ -1155,38 +1221,32 @@ function ItemOriginTooltip({ itemId, index }: { itemId: string; index: ContentIn
   const copy = language === 'vi'
     ? { drop: 'Rơi từ', craft: 'Có thể chế tạo tại Workshop', none: 'Chưa có nguồn rơi hoặc công thức.' }
     : { drop: 'Drops from', craft: 'Can be crafted in the Workshop', none: 'No drop source or recipe is known.' }
-  return <span className="item-origin-tooltip" role="tooltip"><strong>{name(item?.name ?? itemId)}</strong>{enemies.length > 0 && <><small>{copy.drop}</small><span className="origin-enemy-list">{enemies.map((enemy) => { const maps = areaNamesForEnemy(enemy.id, index, name); return <span className="origin-enemy" title={maps.join(' · ')} key={enemy.id}><img src={assetUrl(enemy.imageKey)} alt="" /><span><span className="origin-enemy-name">{name(enemy.name)}</span><small>{maps.join(' · ') || '—'}</small></span></span> })}</span></>}{crafted && <small className="origin-crafted">{copy.craft}</small>}{enemies.length === 0 && !crafted && <small>{copy.none}</small>}</span>
+  const content = <><strong>{name(item?.name ?? itemId)}</strong>{enemies.length > 0 && <><small>{copy.drop}</small><span className="origin-enemy-list">{enemies.map((enemy) => { const maps = areaNamesForEnemy(enemy.id, index, name); return <span className="origin-enemy" title={maps.join(' · ')} key={enemy.id}><img src={assetUrl(enemy.imageKey)} alt="" /><span><span className="origin-enemy-name">{name(enemy.name)}</span><small>{maps.join(' · ') || '—'}</small></span></span> })}</span></>}{crafted && <small className="origin-crafted">{copy.craft}</small>}{enemies.length === 0 && !crafted && <small>{copy.none}</small>}</>
+  return mobileTooltip?.isMobile ? <MobileTooltip tooltip={mobileTooltip} className="item-origin-tooltip">{content}</MobileTooltip> : <span className="item-origin-tooltip" role="tooltip">{content}</span>
 }
 
 function useClosableTooltip() {
-  const [open, setOpen] = useState(false)
-  const rootRef = useRef<HTMLSpanElement>(null)
-  useEffect(() => {
-    if (!open) return
-    const closeOnOutsidePointer = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
-    }
-    document.addEventListener('pointerdown', closeOnOutsidePointer)
-    return () => document.removeEventListener('pointerdown', closeOnOutsidePointer)
-  }, [open])
-  return { open, rootRef, setOpen }
+  return useTooltipController()
 }
 
 function ItemRelationIcon({ itemId, index, amount }: { itemId: string; index: ContentIndex; amount?: number }) {
   const { name } = useI18n()
-  const { open, rootRef, setOpen } = useClosableTooltip()
+  const tooltip = useClosableTooltip()
   const item = index.items.get(itemId)
-  return <span className={`relation-icon ${open ? 'is-open' : ''}`} ref={rootRef}><button type="button" title={name(item?.name ?? itemId)} aria-expanded={open} onClick={() => setOpen((value) => !value)}><img src={assetUrl(item?.imageKey)} alt="" />{amount !== undefined && <b>×{amount}</b>}</button><ItemOriginTooltip itemId={itemId} index={index} /></span>
+  const toggle = () => tooltip.setOpen((current) => !current)
+  return <span className={`relation-icon ${tooltip.open ? 'is-open' : ''}`}><button ref={tooltip.anchorRef} type="button" title={name(item?.name ?? itemId)} aria-expanded={tooltip.open} onPointerDown={(event) => { if (!tooltip.isMobile) return; event.preventDefault(); event.stopPropagation(); toggle() }} onClick={() => { if (!tooltip.isMobile) toggle() }}><img src={assetUrl(item?.imageKey)} alt="" />{amount !== undefined && <b>×{amount}</b>}</button><ItemOriginTooltip itemId={itemId} index={index} mobileTooltip={tooltip} /></span>
 }
 
 function EnemyRelationIcon({ enemyId, index }: { enemyId: string; index: ContentIndex }) {
   const { language, name } = useI18n()
-  const { open, rootRef, setOpen } = useClosableTooltip()
+  const tooltip = useClosableTooltip()
   const enemy = index.enemies.get(enemyId)
   if (!enemy) return null
   const maps = areaNamesForEnemy(enemyId, index, name)
   const mapLabel = language === 'vi' ? 'Xuất hiện ở' : 'Appears in'
-  return <span className={`relation-icon ${open ? 'is-open' : ''}`} ref={rootRef}><button type="button" title={name(enemy.name)} aria-expanded={open} onClick={() => setOpen((value) => !value)}><img src={assetUrl(enemy.imageKey)} alt="" /></button><span className="enemy-origin-tooltip" role="tooltip"><strong>{name(enemy.name)}</strong><small>{mapLabel}: {maps.join(' · ') || '—'}</small></span></span>
+  const toggle = () => tooltip.setOpen((current) => !current)
+  const content = <><strong>{name(enemy.name)}</strong><small>{mapLabel}: {maps.join(' · ') || '—'}</small></>
+  return <span className={`relation-icon ${tooltip.open ? 'is-open' : ''}`}><button ref={tooltip.anchorRef} type="button" title={name(enemy.name)} aria-expanded={tooltip.open} onPointerDown={(event) => { if (!tooltip.isMobile) return; event.preventDefault(); event.stopPropagation(); toggle() }} onClick={() => { if (!tooltip.isMobile) toggle() }}><img src={assetUrl(enemy.imageKey)} alt="" /></button>{tooltip.isMobile ? <MobileTooltip tooltip={tooltip} className="enemy-origin-tooltip">{content}</MobileTooltip> : <span className="enemy-origin-tooltip" role="tooltip">{content}</span>}</span>
 }
 
 function ItemFacts({ item, index }: { item: ItemDefinition; index: ContentIndex }) {

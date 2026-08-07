@@ -558,6 +558,7 @@ button { color: inherit; }
 .detail-hint > button i { width: 13px; height: 13px; display: inline-grid; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: 9px; font-style: normal; line-height: 1; opacity: .8; }
 .detail-hint-popup { position: absolute; z-index: 20; left: 0; bottom: calc(100% + 8px); width: min(290px, calc(100vw - 52px)); padding: 9px 10px; display: block; border: 1px solid var(--brass-border); border-radius: 8px; background: #242424; box-shadow: 0 8px 22px #000; color: var(--text); font-size: 11px; font-weight: 500; line-height: 1.4; text-align: left; pointer-events: none; opacity: 0; transform: translateY(3px); transition: opacity .14s ease, transform .14s ease; }
 .detail-hint:hover > .detail-hint-popup, .detail-hint:focus-within > .detail-hint-popup, .detail-hint.is-open > .detail-hint-popup { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.mobile-tooltip { position: fixed; z-index: 120; right: auto !important; bottom: auto !important; max-height: calc(100dvh - 24px); overflow-y: auto; pointer-events: auto; opacity: 1; transform: none !important; }
 .stat-grid > span:nth-child(3n) .detail-hint-popup { right: 0; left: auto; }
 .tavern-guest-detail .stat-grid .detail-hint-popup { top: calc(100% + 8px); bottom: auto; }
 .trait-hint { display: inline-flex; padding: 0; background: transparent; vertical-align: baseline; }
@@ -668,6 +669,7 @@ button { color: inherit; }
   .recipe-ingredients { grid-column: 2; grid-row: 1; max-width: 168px; }
   .recipe-card > button { grid-column: 1 / -1; grid-row: 2; justify-self: end; }
   .recipe-meta { grid-column: 1 / -1; grid-row: 3; }
+  .recipe-ingredient .item-origin-tooltip { display: none; }
   .battle-dialog { width: 100%; height: min(90dvh, 680px); max-height: 90dvh; grid-template-rows: auto minmax(0, 1fr) auto minmax(50px, .75fr) auto; border-left: 3px solid #000; border-right: 3px solid #000; }
   .battle-scene-frame { min-height: 0; aspect-ratio: auto; }
   .team-dialog-backdrop { padding: 0; }
