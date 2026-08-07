@@ -196,6 +196,8 @@ button { color: inherit; }
 .confirm-box > .item-detail-copy { display: block; min-width: 0; }
 .item-detail h3, .item-detail p { margin: 0; overflow-wrap: anywhere; }
 .item-detail p { margin-top: 5px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+.item-purpose p { margin: 0; white-space: pre-line; overflow-wrap: anywhere; }
+.item-purpose .item-purpose-use { margin-bottom: 5px; color: var(--gold); font-weight: 700; }
 .item-detail small { display: block; margin-top: 7px; color: var(--brass); }
 .item-relations { margin-top: 10px; padding-top: 7px; display: grid; gap: 8px; border-top: 1px solid var(--line); }
 .item-relations > div { display: grid; grid-template-columns: minmax(72px, auto) minmax(0, 1fr); align-items: start; gap: 7px; color: var(--muted); font-size: 11px; }
@@ -588,9 +590,13 @@ button { color: inherit; }
 .adventurer-advanced .stat-grid { margin-top: 0; }
 .adventurer-potions { margin-top: 14px; border-top: 1px solid rgba(229,189,101,.35); padding-top: 10px; }
 .adventurer-potions h3 { margin: 0 0 8px; color: var(--brass); font-size: 13px; text-align: center; }
-.adventurer-potions > div { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
-.adventurer-potions span { display: inline-flex; align-items: center; gap: 3px; padding: 3px 5px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); font-size: 10px; }
+.adventurer-potion-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+.adventurer-potion { display: inline-flex; align-items: center; gap: 3px; min-height: 28px; padding: 3px 5px; border: 1px solid var(--line); border-radius: 6px; background: rgba(255,255,255,.05); color: var(--muted); font: inherit; font-size: 10px; cursor: pointer; }
+.adventurer-potion:hover, .adventurer-potion[aria-pressed="true"] { border-color: var(--brass-border); color: var(--gold); background: rgba(250,160,62,.11); }
 .adventurer-potions img { width: 17px; height: 17px; object-fit: contain; image-rendering: pixelated; }
+.adventurer-potion-detail { margin-top: 9px; padding: 8px 9px; border: 1px solid var(--brass-border); border-radius: 7px; background: rgba(250,160,62,.08); }
+.adventurer-potion-detail > strong { display: block; color: var(--gold); font-size: 12px; }
+.adventurer-potion-detail .item-purpose { margin-top: 3px; }
 .equipment-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
 .equipment-row button { min-width: 0; min-height: 72px; padding: 7px; display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 7px; align-items: center; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.12); color: var(--faint); cursor: pointer; transition: filter .15s ease; }
 .equipment-row button:hover { filter: brightness(1.15); }
@@ -732,6 +738,9 @@ button { color: inherit; }
  .confirm-box > .merchant-confirm-copy { display: block; min-width: 0; }
  .merchant-confirm h3, .merchant-confirm p { margin: 0 0 6px; }
  .merchant-confirm p { line-height: 1.45; overflow-wrap: anywhere; }
+ .merchant-confirm .item-purpose { margin: 7px 0 9px; padding: 8px 9px; border-left: 2px solid var(--brass-border); background: rgba(250,160,62,.08); color: var(--muted); font-size: 13px; }
+ .merchant-confirm .item-purpose p { margin: 0; }
+ .merchant-confirm .item-purpose .item-purpose-use { margin-bottom: 5px; }
  .merchant-confirm-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
  .merchant-confirm button img { width: 16px; height: 16px; vertical-align: middle; }
  .entity-detail.ascended { color: #dba5ff; }

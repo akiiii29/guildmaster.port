@@ -1033,7 +1033,7 @@ function MerchantDialog({ store, index, onClose }: { store: GameStore; index: Co
   })}</div>}</section>
   const selectedOffer = [...state.merchantRegularStock, ...state.merchantSpecialStock].find((offer) => offer.uid === selectedOfferUid)
   const selectedItem = selectedOffer && index.items.get(selectedOffer.itemId)
-  return <Modal title={t('tool.merchant')} onClose={onClose} wide>{section(t('merchant.regular'), state.merchantRegularStock, nextDay.getTime())}{section(t('merchant.special'), state.merchantSpecialStock, nextWeek.getTime())}<div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>{selectedOffer && selectedItem && <div className="confirm-layer"><section className="confirm-box merchant-confirm"><img src={assetUrl(selectedItem.imageKey)} alt="" /><div className="merchant-confirm-copy"><h3>{name(selectedItem.name)}</h3><p>{t('merchant.buyConfirm', { count: selectedOffer.stack, item: name(selectedItem.name), price: selectedOffer.price })}</p><ItemFacts item={selectedItem} index={index} /></div><div className="merchant-confirm-actions"><button onClick={() => setSelectedOfferUid(null)}>{t('common.cancel')}</button><button onClick={() => { store.buyMerchant(selectedOffer.uid); setSelectedOfferUid(null) }}><img src={assetUrl(selectedOffer.gems ? 'gem' : 'coin_copper')} alt="" />{selectedOffer.price}</button></div></section></div>}</Modal>
+  return <Modal title={t('tool.merchant')} onClose={onClose} wide>{section(t('merchant.regular'), state.merchantRegularStock, nextDay.getTime())}{section(t('merchant.special'), state.merchantSpecialStock, nextWeek.getTime())}<div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>{selectedOffer && selectedItem && <div className="confirm-layer"><section className="confirm-box merchant-confirm"><img src={assetUrl(selectedItem.imageKey)} alt="" /><div className="merchant-confirm-copy"><h3>{name(selectedItem.name)}</h3><ItemPurpose item={selectedItem} /><p>{t('merchant.buyConfirm', { count: selectedOffer.stack, item: name(selectedItem.name), price: selectedOffer.price })}</p><ItemFacts item={selectedItem} index={index} /></div><div className="merchant-confirm-actions"><button onClick={() => setSelectedOfferUid(null)}>{t('common.cancel')}</button><button onClick={() => { store.buyMerchant(selectedOffer.uid); setSelectedOfferUid(null) }}><img src={assetUrl(selectedOffer.gems ? 'gem' : 'coin_copper')} alt="" />{selectedOffer.price}</button></div></section></div>}</Modal>
 }
 
 function QuestsDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
@@ -1247,6 +1247,19 @@ function EnemyRelationIcon({ enemyId, index }: { enemyId: string; index: Content
   const toggle = () => tooltip.setOpen((current) => !current)
   const content = <><strong>{name(enemy.name)}</strong><small>{mapLabel}: {maps.join(' · ') || '—'}</small></>
   return <span className={`relation-icon ${tooltip.open ? 'is-open' : ''}`}><button ref={tooltip.anchorRef} type="button" title={name(enemy.name)} aria-expanded={tooltip.open} onPointerDown={(event) => { if (!tooltip.isMobile) return; event.preventDefault(); event.stopPropagation(); toggle() }} onClick={() => { if (!tooltip.isMobile) toggle() }}><img src={assetUrl(enemy.imageKey)} alt="" /></button>{tooltip.isMobile ? <MobileTooltip tooltip={tooltip} className="enemy-origin-tooltip">{content}</MobileTooltip> : <span className="enemy-origin-tooltip" role="tooltip">{content}</span>}</span>
+}
+
+function ItemPurpose({ item }: { item: ItemDefinition }) {
+  const { language, description } = useI18n()
+  const feedPower = Number(item.fields.feedPower ?? 0)
+  const useText = item.type === 'Food'
+    ? language === 'vi'
+      ? `Dùng để cho thú cưng ăn${feedPower > 0 ? `: +${feedPower} Food.` : '.'}`
+      : `Feed this to a pet${feedPower > 0 ? `: +${feedPower} Food.` : '.'}`
+    : item.type === 'Egg'
+      ? language === 'vi' ? 'Dùng tại Shelter để ấp thành thú cưng.' : 'Use it at the Shelter to hatch a pet.'
+      : null
+  return <div className="item-purpose">{useText && <p className="item-purpose-use">{useText}</p>}<p>{description(item.id, item.description)}</p></div>
 }
 
 function ItemFacts({ item, index }: { item: ItemDefinition; index: ContentIndex }) {
@@ -1829,6 +1842,7 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
   const [showDoctrine, setShowDoctrine] = useState(false)
   const [selectedDoctrineAbility, setSelectedDoctrineAbility] = useState<string | null>(null)
   const [confirmDoctrineReset, setConfirmDoctrineReset] = useState(false)
+  const [selectedPotionId, setSelectedPotionId] = useState<string | null>(null)
   const member = state.adventurers.find((entry) => entry.uid === uid)
   const definition = member && index.adventurers.get(member.classId)
   if (!member || !definition) return null
@@ -1880,7 +1894,7 @@ function AdventurerDialog({ uid, store, index, onClose, onSelectEquipment }: { u
         <article><small>{t('battle.passive')}</small>{definition.fields.passiveSkill && definition.fields.passiveSkill !== 'PASSIVE_NONE' ? <SkillHint language={language} kind="passive" skillId={definition.fields.passiveSkill} fields={definition.fields} /> : <strong>{passiveSkill}</strong>}</article>
       </section>
       <section className="adventurer-advanced"><h3>{t('adventurer.combatStats')}</h3><div className="stat-grid">{advancedStats.map(([label, value]) => <span key={label}>{label} <b>{value}</b></span>)}</div></section>
-      <section className="adventurer-potions"><h3>{t('adventurer.potions')}</h3><div>{['PotionOfConstitution', 'PotionOfDexterity', 'PotionOfIntelligence', 'PotionOfHealth', 'PotionOfDefense', 'PotionOfMagicDefense', 'PotionOfPrecision', 'PotionOfViciousness', 'PotionOfDarkness', 'PotionOfImmunity', 'PotionOfAgility'].map((itemId, potionType) => <span key={itemId}><img src={assetUrl(index.items.get(itemId)?.imageKey)} alt="" />{member.potionsDrank[potionType] ?? 0}/{potionLimit(member, index, potionType)}</span>)}</div></section>
+      <section className="adventurer-potions"><h3>{t('adventurer.potions')}</h3><div className="adventurer-potion-list">{['PotionOfConstitution', 'PotionOfDexterity', 'PotionOfIntelligence', 'PotionOfHealth', 'PotionOfDefense', 'PotionOfMagicDefense', 'PotionOfPrecision', 'PotionOfViciousness', 'PotionOfDarkness', 'PotionOfImmunity', 'PotionOfAgility'].map((itemId, potionType) => { const potion = index.items.get(itemId); return <button type="button" className="adventurer-potion" key={itemId} aria-pressed={selectedPotionId === itemId} title={potion ? name(potion.name) : itemId} onClick={() => setSelectedPotionId((current) => current === itemId ? null : itemId)}><img src={assetUrl(potion?.imageKey)} alt="" />{member.potionsDrank[potionType] ?? 0}/{potionLimit(member, index, potionType)}</button> })}</div>{selectedPotionId && index.items.get(selectedPotionId) && <div className="adventurer-potion-detail"><strong>{name(index.items.get(selectedPotionId)!.name)}</strong><ItemPurpose item={index.items.get(selectedPotionId)!} /></div>}</section>
       <div className="equipment-row">
         {slots.map((slot) => {
           const itemId = equipmentItemId(member, slot)
