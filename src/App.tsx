@@ -598,6 +598,7 @@ const PERMANENT_PACKAGES = [
 function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void }) {
   const { t } = useI18n()
   const state = useGame(store)
+  const user = store.getCloudUser()
   const [order, setOrder] = useState<{ orderId: string; productId: string; priceMinor: number; paymentCode: string } | null>(null)
   const [creating, setCreating] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -657,7 +658,8 @@ function ShopDialog({ store, onClose }: { store: GameStore; onClose: () => void 
         <h3 className="iap-pack-heading">{t('shop.permanentPacks')}</h3>
         <div className="iap-package-list">{PERMANENT_PACKAGES.map((pack) => {
           const owned = state.purchasedPacks[pack.id]
-          return <button className="iap-package iap-permanent-pack" disabled={creating || owned} key={pack.id} onClick={() => void buyPermanentPack(pack.id)}><img src={assetUrl(pack.id === 'starter' ? 'sign_storage' : 'merchant')} alt="" /><span><strong>{t(pack.titleKey)}</strong><small>{t(pack.descriptionKey)}</small></span><b>{owned ? t('shop.owned') : `${pack.gems.toLocaleString()} ${t('currency.gems')}`}</b></button>
+          const signInRequired = !user && !owned
+          return <button className="iap-package iap-permanent-pack" disabled={creating || owned} key={pack.id} onClick={() => signInRequired ? void store.signInWithGoogle() : void buyPermanentPack(pack.id)}><img src={assetUrl(pack.id === 'starter' ? 'sign_storage' : 'merchant')} alt="" /><span><strong>{t(pack.titleKey)}</strong><small>{t(pack.descriptionKey)}</small></span><b>{owned ? t('shop.owned') : signInRequired ? t('shop.signInToBuy') : `${pack.gems.toLocaleString()} ${t('currency.gems')}`}</b></button>
         })}</div>
       </> : <>
         <div className="iap-qr"><img src={qrUrl} alt={t('shop.qrAlt')} /></div>
@@ -1015,6 +1017,7 @@ function MarketDialog({ store, index, onClose, initialSellingItemId }: { store: 
 function MerchantDialog({ store, index, onClose }: { store: GameStore; index: ContentIndex; onClose: () => void }) {
   const state = useGame(store)
   const { t, name } = useI18n()
+  const user = store.getCloudUser()
   const [selectedOfferUid, setSelectedOfferUid] = useState<number | null>(null)
   const [now, setNow] = useState(Date.now())
   useEffect(() => {
@@ -1029,7 +1032,8 @@ function MerchantDialog({ store, index, onClose }: { store: GameStore; index: Co
   const section = (title: string, offers: typeof state.merchantRegularStock, countdown: number) => <section className="merchant-section"><h3>{title}</h3><small className="merchant-countdown">{t('merchant.refreshIn', { time: formatSeconds(Math.max(0, Math.ceil((countdown - now) / 1000))) })}</small>{offers.length === 0 ? <EmptyState text={t('merchant.empty')} /> : <div className="item-grid">{offers.map((offer) => {
     const item = index.items.get(offer.itemId)
     const affordable = offer.gems ? state.gems >= offer.price : state.money >= offer.price
-    return <button className="item-slot merchant-offer" disabled={!affordable} key={offer.uid} onClick={() => setSelectedOfferUid(offer.uid)}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{offer.stack}</strong><span>{name(item?.name ?? offer.itemId)}</span><small><img src={assetUrl(offer.gems ? 'gem' : 'coin_copper')} alt="" />{offer.price}</small></button>
+    const signInRequired = offer.gems && !user
+    return <button className="item-slot merchant-offer" disabled={!affordable && !signInRequired} key={offer.uid} onClick={() => signInRequired ? void store.signInWithGoogle() : setSelectedOfferUid(offer.uid)}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{offer.stack}</strong><span>{name(item?.name ?? offer.itemId)}</span><small>{signInRequired ? t('shop.signInToBuy') : <><img src={assetUrl(offer.gems ? 'gem' : 'coin_copper')} alt="" />{offer.price}</>}</small></button>
   })}</div>}</section>
   const selectedOffer = [...state.merchantRegularStock, ...state.merchantSpecialStock].find((offer) => offer.uid === selectedOfferUid)
   const selectedItem = selectedOffer && index.items.get(selectedOffer.itemId)

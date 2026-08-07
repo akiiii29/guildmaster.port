@@ -64,4 +64,24 @@ describe('save migrations', () => {
     expect(privateStore.migrateSerialized(JSON.stringify(claimed))?.purchasedPacks).toEqual({ starter: false, merchant: false })
     expect(privateStore.migrateSerialized(JSON.stringify(claimed), true)?.purchasedPacks).toEqual({ starter: true, merchant: true })
   })
+
+  it('does not spend guest Gems on an account-bound permanent pack', async () => {
+    const store = new GameStore(index)
+    const before = store.getSnapshot()
+
+    await expect(store.buyPack('starter')).resolves.toBe(false)
+    expect(store.getSnapshot().gems).toBe(before.gems)
+    expect(store.getSnapshot().purchasedPacks).toEqual({ starter: false, merchant: false })
+  })
+
+  it('does not let a guest spend local Gems on a merchant offer', async () => {
+    const store = new GameStore(index)
+    const state = store.getSnapshot()
+    state.gems = 500
+    state.merchantSpecialStock = [{ uid: 99, itemId: 'CopperArmor', stack: 1, price: 500, gems: true, special: true }]
+
+    await expect(store.buyMerchant(99)).resolves.toBe(false)
+    expect(store.getSnapshot().gems).toBe(500)
+    expect(store.getSnapshot().inventory.some((stack) => stack.itemId === 'CopperArmor')).toBe(false)
+  })
 })

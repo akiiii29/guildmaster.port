@@ -26,7 +26,6 @@ import {
   upgradeTavern,
   upgradeMarket,
   buyMerchantOffer,
-  buyPack,
   refreshMerchantRegular,
   refreshMerchantSpecial,
   promoteAdventurer,
@@ -544,14 +543,20 @@ export class GameStore {
   }
 
   buyMerchant(uid: number) {
+    const offer = [...this.state.merchantRegularStock, ...this.state.merchantSpecialStock].find((entry) => entry.uid === uid)
+    if (offer?.gems && (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser())) {
+      // Gem-priced merchant goods spend protected currency and must be tied to
+      // an account, just like permanent packs.
+      return Promise.resolve(false)
+    }
     return this.commitAuthoritative('buyMerchant', { uid }, (draft) => { buyMerchantOffer(draft, uid) })
   }
 
   buyPack(pack: 'starter' | 'merchant') {
     if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) {
-      let purchased = false
-      this.commit((draft) => { purchased = buyPack(draft, pack) })
-      return Promise.resolve(purchased)
+      // Permanent packs are account-bound benefits. Never complete this
+      // transaction locally: a guest save cannot restore a pack after reload.
+      return Promise.resolve(false)
     }
     return this.cloudSync.applyGemAuthorityAction({ id: this.actionId(), type: 'buyPack', payload: { pack } }, this.state)
       .then((remote) => remote ? this.mergeAuthoritativeBenefits(remote) : false)
