@@ -996,8 +996,8 @@ function MarketDialog({ store, index, onClose, initialSellingItemId }: { store: 
         return <button className="item-slot market-sell-slot" disabled={jobs.length >= capacity} key={stack.itemId} onClick={() => openSale(stack.itemId)}><img src={assetUrl(item?.imageKey)} alt="" /><strong>{stack.stack}</strong><span>{name(item?.name ?? stack.itemId)}</span><small>{Number(item?.fields.price ?? 0) * stack.stack}</small></button>
       })}</div>
       <div className="workshop-actions"><button onClick={onClose}>{t('common.close')}</button></div>
-      {sellingStack && sellingItem && <div className="market-sell-layer" onMouseDown={() => setSellingItemId(null)}>
-        <section className="market-sell-panel" onMouseDown={(event) => event.stopPropagation()}>
+      {sellingStack && sellingItem && <div className="market-sell-layer" onPointerDown={() => setSellingItemId(null)}>
+        <section className="market-sell-panel" onPointerDown={(event) => event.stopPropagation()}>
           <h3>{t('market.sellTitle', { item: name(sellingItem.name) })}</h3>
           <div className="market-sale-preview"><span className="workshop-job-item"><img src={assetUrl(sellingItem.imageKey)} alt="" /><b>{amount}</b></span><strong>{sellingPrice.toLocaleString()}</strong></div>
           <p>{t('market.saleTime', { time: formatSeconds(sellingTime) })}</p>
