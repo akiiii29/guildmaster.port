@@ -73,7 +73,7 @@ button { color: inherit; }
 .building-card small { display: block; color: var(--muted); margin-top: 3px; }
 .card-chevron { grid-column: 3; visibility: hidden; }
 
-.bottom-nav { height: 56px; display: grid; grid-template-columns: repeat(4, 1fr); background: #282828; border-top: 1px solid #3d3d3d; padding-bottom: env(safe-area-inset-bottom); }
+.bottom-nav { height: calc(56px + env(safe-area-inset-bottom)); flex: 0 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); background: #282828; border-top: 1px solid #3d3d3d; padding-bottom: env(safe-area-inset-bottom); }
 .bottom-nav button { min-height: 0; border: 0; background: transparent; color: #969696; padding: 5px 3px 4px; display: grid; grid-template-rows: 23px 14px; align-content: center; justify-items: center; gap: 2px; cursor: pointer; position: relative; }
 .bottom-nav button::before { content: ''; position: absolute; left: 28%; right: 28%; top: 0; height: 2px; background: transparent; }
 .bottom-nav button.active { color: var(--brass); }
