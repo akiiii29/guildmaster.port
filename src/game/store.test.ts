@@ -86,7 +86,7 @@ describe('save migrations', () => {
     expect(store.getSnapshot().inventory.some((stack) => stack.itemId === 'CopperArmor')).toBe(false)
   })
 
-  it('keeps locally collected chest loot when retreat is acknowledged by strict Gem sync', async () => {
+  it('keeps all 35 collected chest stacks through retreat and the next strict Gem action', async () => {
     const store = new GameStore(index)
     await store.hire(1)
     await store.send('EnchantedForest', [1])
@@ -94,13 +94,16 @@ describe('save migrations', () => {
     const areaId = 'EnchantedForest'
     const run = store.getSnapshot().runs[areaId]
     expect(run).toBeDefined()
-    run!.chest = [{ itemId: 'BeastPelt', stack: 2 }]
+    const chestLoot = content.items.slice(0, 35).map((item) => ({ itemId: item.id, stack: 1 }))
+    run!.chest = chestLoot
 
     const serverState = structuredClone(store.getSnapshot())
     serverState.runs[areaId].chest = []
     serverState.adventurers.forEach((member) => { member.areaId = null })
     delete serverState.runs[areaId]
     await expect(store.collect(areaId)).resolves.toBe(true)
+    expect(store.getSnapshot().inventory).toEqual(expect.arrayContaining(chestLoot))
+    expect(store.getSnapshot().inventory).toHaveLength(35)
 
     const remote = {
       revision: 3,
@@ -117,7 +120,8 @@ describe('save migrations', () => {
     ;(store as unknown as { cloudSync: GameSync | null }).cloudSync = authoritativeSync
 
     await expect(store.retreat(areaId)).resolves.toBe(true)
-    expect(store.getSnapshot().inventory).toContainEqual({ itemId: 'BeastPelt', stack: 2 })
+    expect(store.getSnapshot().inventory).toEqual(expect.arrayContaining(chestLoot))
+    expect(store.getSnapshot().inventory).toHaveLength(35)
     expect(store.getSnapshot().runs[areaId]).toBeUndefined()
     expect(authoritativeSync.applyGemAuthorityAction).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'retreat', payload: { areaId } }),
@@ -125,7 +129,8 @@ describe('save migrations', () => {
     )
 
     await expect(store.send(areaId, [1])).resolves.toBe(true)
-    expect(store.getSnapshot().inventory).toContainEqual({ itemId: 'BeastPelt', stack: 2 })
+    expect(store.getSnapshot().inventory).toEqual(expect.arrayContaining(chestLoot))
+    expect(store.getSnapshot().inventory).toHaveLength(35)
     expect(store.getSnapshot().runs[areaId]).toBeDefined()
   })
 })

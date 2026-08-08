@@ -768,6 +768,34 @@ describe('original-compatible game loop', () => {
     expect(state.runs.TheDreadfulAscent).toMatchObject({ finished: true, finishedReason: 'retreat', partyIds: [], enemies: [] })
   })
 
+  it('keeps dungeon chest loot when retreating, including when Storage is full', () => {
+    const index = indexContent(content)
+    const state = createInitialState(index)
+    expect(hireGuest(state, 1)).toBe(true)
+    expect(startRun(state, 'EnchantedForest', [1], index)).toBe(true)
+    state.runs.EnchantedForest.chest = [{ itemId: 'BeastPelt', stack: 2 }]
+
+    retreatRun(state, 'EnchantedForest', index)
+
+    expect(state.inventory).toContainEqual({ itemId: 'BeastPelt', stack: 2 })
+    expect(state.runs.EnchantedForest).toBeUndefined()
+    expect(state.adventurers[0].areaId).toBeNull()
+
+    expect(startRun(state, 'EnchantedForest', [1], index)).toBe(true)
+    state.inventory = Array.from({ length: 35 }, (_, id) => ({ itemId: `Stored${id}`, stack: 1 }))
+    state.runs.EnchantedForest.chest = [{ itemId: 'BeastPelt', stack: 1 }]
+
+    retreatRun(state, 'EnchantedForest', index)
+
+    expect(state.runs.EnchantedForest).toMatchObject({
+      finished: true,
+      finishedReason: 'retreat',
+      partyIds: [],
+      chest: [{ itemId: 'BeastPelt', stack: 1 }],
+    })
+    expect(state.adventurers[0].areaId).toBeNull()
+  })
+
   it('finishes room thirteen, unlocks Southern Grove, and preserves raid history for a rerun', () => {
     const variant = structuredClone(content)
     variant.messages = [

@@ -3555,6 +3555,16 @@ export function retreatRun(state: GameState, areaId: string, index?: ContentInde
     finishRaidRun(state, run, 'retreat')
     return
   }
+  // Dungeon loot belongs to the player as soon as it reaches the chest.
+  // Collect it before deleting the run; if Storage is full, retain a finished
+  // run so the chest remains available instead of discarding its contents.
+  if (run.chest.length > 0 && !collectChest(state, areaId, index)) {
+    run.progress = 0
+    run.maxProgress = 0
+    run.localDarkness = 0
+    finishRaidRun(state, run, 'retreat')
+    return
+  }
   run.partyIds.forEach((uid) => {
     const member = state.adventurers.find((entry) => entry.uid === uid)
     if (member) member.areaId = null
