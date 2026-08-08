@@ -300,7 +300,12 @@ export class GameStore {
     return this.mergeAuthoritativeBenefits(remote)
   }
 
-  private async commitAuthoritative(type: string, payload: Record<string, unknown>, fallback: (draft: GameState) => void) {
+  private async commitAuthoritative(
+    type: string,
+    payload: Record<string, unknown>,
+    fallback: (draft: GameState) => void,
+    preserveLocalState = false,
+  ) {
     if (!this.cloudSync?.isGemAuthorityEnabled() || !this.cloudSync.getUser()) {
       this.commit(fallback)
       return true
@@ -310,6 +315,14 @@ export class GameStore {
       const status = this.cloudSync.getStatus()
       if (status.kind === 'conflict') this.replaceWithCloudSave(status.remote)
       return false
+    }
+    if (preserveLocalState) {
+      // Combat and loot continue locally in strict Gem mode. Apply the local
+      // expedition transition after the server has recorded the intent, then
+      // merge only protected values so an older server run cannot overwrite
+      // inventory collected from a local chest.
+      this.commit(fallback, false)
+      return this.mergeAuthoritativeBenefits(remote)
     }
     const migrated = this.migrateSerialized(JSON.stringify(remote.state), true)
     if (!migrated) return false
@@ -482,7 +495,7 @@ export class GameStore {
   }
 
   send(areaId: string, party: number[], petUid: number | null = null) {
-    return this.commitAuthoritative('startRun', { areaId, partyIds: party, petUid }, (draft) => { startRun(draft, areaId, party, this.index, petUid) })
+    return this.commitAuthoritative('startRun', { areaId, partyIds: party, petUid }, (draft) => { startRun(draft, areaId, party, this.index, petUid) }, true)
   }
 
   refillRaid(areaId: string) {
@@ -490,7 +503,7 @@ export class GameStore {
   }
 
   retreat(areaId: string) {
-    return this.commitAuthoritative('retreat', { areaId }, (draft) => retreatRun(draft, areaId, this.index))
+    return this.commitAuthoritative('retreat', { areaId }, (draft) => retreatRun(draft, areaId, this.index), true)
   }
 
   collect(areaId: string) {

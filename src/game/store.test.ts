@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { indexContent } from './content'
 import { createInitialState } from './engine'
 import { GameStore } from './store'
+import type { GameSync } from '../sync/client'
 import type { GameContent } from './types'
 
 const load = (name: string) => JSON.parse(readFileSync(new URL(`../../public/data/${name}.json`, import.meta.url), 'utf8'))
@@ -83,5 +84,48 @@ describe('save migrations', () => {
     await expect(store.buyMerchant(99)).resolves.toBe(false)
     expect(store.getSnapshot().gems).toBe(500)
     expect(store.getSnapshot().inventory.some((stack) => stack.itemId === 'CopperArmor')).toBe(false)
+  })
+
+  it('keeps locally collected chest loot when retreat is acknowledged by strict Gem sync', async () => {
+    const store = new GameStore(index)
+    await store.hire(1)
+    await store.send('EnchantedForest', [1])
+
+    const areaId = 'EnchantedForest'
+    const run = store.getSnapshot().runs[areaId]
+    expect(run).toBeDefined()
+    run!.chest = [{ itemId: 'BeastPelt', stack: 2 }]
+
+    const serverState = structuredClone(store.getSnapshot())
+    serverState.runs[areaId].chest = []
+    serverState.adventurers.forEach((member) => { member.areaId = null })
+    delete serverState.runs[areaId]
+    await expect(store.collect(areaId)).resolves.toBe(true)
+
+    const remote = {
+      revision: 3,
+      gameVersion: serverState.version,
+      updatedAt: new Date().toISOString(),
+      state: serverState,
+    }
+    const authoritativeSync = {
+      isGemAuthorityEnabled: () => true,
+      getUser: () => ({ id: 'test-user' }),
+      applyGemAuthorityAction: vi.fn(async () => remote),
+      adoptRemote: vi.fn(async () => undefined),
+    } as unknown as GameSync
+    ;(store as unknown as { cloudSync: GameSync | null }).cloudSync = authoritativeSync
+
+    await expect(store.retreat(areaId)).resolves.toBe(true)
+    expect(store.getSnapshot().inventory).toContainEqual({ itemId: 'BeastPelt', stack: 2 })
+    expect(store.getSnapshot().runs[areaId]).toBeUndefined()
+    expect(authoritativeSync.applyGemAuthorityAction).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'retreat', payload: { areaId } }),
+      expect.any(Object),
+    )
+
+    await expect(store.send(areaId, [1])).resolves.toBe(true)
+    expect(store.getSnapshot().inventory).toContainEqual({ itemId: 'BeastPelt', stack: 2 })
+    expect(store.getSnapshot().runs[areaId]).toBeDefined()
   })
 })
