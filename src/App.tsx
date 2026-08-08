@@ -681,6 +681,7 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
   const [showRecipes, setShowRecipes] = useState(false)
   const [craftingRecipeId, setCraftingRecipeId] = useState<string | null>(null)
   const [craftAmount, setCraftAmount] = useState(1)
+  const [craftSubmitting, setCraftSubmitting] = useState(false)
   const [recipeFilter, setRecipeFilter] = useState<'all' | 'materials' | 'weapons' | 'armors' | 'accessories'>('all')
   const [recipeSort, setRecipeSort] = useState<'type' | 'craftable' | 'alphabetical'>('type')
   const [hideInsufficient, setHideInsufficient] = useState(true)
@@ -734,6 +735,16 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
     setHighlightRecipeId(target.id)
   }
 
+  const queueCraft = async () => {
+    if (!craftingRecipe || craftSubmitting) return
+    setCraftSubmitting(true)
+    const queued = await store.craft(craftingRecipe.id, amount)
+    setCraftSubmitting(false)
+    if (!queued) return
+    setCraftingRecipeId(null)
+    setShowRecipes(false)
+  }
+
   return (
     <Modal title={t('building.workshop')} onClose={onClose} wide>
       <div className="workshop-summary">
@@ -785,7 +796,7 @@ function WorkshopDialog({ store, index, onClose }: { store: GameStore; index: Co
               <p>{t('workshop.craftTime', { time: formatSeconds(craftingTime) })}</p>
               <div className="market-quantity"><button disabled={amount <= 1} onClick={() => setCraftAmount(amount - 1)}>-</button><strong>{amount}</strong><button disabled={amount >= maxCraftAmount} onClick={() => setCraftAmount(amount + 1)}>+</button></div>
               <input className="market-quantity-slider" type="range" min="1" max={maxCraftAmount} value={amount} onChange={(event) => setCraftAmount(Number(event.target.value))} />
-              <div className="workshop-actions"><button onClick={() => setCraftingRecipeId(null)}>{t('common.close')}</button><button disabled={queueFull || maxCraftAmount < 1} onClick={() => { store.craft(craftingRecipe.id, amount); setCraftingRecipeId(null); setShowRecipes(false) }}>{t('workshop.craft')}</button></div>
+              <div className="workshop-actions"><button disabled={craftSubmitting} onClick={() => setCraftingRecipeId(null)}>{t('common.close')}</button><button disabled={craftSubmitting || queueFull || maxCraftAmount < 1} onClick={() => void queueCraft()}>{t('workshop.craft')}</button></div>
             </section> : <section className="recipe-browser"><div className="storage-filters recipe-filters"><label>{t('workshop.recipeFilter')}<select value={recipeFilter} onChange={(event) => setRecipeFilter(event.target.value as typeof recipeFilter)}><option value="all">{t('storage.all')}</option><option value="materials">{t('storage.materials')}</option><option value="weapons">{t('storage.weapons')}</option><option value="armors">{t('storage.armors')}</option><option value="accessories">{t('storage.accessories')}</option></select></label><label>{t('workshop.recipeSort')}<select value={recipeSort} onChange={(event) => setRecipeSort(event.target.value as typeof recipeSort)}><option value="type">{t('storage.sortType')}</option><option value="craftable">{t('workshop.sortCraftable')}</option><option value="alphabetical">{t('storage.sortAlphabetical')}</option></select></label><label className="recipe-hide"><input type="checkbox" checked={hideInsufficient} onChange={(event) => setHideInsufficient(event.target.checked)} />{t('workshop.hideInsufficient')}</label></div><div className="recipe-list" ref={recipeListRef}>
               {filteredRecipes.map((recipe) => {
                 const result = index.items.get(recipe.result.itemId)
